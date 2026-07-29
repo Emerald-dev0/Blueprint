@@ -1,0 +1,129 @@
+'use client';
+
+import * as React from 'react';
+import {
+  Button,
+  Input,
+  Badge,
+  Separator,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent
+} from '@blueprint/ui';
+import { ShieldCheck, Key, Globe, Github } from 'lucide-react';
+import { invoke } from '@tauri-apps/api/core';
+
+export default function SettingsPage() {
+  const [keys, setKeys] = React.useState({
+    gemini: '',
+    anthropic: '',
+    openai: ''
+  });
+  const [status, setStatus] = React.useState<Record<string, string>>({});
+
+  const saveKey = async (provider: string) => {
+    try {
+      await invoke('set_ai_credential', {
+        providerId: provider,
+        key: (keys as any)[provider]
+      });
+      setStatus(prev => ({ ...prev, [provider]: 'Saved' }));
+      setTimeout(() => setStatus(prev => ({ ...prev, [provider]: '' })), 2000);
+    } catch (e) {
+      setStatus(prev => ({ ...prev, [provider]: 'Error' }));
+    }
+  };
+
+  return (
+    <div className="p-12 max-w-4xl mx-auto space-y-12">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-black tracking-tight text-white uppercase italic">Command Settings</h1>
+        <p className="text-slate-500 font-mono text-sm">Configure your engineering intelligence layer.</p>
+      </header>
+
+      <Tabs defaultValue="ai" className="w-full">
+        <TabsList className="bg-white/5 border border-white/5 p-1 mb-8">
+          <TabsTrigger value="ai" className="data-[state=active]:bg-[#00FF9D]/10">AI Providers</TabsTrigger>
+          <TabsTrigger value="github" className="data-[state=active]:bg-[#00FF9D]/10">GitHub</TabsTrigger>
+          <TabsTrigger value="general" className="data-[state=active]:bg-[#00FF9D]/10">General</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="ai" className="space-y-8 animate-in fade-in duration-300">
+          <section className="space-y-6">
+            <div className="flex items-center space-x-2 text-[#00FF9D]">
+              <Key size={16} />
+              <h3 className="text-xs font-black uppercase tracking-widest">API Key Management</h3>
+            </div>
+
+            <div className="grid gap-4">
+              <ProviderKeyInput
+                id="gemini"
+                name="Google Gemini"
+                value={keys.gemini}
+                status={status.gemini}
+                onChange={(val) => setKeys(k => ({ ...k, gemini: val }))}
+                onSave={() => saveKey('gemini')}
+              />
+              <ProviderKeyInput
+                id="anthropic"
+                name="Anthropic Claude"
+                value={keys.anthropic}
+                status={status.anthropic}
+                onChange={(val) => setKeys(k => ({ ...k, anthropic: val }))}
+                onSave={() => saveKey('anthropic')}
+              />
+              <ProviderKeyInput
+                id="openai"
+                name="OpenAI"
+                value={keys.openai}
+                status={status.openai}
+                onChange={(val) => setKeys(k => ({ ...k, openai: val }))}
+                onSave={() => saveKey('openai')}
+              />
+            </div>
+          </section>
+
+          <Separator />
+
+          <section className="p-6 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-white">Privacy Seal</h4>
+              <p className="text-xs text-slate-500 font-mono">Keys are stored locally in your system keychain. No cloud sync.</p>
+            </div>
+            <ShieldCheck size={24} className="text-[#00FF9D] opacity-50" />
+          </section>
+        </TabsContent>
+
+        <TabsContent value="github" className="animate-in fade-in duration-300">
+          <div className="p-12 border border-dashed border-white/10 rounded-2xl text-center space-y-4">
+            <Github size={32} className="mx-auto text-slate-600" />
+            <p className="text-slate-400 font-mono text-sm">GitHub integration is currently being scaffolded.</p>
+            <Button variant="outline" disabled>Connect GitHub</Button>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+function ProviderKeyInput({ id, name, value, onChange, onSave, status }: any) {
+  return (
+    <div className="flex items-center justify-between p-4 bg-[#141414] border border-white/5 rounded-xl transition-all hover:border-white/10">
+      <div className="space-y-1">
+        <label className="text-[10px] font-black uppercase text-slate-500 tracking-tighter">{name}</label>
+        <Input
+          type="password"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Paste API Key..."
+          className="border-none bg-transparent h-8 p-0 focus-visible:ring-0 w-64"
+        />
+      </div>
+      <div className="flex items-center space-x-2">
+        {status && <span className={`text-[10px] font-mono ${status === 'Error' ? 'text-red-500' : 'text-[#00FF9D]'}`}>{status}</span>}
+        <Button size="sm" variant="ghost" onClick={onSave} className="h-8">Save Key</Button>
+      </div>
+    </div>
+  );
+}
