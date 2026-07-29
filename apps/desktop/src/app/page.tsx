@@ -1,13 +1,21 @@
+'use client';
+
+import { useWorkspaceStore } from '../store/workspace';
+
 export default function Home() {
+  const { activeSystem } = useWorkspaceStore();
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#0B0B0B] text-white">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm flex flex-col gap-8">
-        <h1 className="text-6xl font-black tracking-tighter text-[#00FF9D]">BLUEPRINT</h1>
-        <p className="text-xl text-slate-400">AI Engineering Command Center</p>
-        <div className="mt-8 p-4 border border-slate-800 rounded-lg bg-[#141414]">
-          <p>Initial handshake complete. System ready.</p>
-        </div>
+    <div className="p-8 h-full flex flex-col items-center justify-center space-y-6">
+      <div className="p-12 border border-white/5 rounded-2xl bg-[#141414]/50 backdrop-blur-sm flex flex-col items-center space-y-4 max-w-lg text-center">
+        <h2 className="text-2xl font-black tracking-tight text-[#00FF9D]">
+          {activeSystem.toUpperCase()}
+        </h2>
+        <p className="text-slate-400 font-mono text-sm leading-relaxed">
+          The {activeSystem} engine is currently in development.
+          Press <kbd className="px-1.5 py-0.5 rounded border border-white/20 bg-white/5 text-white">Cmd + K</kbd> to explore available commands.
+        </p>
       </div>
-    </main>
+    </div>
   );
 }
