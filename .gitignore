@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+.pnpm-debug.log
+
+# Build Outputs
+dist
+.next
+out
+target
+build
+
+# Tauri
+src-tauri/target
+src-tauri/gen
+
+# IDEs
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local Cache
+.turbo
+.cache
