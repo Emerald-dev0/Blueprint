@@ -21,7 +21,7 @@ import {
   BookOpen,
   LayoutGrid
 } from 'lucide-react';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, describeError } from '../../../lib/ipc';
 
 export default function AOSDashboard() {
   const [manuals, setManuals] = React.useState<any[]>([]);

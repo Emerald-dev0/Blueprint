@@ -21,7 +21,7 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, describeError } from '../../lib/ipc';
 
 export default function IntelligencePage() {
   const [url, setUrl] = React.useState('');

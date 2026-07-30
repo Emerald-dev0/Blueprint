@@ -22,7 +22,7 @@ import {
   ChevronRight,
   ShieldCheck
 } from 'lucide-react';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, describeError } from '../../lib/ipc';
 import { GitHubRepository } from '@blueprint/types';
 
 export default function GitHubPage() {

@@ -28,7 +28,7 @@ import {
   Loader2,
   AlertTriangle
 } from 'lucide-react';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, describeError } from '../../lib/ipc';
 import { MemoryEntry, ADR } from '@blueprint/types';
 
 type LoadState = 'loading' | 'ready' | 'error';
