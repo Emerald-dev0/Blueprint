@@ -9,6 +9,7 @@ mod plugins;
 mod events;
 
 use ai::manager::AIManager;
+use ai::aos::AgentOS;
 use memory::MemoryManager;
 use plugins::manager::PluginManager;
 use std::sync::Arc;
@@ -18,15 +19,19 @@ fn main() {
     let memory_manager = Arc::new(MemoryManager::new("blueprint.db"));
     let app_data_dir = PathBuf::from(".");
     let plugin_manager = PluginManager::new(app_data_dir);
+    let agent_os = AgentOS::new();
 
     tauri::Builder::default()
         .manage(AIManager::new())
         .manage(memory_manager)
         .manage(plugin_manager)
+        .manage(agent_os)
         .invoke_handler(tauri::generate_handler![
             ai::set_ai_credential,
             ai::generate_ai_completion,
+            ai::run_aos_completion,
             ai::get_personas,
+            ai::get_operating_manuals,
             ai::plan_goal_execution,
             ai::orchestration::assemble_team,
             intelligence::start_repo_analysis,
