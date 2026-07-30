@@ -11,10 +11,17 @@ import {
   TabsTrigger,
   TabsContent
 } from '@blueprint/ui';
-import { ShieldCheck, Key, Globe, Github } from 'lucide-react';
+import { ShieldCheck, Key, Github } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
-
 import { usePluginStore } from '../../store/plugins';
+
+interface ProviderKeyInputProps {
+  name: string;
+  value: string;
+  onChange: (val: string) => void;
+  onSave: () => void;
+  status?: string;
+}
 
 export default function SettingsPage() {
   const { plugins } = usePluginStore();
@@ -53,32 +60,6 @@ export default function SettingsPage() {
           <TabsTrigger value="general" className="data-[state=active]:bg-[#00FF9D]/10">General</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="plugins" className="space-y-6 animate-in fade-in duration-300">
-          <div className="grid gap-4">
-            {plugins.length === 0 ? (
-              <p className="text-sm text-slate-500 font-mono">No plugins installed.</p>
-            ) : (
-              plugins.map((plugin) => (
-                <div key={plugin.id} className="p-6 bg-[#141414] border border-white/5 rounded-2xl flex items-start justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <h4 className="text-sm font-bold text-white">{plugin.name}</h4>
-                      <Badge variant="outline">v{plugin.version}</Badge>
-                    </div>
-                    <p className="text-xs text-slate-500 font-mono leading-relaxed max-w-md">{plugin.description}</p>
-                    <div className="flex gap-2">
-                      {plugin.permissions.map(p => (
-                        <span key={p} className="text-[9px] px-1.5 py-0.5 bg-white/5 rounded text-slate-400 font-mono uppercase">{p}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:bg-red-500/10">Disable</Button>
-                </div>
-              ))
-            )}
-          </div>
-        </TabsContent>
-
         <TabsContent value="ai" className="space-y-8 animate-in fade-in duration-300">
           <section className="space-y-6">
             <div className="flex items-center space-x-2 text-[#00FF9D]">
@@ -88,27 +69,24 @@ export default function SettingsPage() {
 
             <div className="grid gap-4">
               <ProviderKeyInput
-                id="gemini"
                 name="Google Gemini"
                 value={keys.gemini}
                 status={status.gemini}
-                onChange={(val) => setKeys(k => ({ ...k, gemini: val }))}
+                onChange={(val: string) => setKeys(k => ({ ...k, gemini: val }))}
                 onSave={() => saveKey('gemini')}
               />
               <ProviderKeyInput
-                id="anthropic"
                 name="Anthropic Claude"
                 value={keys.anthropic}
                 status={status.anthropic}
-                onChange={(val) => setKeys(k => ({ ...k, anthropic: val }))}
+                onChange={(val: string) => setKeys(k => ({ ...k, anthropic: val }))}
                 onSave={() => saveKey('anthropic')}
               />
               <ProviderKeyInput
-                id="openai"
                 name="OpenAI"
                 value={keys.openai}
                 status={status.openai}
-                onChange={(val) => setKeys(k => ({ ...k, openai: val }))}
+                onChange={(val: string) => setKeys(k => ({ ...k, openai: val }))}
                 onSave={() => saveKey('openai')}
               />
             </div>
@@ -132,12 +110,38 @@ export default function SettingsPage() {
             <Button variant="outline" disabled>Connect GitHub</Button>
           </div>
         </TabsContent>
+
+        <TabsContent value="plugins" className="space-y-6 animate-in fade-in duration-300">
+          <div className="grid gap-4">
+            {plugins.length === 0 ? (
+              <p className="text-sm text-slate-500 font-mono text-center py-12 border border-dashed border-white/5 rounded-2xl">No plugins installed.</p>
+            ) : (
+              plugins.map((plugin) => (
+                <div key={plugin.id} className="p-6 bg-[#141414] border border-white/5 rounded-2xl flex items-start justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="text-sm font-bold text-white">{plugin.name}</h4>
+                      <Badge variant="outline">v{plugin.version}</Badge>
+                    </div>
+                    <p className="text-xs text-slate-500 font-mono leading-relaxed max-w-md">{plugin.description}</p>
+                    <div className="flex gap-2">
+                      {plugin.permissions.map(p => (
+                        <span key={p} className="text-[9px] px-1.5 py-0.5 bg-white/5 rounded text-slate-400 font-mono uppercase">{p}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:bg-red-500/10">Disable</Button>
+                </div>
+              ))
+            )}
+          </div>
+        </TabsContent>
       </Tabs>
     </div>
   );
 }
 
-function ProviderKeyInput({ id, name, value, onChange, onSave, status }: any) {
+function ProviderKeyInput({ name, value, onChange, onSave, status }: ProviderKeyInputProps) {
   return (
     <div className="flex items-center justify-between p-4 bg-[#141414] border border-white/5 rounded-xl transition-all hover:border-white/10">
       <div className="space-y-1">
