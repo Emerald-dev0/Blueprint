@@ -1,0 +1,24 @@
+{
+  "id": "io.blueprint.official.workflow-pack",
+  "name": "AI Workflow Pack",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Standardized engineering workflows for product building, website reconstruction, and backend design.",
+  "permissions": [
+    "ai.complete",
+    "ui.tab",
+    "git.write",
+    "fs.write"
+  ],
+  "minBlueprintVersion": "0.1.0",
+  "entrypoints": {
+    "frontend": "src/index.ts"
+  },
+  "commands": [
+    {
+      "id": "workflow.start-new-product",
+      "label": "Workflow: Start New Product",
+      "shortcut": "Cmd+Shift+N"
+    }
+  ]
+}

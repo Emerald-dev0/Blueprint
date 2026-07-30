@@ -1,0 +1,12 @@
+{
+  "id": "io.blueprint.official.api-explorer",
+  "name": "API Explorer",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Discover and document REST/GraphQL APIs.",
+  "permissions": ["network.request", "ai.complete"],
+  "minBlueprintVersion": "0.1.0",
+  "entrypoints": {
+    "frontend": "src/index.ts"
+  }
+}

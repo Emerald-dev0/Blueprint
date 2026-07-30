@@ -1,0 +1,22 @@
+{
+  "id": "io.blueprint.official.design-intelligence",
+  "name": "Design Intelligence",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Extract and analyze design systems, tokens, and visual patterns.",
+  "permissions": [
+    "ui.panel",
+    "ai.complete"
+  ],
+  "minBlueprintVersion": "0.1.0",
+  "entrypoints": {
+    "frontend": "src/index.ts"
+  },
+  "commands": [
+    {
+      "id": "design.extract-tokens",
+      "label": "Design: Extract Tokens",
+      "shortcut": "Cmd+Shift+D"
+    }
+  ]
+}

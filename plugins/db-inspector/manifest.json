@@ -1,0 +1,12 @@
+{
+  "id": "io.blueprint.official.db-inspector",
+  "name": "Database Inspector",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Visualize and optimize database schemas.",
+  "permissions": ["fs.read", "ai.complete"],
+  "minBlueprintVersion": "0.1.0",
+  "entrypoints": {
+    "frontend": "src/index.ts"
+  }
+}

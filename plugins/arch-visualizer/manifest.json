@@ -1,0 +1,12 @@
+{
+  "id": "io.blueprint.official.arch-visualizer",
+  "name": "Architecture Visualizer",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Interactive diagrams and system maps.",
+  "permissions": ["ui.panel", "fs.read"],
+  "minBlueprintVersion": "0.1.0",
+  "entrypoints": {
+    "frontend": "src/index.ts"
+  }
+}

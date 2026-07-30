@@ -218,6 +218,70 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
+  plugins/design-intelligence:
+    dependencies:
+      '@blueprint/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/plugin-sdk
+      '@blueprint/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      lucide-react:
+        specifier: ^0.400.0
+        version: 0.400.0(react@19.2.8)
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+
+  plugins/repo-intelligence:
+    dependencies:
+      '@blueprint/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/plugin-sdk
+      '@blueprint/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      lucide-react:
+        specifier: ^0.400.0
+        version: 0.400.0(react@19.2.8)
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+
+  plugins/web-intelligence:
+    dependencies:
+      '@blueprint/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/plugin-sdk
+      '@blueprint/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      lucide-react:
+        specifier: ^0.400.0
+        version: 0.400.0(react@19.2.8)
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+
+  plugins/workflow-pack:
+    dependencies:
+      '@blueprint/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/plugin-sdk
+      '@blueprint/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      lucide-react:
+        specifier: ^0.400.0
+        version: 0.400.0(react@19.2.8)
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+
 packages:
 
   '@babel/code-frame@7.29.7':

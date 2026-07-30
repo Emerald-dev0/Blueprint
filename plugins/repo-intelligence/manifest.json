@@ -1,0 +1,25 @@
+{
+  "id": "io.blueprint.official.repo-intelligence",
+  "name": "Repository Intelligence",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Deep understanding of existing codebases, architecture mapping, and tech debt detection.",
+  "permissions": [
+    "fs.read",
+    "ai.complete",
+    "ui.panel",
+    "ui.tab",
+    "git.read"
+  ],
+  "minBlueprintVersion": "0.1.0",
+  "entrypoints": {
+    "frontend": "src/index.ts"
+  },
+  "commands": [
+    {
+      "id": "repo.analyze",
+      "label": "Intelligence: Analyze Repository",
+      "shortcut": "Cmd+Shift+R"
+    }
+  ]
+}
