@@ -1,0 +1,32 @@
+name: Security
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 0 * * 1' # Weekly on Mondays
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          
+      - name: Audit Node.js dependencies
+        run: pnpm audit
+        
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+        
+      - name: Audit Rust dependencies
+        run: cd apps/desktop/src-tauri && cargo audit
