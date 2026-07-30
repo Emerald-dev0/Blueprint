@@ -19,7 +19,10 @@ fn main() {
     let memory_manager = Arc::new(MemoryManager::new("blueprint.db"));
     let app_data_dir = PathBuf::from(".");
     let plugin_manager = PluginManager::new(app_data_dir);
-    let agent_os = AgentOS::new();
+
+    // Path to personas in development
+    let personas_root = PathBuf::from("../../packages/personas");
+    let agent_os = AgentOS::new(personas_root);
 
     tauri::Builder::default()
         .manage(AIManager::new())
@@ -32,6 +35,7 @@ fn main() {
             ai::run_aos_completion,
             ai::get_personas,
             ai::get_operating_manuals,
+            ai::reload_personas,
             ai::plan_aos_workflow,
             ai::orchestration::assemble_team,
             intelligence::start_repo_analysis,

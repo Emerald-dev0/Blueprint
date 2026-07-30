@@ -21,11 +21,13 @@ impl PromptCompiler {
         prompt.push_str("\n\n");
 
         // 3. Operational Expertise
-        prompt.push_str("# EXPERTISE & CAPABILITIES\n");
-        for exp in &manual.expertise {
-            prompt.push_str(&format!("- {}\n", exp));
+        if !manual.expertise.is_empty() {
+            prompt.push_str("# EXPERTISE & CAPABILITIES\n");
+            for exp in &manual.expertise {
+                prompt.push_str(&format!("- {}\n", exp));
+            }
+            prompt.push_str("\n");
         }
-        prompt.push_str("\n");
 
         // 4. Injected Context (The "Eyes" of the Agent)
         prompt.push_str("# PROJECT CONTEXT\n");
@@ -39,21 +41,32 @@ impl PromptCompiler {
             prompt.push_str("## PROJECT UNDERSTANDING MODEL (PUM)\n");
             prompt.push_str(&pum.to_string());
         }
+
+        if let Some(memories) = context.get("relevant_memories").and_then(|m| m.as_array()) {
+            prompt.push_str("## RELEVANT MEMORIES\n");
+            for mem in memories {
+                prompt.push_str(&format!("* {}\n", mem));
+            }
+        }
         prompt.push_str("\n");
 
         // 5. Reasoning Framework
-        prompt.push_str("# THINKING FRAMEWORK\n");
-        for (i, step) in manual.thinking_framework.iter().enumerate() {
-            prompt.push_str(&format!("{}. {}\n", i + 1, step));
+        if !manual.thinking_framework.is_empty() {
+            prompt.push_str("# THINKING FRAMEWORK\n");
+            for (i, step) in manual.thinking_framework.iter().enumerate() {
+                prompt.push_str(&format!("{}. {}\n", i + 1, step));
+            }
+            prompt.push_str("\n");
         }
-        prompt.push_str("\n");
 
         // 6. Tools Availability
-        prompt.push_str("# AVAILABLE TOOLS\n");
-        for tool in &manual.tools {
-            prompt.push_str(&format!("- {}\n", tool));
+        if !manual.tools.is_empty() {
+            prompt.push_str("# AVAILABLE TOOLS\n");
+            for tool in &manual.tools {
+                prompt.push_str(&format!("- {}\n", tool));
+            }
+            prompt.push_str("\n");
         }
-        prompt.push_str("\n");
 
         // 7. Executive Decision
         prompt.push_str("# ACTIVE REQUIREMENT\n");
@@ -61,11 +74,13 @@ impl PromptCompiler {
         prompt.push_str("\n\n");
 
         // 8. Quality Control & Output
-        prompt.push_str("# QUALITY STANDARDS\n");
-        for std in &manual.quality_standards {
-            prompt.push_str(&format!("* {}\n", std));
+        if !manual.quality_standards.is_empty() {
+            prompt.push_str("# QUALITY STANDARDS\n");
+            for std in &manual.quality_standards {
+                prompt.push_str(&format!("* {}\n", std));
+            }
+            prompt.push_str("\n");
         }
-        prompt.push_str("\n");
 
         prompt.push_str("# OUTPUT FORMAT\n");
         prompt.push_str(&manual.output_format);

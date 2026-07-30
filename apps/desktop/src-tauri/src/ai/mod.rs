@@ -52,11 +52,7 @@ pub async fn run_aos_completion(
         context["git_context"] = git_summary;
     }
 
-    let compiled_prompt = aos::compiler::PromptCompiler::compile(
-        aos.persona_registry.get(&role_id).ok_or("Persona not found")?,
-        &goal,
-        &context
-    );
+    let compiled_prompt = aos.compile_prompt(&role_id, &goal, &context)?;
 
     // Choose model
     let (provider_id, model_id) = aos::router::ModelRouter::route(aos::router::ModelCapability::Reasoning);
@@ -83,7 +79,14 @@ pub fn get_personas() -> Vec<orchestration::roles::Persona> {
 
 #[tauri::command]
 pub fn get_operating_manuals(aos: State<'_, AgentOS>) -> Vec<OperatingManual> {
-    aos.persona_registry.manuals.values().cloned().collect()
+    let registry = aos.persona_registry.lock().unwrap();
+    registry.manuals.values().cloned().collect()
+}
+
+#[tauri::command]
+pub fn reload_personas(aos: State<'_, AgentOS>) -> Result<(), String> {
+    let mut registry = aos.persona_registry.lock().unwrap();
+    registry.reload()
 }
 
 #[tauri::command]

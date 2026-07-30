@@ -41,7 +41,11 @@ export default function AOSDashboard() {
     fetchAOSData();
   }, []);
 
-  if (isLoading) return <ActivityIndicator fullScreen label="Booting Agent OS Kernel..." />;
+  if (isLoading) return (
+    <div className="h-screen w-full flex items-center justify-center bg-[#0B0B0B]">
+      <ActivityIndicator label="Booting Agent OS Kernel..." />
+    </div>
+  );
 
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-12">
