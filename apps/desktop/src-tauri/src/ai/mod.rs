@@ -78,23 +78,7 @@ pub fn get_operating_manuals(aos: State<'_, AgentOS>) -> Vec<OperatingManual> {
 }
 
 #[tauri::command]
-pub fn plan_goal_execution(goal: String) -> orchestration::tasks::TaskGraph {
-    let redacted_goal = RedactionEngine::redact(&goal);
-    orchestration::tasks::TaskGraph {
-        id: "mock-id".to_string(),
-        goal: redacted_goal,
-        tasks: vec![
-            orchestration::tasks::Task {
-                id: "1".to_string(),
-                title: "Decompose Goal".to_string(),
-                description: "Breaking down high-level requirement.".to_string(),
-                role_id: orchestration::roles::AgentRoleId::Principal,
-                status: orchestration::tasks::TaskStatus::Completed,
-                dependencies: vec![],
-                output: Some("Goal decomposed into 4 sub-tasks.".to_string()),
-                error: None,
-            },
-        ],
-        status: "executing".to_string(),
-    }
+pub fn plan_aos_workflow(aos: State<'_, AgentOS>, goal: String) -> aos::workflow::TaskGraph {
+    let mut engine = aos.workflow_engine.lock().unwrap();
+    engine.plan_workflow(&goal)
 }

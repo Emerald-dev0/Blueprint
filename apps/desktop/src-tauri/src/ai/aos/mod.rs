@@ -10,17 +10,18 @@ use router::{ModelRouter, ModelCapability};
 use workflow::WorkflowEngine;
 use tools::ToolRuntime;
 use serde_json::Value;
+use std::sync::Mutex;
 
 pub struct AgentOS {
     pub persona_registry: PersonaRegistry,
-    pub workflow_engine: WorkflowEngine,
+    pub workflow_engine: Mutex<WorkflowEngine>,
 }
 
 impl AgentOS {
     pub fn new() -> Self {
         Self {
             persona_registry: PersonaRegistry::new(),
-            workflow_engine: WorkflowEngine::new(),
+            workflow_engine: Mutex::new(WorkflowEngine::new()),
         }
     }
 

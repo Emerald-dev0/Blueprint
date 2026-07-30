@@ -32,7 +32,7 @@ fn main() {
             ai::run_aos_completion,
             ai::get_personas,
             ai::get_operating_manuals,
-            ai::plan_goal_execution,
+            ai::plan_aos_workflow,
             ai::orchestration::assemble_team,
             intelligence::start_repo_analysis,
             intelligence::analyze_website,
