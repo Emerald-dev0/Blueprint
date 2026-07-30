@@ -11,36 +11,37 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@blueprint/ui": "workspace:*",
-    "@blueprint/core": "workspace:*",
     "@blueprint/ai-adapters": "workspace:*",
-    "@blueprint/git-engine": "workspace:*",
     "@blueprint/brain": "workspace:*",
-    "@blueprint/types": "workspace:*",
+    "@blueprint/core": "workspace:*",
+    "@blueprint/git-engine": "workspace:*",
     "@blueprint/plugin-sdk": "workspace:*",
+    "@blueprint/types": "workspace:*",
+    "@blueprint/ui": "workspace:*",
+    "@tanstack/react-query": "^5.101.4",
+    "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/plugin-shell": "^2.0.0",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "framer-motion": "^11.18.2",
+    "lucide-react": "^0.378.0",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@tauri-apps/api": "^2.0.0",
-    "@tauri-apps/plugin-shell": "^2.0.0",
-    "zustand": "^4.5.7",
-    "@tanstack/react-query": "^5.101.4",
-    "cmdk": "^1.1.1",
-    "lucide-react": "^0.378.0",
-    "framer-motion": "^11.18.2",
-    "clsx": "^2.1.1",
+    "react-resizable-panels": "^2.1.1",
     "tailwind-merge": "^2.6.1",
-    "react-resizable-panels": "^2.1.1"
+    "zustand": "^4.5.7"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
     "@tauri-apps/cli": "^2.0.0",
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "typescript": "^5.5.0",
     "autoprefixer": "^10.4.19",
+    "eslint-config-next": "15.0.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^4.0.0-alpha.1",
-    "eslint-config-next": "15.0.0"
+    "typescript": "^5.5.0"
   }
 }
