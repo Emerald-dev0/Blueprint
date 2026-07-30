@@ -27,8 +27,8 @@ pub async fn generate_ai_completion(
 }
 
 #[tauri::command]
-pub fn get_personas() -> Vec<orchestration::roles::Persona> {
-    orchestration::roles::AgentRegistry::new().personas
+pub fn get_agent_roles() -> Vec<orchestration::roles::AgentRole> {
+    orchestration::roles::AgentRegistry::new().roles
 }
 
 #[tauri::command]
@@ -45,6 +45,16 @@ pub fn plan_goal_execution(goal: String) -> orchestration::tasks::TaskGraph {
                 status: orchestration::tasks::TaskStatus::Completed,
                 dependencies: vec![],
                 output: Some("Goal decomposed into 4 sub-tasks.".to_string()),
+                error: None,
+            },
+            orchestration::tasks::Task {
+                id: "2".to_string(),
+                title: "Draft Schema".to_string(),
+                description: "Designing data models.".to_string(),
+                role_id: orchestration::roles::AgentRoleId::Database,
+                status: orchestration::tasks::TaskStatus::Active,
+                dependencies: vec!["1".to_string()],
+                output: None,
                 error: None,
             },
         ],

@@ -10,7 +10,6 @@ impl AIProvider for OpenAIProvider {
     }
 
     async fn complete(&self, _api_key: &str, _messages: Vec<AIMessage>, model_id: &str) -> Result<CompletionResponse, String> {
-        // Implementation coming in next PR
         Ok(CompletionResponse {
             content: "OpenAI response placeholder".to_string(),
             model_id: model_id.to_string(),

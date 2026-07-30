@@ -10,8 +10,8 @@ import {
 } from '@blueprint/ui';
 import { Send, Bot, User, Sparkles, LayoutList } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
-import { ExecutionTimeline } from '../../components/ai/execution-timeline';
-import { Task, Persona } from '@blueprint/types';
+import { ExecutionTimeline } from '@/components/ai/execution-timeline';
+import { Task } from '@blueprint/types';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -23,9 +23,9 @@ export default function AIPage() {
   const [input, setInput] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [showTimeline, setShowTimeline] = React.useState(false);
-  const [activePersona, setActivePersona] = React.useState<Persona | null>(null);
 
-  const [tasks] = React.useState<Task[]>([
+  // Mock Tasks for Orchestration visualization
+  const [tasks, setTasks] = React.useState<Task[]>([
     {
       id: '1',
       title: 'Analyze Project Intent',
@@ -39,21 +39,24 @@ export default function AIPage() {
       title: 'Extract Schema Requirements',
       description: 'Mapping necessary data models for implementation.',
       roleId: 'architect',
+      status: 'completed',
+      output: 'Identified 3 core entities: Project, ADR, Task.'
+    },
+    {
+      id: '3',
+      title: 'Draft Implementation Plan',
+      description: 'Creating a step-by-step roadmap.',
+      roleId: 'pm',
       status: 'active'
     },
+    {
+      id: '4',
+      title: 'Generate Core Components',
+      description: 'Executing file modifications.',
+      roleId: 'frontend',
+      status: 'pending'
+    },
   ]);
-
-  React.useEffect(() => {
-    const fetchPersonas = async () => {
-      try {
-        const personas: Persona[] = await invoke('get_personas');
-        setActivePersona(personas.find(p => p.id === 'principal') || null);
-      } catch (e) {
-        console.error("Failed to fetch personas", e);
-      }
-    };
-    fetchPersonas();
-  }, []);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -74,7 +77,7 @@ export default function AIPage() {
     } catch (error) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: `Error: ${String(error)}`
+        content: `Error: ${error instanceof Error ? error.message : String(error)}. Have you configured your API key in Settings?`
       }]);
     } finally {
       setIsLoading(false);
@@ -158,7 +161,7 @@ export default function AIPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Type your intent..."
+              placeholder="Type your intent (e.g. 'Build a production SaaS application')..."
               className="pr-12 h-12 bg-[#141414] border-white/10 focus-visible:ring-[#00FF9D]/50"
             />
             <Button
@@ -174,39 +177,11 @@ export default function AIPage() {
         </footer>
       </div>
 
-      <div className="w-[320px] h-full flex flex-col bg-[#0B0B0B]">
-        {activePersona && (
-          <div className="p-6 border-b border-white/5 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Active Expert</h3>
-              <Badge variant="primary">v{activePersona.version}</Badge>
-            </div>
-
-            <div className="space-y-1">
-              <h4 className="text-sm font-bold text-[#00FF9D]">{activePersona.name}</h4>
-              <p className="text-[11px] text-slate-400 font-mono leading-relaxed">{activePersona.identity}</p>
-            </div>
-
-            <div className="pt-2">
-              <p className="text-[9px] font-black uppercase text-slate-600 mb-2">Thinking Framework</p>
-              <ul className="space-y-1.5">
-                {activePersona.thinkingFramework.map((step, i) => (
-                  <li key={i} className="flex items-center space-x-2 text-[10px] font-mono text-slate-500">
-                    <span className="w-3 h-3 rounded-full bg-white/5 flex items-center justify-center text-[8px] text-[#00FF9D]">{i + 1}</span>
-                    <span>{step}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-
-        {showTimeline && (
-          <div className="flex-grow p-6 overflow-y-auto animate-in slide-in-from-right duration-300">
-            <ExecutionTimeline tasks={tasks} />
-          </div>
-        )}
-      </div>
+      {showTimeline && (
+        <div className="w-[320px] h-full bg-[#0B0B0B] p-6 overflow-y-auto animate-in slide-in-from-right duration-300">
+          <ExecutionTimeline tasks={tasks} />
+        </div>
+      )}
     </div>
   );
 }
