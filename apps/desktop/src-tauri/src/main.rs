@@ -11,8 +11,9 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             ai::set_ai_credential,
             ai::generate_ai_completion,
-            ai::get_agent_roles,
-            ai::plan_goal_execution
+            ai::get_personas,
+            ai::plan_goal_execution,
+            ai::orchestration::assemble_team
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

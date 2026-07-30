@@ -1,9 +1,9 @@
 use keyring::Entry;
-use super::providers::{AIProvider, AIMessage, CompletionResponse};
+use super::providers::{AIProvider, CompletionResponse};
 use super::providers::gemini::GeminiProvider;
 use super::providers::anthropic::AnthropicProvider;
 use super::providers::openai::OpenAIProvider;
-use std::sync::Arc;
+use super::orchestration::roles::AIMessage;
 
 pub struct AIManager {
     providers: Vec<Box<dyn AIProvider>>,
@@ -35,6 +35,16 @@ impl AIManager {
             .ok_or_else(|| format!("Provider {} not found", provider_id))?;
 
         let key = self.get_key(provider_id)?;
-        provider.complete(&key, messages, model_id).await
+
+        // Translate orchestration AIMessage to provider AIMessage if needed
+        // Currently they are structurally identical
+        let provider_messages: Vec<super::providers::AIMessage> = messages.into_iter().map(|m| {
+            super::providers::AIMessage {
+                role: m.role,
+                content: m.content,
+            }
+        }).collect();
+
+        provider.complete(&key, provider_messages, model_id).await
     }
 }
