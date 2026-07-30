@@ -11,8 +11,16 @@ import {
   TabsTrigger,
   TabsContent
 } from '@blueprint/ui';
-import { ShieldCheck, Key, Globe, Github } from 'lucide-react';
+import { ShieldCheck, Key, Github } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
+
+interface ProviderKeyInputProps {
+  name: string;
+  value: string;
+  onChange: (val: string) => void;
+  onSave: () => void;
+  status?: string;
+}
 
 export default function SettingsPage() {
   const [keys, setKeys] = React.useState({
@@ -58,27 +66,24 @@ export default function SettingsPage() {
 
             <div className="grid gap-4">
               <ProviderKeyInput
-                id="gemini"
                 name="Google Gemini"
                 value={keys.gemini}
                 status={status.gemini}
-                onChange={(val) => setKeys(k => ({ ...k, gemini: val }))}
+                onChange={(val: string) => setKeys(k => ({ ...k, gemini: val }))}
                 onSave={() => saveKey('gemini')}
               />
               <ProviderKeyInput
-                id="anthropic"
                 name="Anthropic Claude"
                 value={keys.anthropic}
                 status={status.anthropic}
-                onChange={(val) => setKeys(k => ({ ...k, anthropic: val }))}
+                onChange={(val: string) => setKeys(k => ({ ...k, anthropic: val }))}
                 onSave={() => saveKey('anthropic')}
               />
               <ProviderKeyInput
-                id="openai"
                 name="OpenAI"
                 value={keys.openai}
                 status={status.openai}
-                onChange={(val) => setKeys(k => ({ ...k, openai: val }))}
+                onChange={(val: string) => setKeys(k => ({ ...k, openai: val }))}
                 onSave={() => saveKey('openai')}
               />
             </div>
@@ -107,7 +112,7 @@ export default function SettingsPage() {
   );
 }
 
-function ProviderKeyInput({ id, name, value, onChange, onSave, status }: any) {
+function ProviderKeyInput({ name, value, onChange, onSave, status }: ProviderKeyInputProps) {
   return (
     <div className="flex items-center justify-between p-4 bg-[#141414] border border-white/5 rounded-xl transition-all hover:border-white/10">
       <div className="space-y-1">

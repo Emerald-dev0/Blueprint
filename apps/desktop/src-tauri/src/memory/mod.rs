@@ -1,12 +1,30 @@
 use rusqlite::{params, Connection};
 use std::sync::Mutex;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
-pub struct MemoryManager {
-    pub db: Mutex<Connection>,
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum MemoryTier {
+    Session,
+    Project,
+    Decision,
+    Knowledge,
+    User,
+    Agent,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct MemoryEntry {
+    pub id: Option<i32>,
+    pub tier: MemoryTier,
+    pub key: String,
+    pub content: String,
+    pub metadata: Option<String>, // JSON string
+    pub created_at: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ADR {
     pub id: i32,
     pub title: String,
@@ -15,6 +33,11 @@ pub struct ADR {
     pub decision: String,
     pub consequences: String,
     pub created_at: String,
+}
+
+pub struct MemoryManager {
+    pub db: Mutex<Connection>,
+    session_cache: Mutex<HashMap<String, String>>,
 }
 
 impl MemoryManager {
@@ -47,9 +70,84 @@ impl MemoryManager {
             [],
         ).expect("failed to create adrs table");
 
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS memory_entries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                project_id TEXT,
+                tier TEXT NOT NULL,
+                key TEXT NOT NULL,
+                content TEXT NOT NULL,
+                metadata TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(project_id) REFERENCES projects(id)
+            )",
+            [],
+        ).expect("failed to create memory_entries table");
+
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS user_preferences (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            )",
+            [],
+        ).expect("failed to create user_preferences table");
+
         Self {
             db: Mutex::new(conn),
+            session_cache: Mutex::new(HashMap::new()),
         }
+    }
+
+    pub fn save_entry(&self, project_id: &str, entry: MemoryEntry) -> Result<i32, String> {
+        if let MemoryTier::Session = entry.tier {
+            let mut cache = self.session_cache.lock().map_err(|e| e.to_string())?;
+            cache.insert(entry.key, entry.content);
+            return Ok(0);
+        }
+
+        let db = self.db.lock().map_err(|e| e.to_string())?;
+        db.execute(
+            "INSERT INTO memory_entries (project_id, tier, key, content, metadata)
+             VALUES (?, ?, ?, ?, ?)",
+            params![
+                project_id,
+                serde_json::to_string(&entry.tier).unwrap().replace("\"", ""),
+                entry.key,
+                entry.content,
+                entry.metadata
+            ],
+        ).map_err(|e| e.to_string())?;
+
+        Ok(db.last_insert_rowid() as i32)
+    }
+
+    pub fn search_memory(&self, project_id: &str, query: &str) -> Result<Vec<MemoryEntry>, String> {
+        let db = self.db.lock().map_err(|e| e.to_string())?;
+        let mut stmt = db.prepare(
+            "SELECT id, tier, key, content, metadata, created_at
+             FROM memory_entries
+             WHERE project_id = ? AND (content LIKE ? OR key LIKE ?)
+             ORDER BY created_at DESC"
+        ).map_err(|e| e.to_string())?;
+
+        let like_query = format!("%{}%", query);
+        let entries_iter = stmt.query_map(params![project_id, like_query, like_query], |row| {
+            let tier_str: String = row.get(1)?;
+            Ok(MemoryEntry {
+                id: Some(row.get(0)?),
+                tier: serde_json::from_str(&format!("\"{}\"", tier_str)).unwrap_or(MemoryTier::Project),
+                key: row.get(2)?,
+                content: row.get(3)?,
+                metadata: row.get(4)?,
+                created_at: Some(row.get(5)?),
+            })
+        }).map_err(|e| e.to_string())?;
+
+        let mut results = Vec::new();
+        for entry in entries_iter {
+            results.push(entry.map_err(|e| e.to_string())?);
+        }
+        Ok(results)
     }
 
     pub fn add_adr(&self, project_id: &str, adr: ADR) -> Result<i32, String> {
@@ -85,5 +183,14 @@ impl MemoryManager {
             results.push(adr.map_err(|e| e.to_string())?);
         }
         Ok(results)
+    }
+
+    pub fn set_preference(&self, key: &str, value: &str) -> Result<(), String> {
+        let db = self.db.lock().map_err(|e| e.to_string())?;
+        db.execute(
+            "INSERT OR REPLACE INTO user_preferences (key, value) VALUES (?, ?)",
+            params![key, value],
+        ).map_err(|e| e.to_string())?;
+        Ok(())
     }
 }
