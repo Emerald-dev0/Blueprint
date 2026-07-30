@@ -114,6 +114,32 @@ pnpm install
 pnpm dev
 ```
 
+## 🌳 Development Workflow
+
+Blueprint follows a professional engineering workflow to maintain high code quality and clear institutional memory.
+
+### Branching Strategy
+- **`main`**: Production-ready code.
+- **`develop`**: Integration branch for all features.
+- **`feature/*`**: Scoped feature development (e.g., `feature/ai-memory`).
+- **`fix/*`**: Bug fixes.
+- **`refactor/*`**: Code improvements.
+
+### Commit Conventions
+We use **Conventional Commits** to generate automated changelogs:
+- `feat(scope):` ...
+- `fix(scope):` ...
+- `docs(scope):` ...
+- `refactor(scope):` ...
+- `chore(scope):` ...
+
+### Pull Request Process
+1. Create a feature branch from `develop`.
+2. Commit changes following the standard.
+3. Open a PR against `develop`.
+4. PR must pass all CI checks (Lint, Typecheck, Test, Build).
+5. Requires at least one maintainer approval.
+
 ---
 
 ## 📖 Documentation
