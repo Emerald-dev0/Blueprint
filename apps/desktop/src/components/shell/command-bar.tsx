@@ -3,18 +3,22 @@
 import * as React from 'react';
 import { Command } from 'cmdk';
 import { useWorkspaceStore } from '../../store/workspace';
+import { usePluginStore } from '../../store/plugins';
 import {
   Search,
   FolderKanban,
   Settings,
   Terminal,
   Cpu,
-  ShieldCheck
+  ShieldCheck,
+  Plus,
+  Puzzle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function CommandBar() {
-  const { commandBarOpen, setCommandBarOpen, setActiveSystem } = useWorkspaceStore();
+  const { commandBarOpen, setCommandBarOpen, setActiveSystem, openTab } = useWorkspaceStore();
+  const { commands } = usePluginStore();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -27,6 +31,16 @@ export function CommandBar() {
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
   }, [commandBarOpen, setCommandBarOpen]);
+
+  const handleOpenAnalysis = () => {
+    openTab({
+      id: 'mock-analysis',
+      type: 'analysis',
+      title: 'Blueprint v1.0 Architecture'
+    });
+    setActiveSystem('workspace');
+    setCommandBarOpen(false);
+  };
 
   return (
     <AnimatePresence>
@@ -46,6 +60,7 @@ export function CommandBar() {
                 <Search size={18} className="text-slate-500" />
                 <Command.Input
                   placeholder="Search commands, projects, or intent..."
+                  autoFocus
                   className="w-full bg-transparent py-4 px-3 text-sm text-white outline-none placeholder:text-slate-600 font-mono"
                 />
               </div>
@@ -55,6 +70,25 @@ export function CommandBar() {
                   No matches found.
                 </Command.Empty>
 
+                {commands.length > 0 && (
+                  <Command.Group heading="Extensions" className="text-[10px] font-mono uppercase tracking-widest text-slate-500 px-3 py-2">
+                    {commands.map((cmd) => (
+                      <CommandItem key={cmd.id} icon={Puzzle} onSelect={() => { cmd.handler(); setCommandBarOpen(false); }}>
+                        {cmd.label}
+                      </CommandItem>
+                    ))}
+                  </Command.Group>
+                )}
+
+                <Command.Group heading="Project" className="text-[10px] font-mono uppercase tracking-widest text-slate-500 px-3 py-2">
+                  <CommandItem icon={Plus}>New Blueprint Project</CommandItem>
+                  <CommandItem icon={FolderKanban}>Open Local Repository</CommandItem>
+                </Command.Group>
+
+                <Command.Group heading="Intelligence" className="text-[10px] font-mono uppercase tracking-widest text-slate-500 px-3 py-2">
+                  <CommandItem icon={Cpu} onSelect={handleOpenAnalysis}>Analyze Project Architecture</CommandItem>
+                </Command.Group>
+
                 <Command.Group heading="Navigation" className="text-[10px] font-mono uppercase tracking-widest text-slate-500 px-3 py-2">
                   <CommandItem
                     icon={FolderKanban}
@@ -63,22 +97,11 @@ export function CommandBar() {
                     Go to Projects
                   </CommandItem>
                   <CommandItem
-                    icon={Cpu}
-                    onSelect={() => { setActiveSystem('workspace'); setCommandBarOpen(false); }}
-                  >
-                    Go to Workspace
-                  </CommandItem>
-                  <CommandItem
                     icon={Settings}
                     onSelect={() => { setActiveSystem('settings'); setCommandBarOpen(false); }}
                   >
                     Go to Settings
                   </CommandItem>
-                </Command.Group>
-
-                <Command.Group heading="System" className="text-[10px] font-mono uppercase tracking-widest text-slate-500 px-3 py-2">
-                  <CommandItem icon={Terminal}>Run Diagnostics</CommandItem>
-                  <CommandItem icon={ShieldCheck}>Security Audit</CommandItem>
                 </Command.Group>
               </Command.List>
             </Command>
