@@ -28,5 +28,36 @@ pub async fn generate_ai_completion(
 
 #[tauri::command]
 pub fn get_agent_roles() -> Vec<orchestration::roles::AgentRole> {
-    orchestration::get_agent_roles()
+    orchestration::roles::AgentRegistry::new().roles
+}
+
+#[tauri::command]
+pub fn plan_goal_execution(goal: String) -> orchestration::tasks::TaskGraph {
+    orchestration::tasks::TaskGraph {
+        id: "mock-id".to_string(),
+        goal,
+        tasks: vec![
+            orchestration::tasks::Task {
+                id: "1".to_string(),
+                title: "Decompose Goal".to_string(),
+                description: "Breaking down high-level requirement.".to_string(),
+                role_id: orchestration::roles::AgentRoleId::Principal,
+                status: orchestration::tasks::TaskStatus::Completed,
+                dependencies: vec![],
+                output: Some("Goal decomposed into 4 sub-tasks.".to_string()),
+                error: None,
+            },
+            orchestration::tasks::Task {
+                id: "2".to_string(),
+                title: "Draft Schema".to_string(),
+                description: "Designing data models.".to_string(),
+                role_id: orchestration::roles::AgentRoleId::Database,
+                status: orchestration::tasks::TaskStatus::Active,
+                dependencies: vec!["1".to_string()],
+                output: None,
+                error: None,
+            },
+        ],
+        status: "executing".to_string(),
+    }
 }
