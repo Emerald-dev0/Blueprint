@@ -1,26 +1,34 @@
-## Summary
+## Overview
+<!-- Provide a high-level summary of the changes made. -->
 
-Explain what changed and why.
+## Problem Statement
+<!-- What issue is this PR solving? Why is it needed? -->
 
-## Problem Solved
+## Technical Solution
+<!-- Describe the approach taken to solve the problem. -->
 
-Link any related issues here (e.g., Fixes #123).
+## Architecture Decisions
+<!-- List any major technical choices and why they were made. -->
 
-## Implementation Details
+## Changes
+<!-- 
+Detailed list of changes:
+- [NEW] Component name
+- [MODIFY] Service logic
+- [DELETE] Obsolete file
+-->
 
-List the key technical changes made.
+## Testing
+<!-- How did you verify these changes? Include test results. -->
 
-## Testing Performed
-
-Describe the tests you ran to verify your changes.
-
-## Screenshots (if applicable)
-
-Add screenshots or videos showing UI changes.
+## Performance Impact
+<!-- Will this affect startup speed or memory usage? -->
 
 ## Breaking Changes
+<!-- Does this require updates to other parts of the monorepo? -->
 
-Does this PR introduce any breaking changes? (Yes/No). If yes, explain.
+## Screenshots / Videos
+<!-- Mandatory for any UI or UX changes. -->
 
 ---
 By submitting this PR, I confirm that my contribution follows the [Contributing Guidelines](CONTRIBUTING.md).
