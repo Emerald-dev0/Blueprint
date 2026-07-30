@@ -4,18 +4,13 @@
 mod ai;
 mod intelligence;
 mod memory;
+mod git;
 
 use ai::manager::AIManager;
 use memory::MemoryManager;
 use std::sync::Arc;
 
-#[tauri::command]
-async fn get_adrs(manager: tauri::State<'_, Arc<MemoryManager>>, project_id: String) -> Result<Vec<memory::ADR>, String> {
-    manager.list_adrs(&project_id)
-}
-
 fn main() {
-    // In production, path should be in AppData/Local
     let memory_manager = Arc::new(MemoryManager::new("blueprint.db"));
 
     tauri::Builder::default()
@@ -29,7 +24,12 @@ fn main() {
             ai::orchestration::assemble_team,
             intelligence::start_repo_analysis,
             intelligence::analyze_website,
-            get_adrs
+            git::set_github_credential,
+            git::list_github_repositories,
+            git::get_git_status,
+            git::create_git_branch,
+            git::suggest_git_commit_message,
+            git::generate_github_release_notes
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

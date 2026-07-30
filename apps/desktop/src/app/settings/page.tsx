@@ -23,6 +23,14 @@ interface ProviderKeyInputProps {
   status?: string;
 }
 
+interface ProviderKeyInputProps {
+  name: string;
+  value: string;
+  onChange: (val: string) => void;
+  onSave: () => void;
+  status?: string;
+}
+
 export default function SettingsPage() {
   const { plugins } = usePluginStore();
   const [keys, setKeys] = React.useState({
