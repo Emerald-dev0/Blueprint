@@ -36,3 +36,7 @@ Thumbs.db
 
 # TypeScript incremental build info
 *.tsbuildinfo
+
+# Rust / Tauri
+target/
+apps/desktop/src-tauri/gen/

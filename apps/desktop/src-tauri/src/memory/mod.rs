@@ -194,3 +194,46 @@ impl MemoryManager {
         Ok(())
     }
 }
+
+// ---------------------------------------------------------------------------
+// Tauri commands
+//
+// `MemoryManager` had the methods but no command wrappers, so the Memory page's
+// `invoke('get_adrs')` and `invoke('search_memory')` failed at runtime — the
+// errors were swallowed into console.error and the UI silently showed mock data.
+// ---------------------------------------------------------------------------
+
+#[tauri::command]
+pub fn get_adrs(
+    memory: tauri::State<'_, std::sync::Arc<MemoryManager>>,
+    project_id: String,
+) -> Result<Vec<ADR>, String> {
+    memory.list_adrs(&project_id)
+}
+
+#[tauri::command]
+pub fn search_memory(
+    memory: tauri::State<'_, std::sync::Arc<MemoryManager>>,
+    project_id: String,
+    query: String,
+) -> Result<Vec<MemoryEntry>, String> {
+    memory.search_memory(&project_id, &query)
+}
+
+#[tauri::command]
+pub fn add_adr(
+    memory: tauri::State<'_, std::sync::Arc<MemoryManager>>,
+    project_id: String,
+    adr: ADR,
+) -> Result<i32, String> {
+    memory.add_adr(&project_id, adr)
+}
+
+#[tauri::command]
+pub fn save_memory_entry(
+    memory: tauri::State<'_, std::sync::Arc<MemoryManager>>,
+    project_id: String,
+    entry: MemoryEntry,
+) -> Result<i32, String> {
+    memory.save_entry(&project_id, entry)
+}
