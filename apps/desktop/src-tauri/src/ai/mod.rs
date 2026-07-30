@@ -57,14 +57,19 @@ pub async fn run_aos_completion(
     // Choose model
     let (provider_id, model_id) = aos::router::ModelRouter::route(aos::router::ModelCapability::Reasoning);
 
+    // The compiled prompt embeds project context (git state, file contents,
+    // memory) and the goal is user-authored, so both must pass through the
+    // redaction engine before leaving the machine. Previously only
+    // `generate_ai_completion` redacted, which left this — the primary AOS
+    // path — shipping unredacted project context to the provider.
     let messages = vec![
         providers::AIMessage {
             role: "system".to_string(),
-            content: compiled_prompt,
+            content: RedactionEngine::redact(&compiled_prompt),
         },
         providers::AIMessage {
             role: "user".to_string(),
-            content: goal,
+            content: RedactionEngine::redact(&goal),
         }
     ];
 

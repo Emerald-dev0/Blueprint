@@ -125,6 +125,13 @@ importers:
         version: 5.9.3
 
   packages/ai-adapters:
+    dependencies:
+      '@blueprint/types':
+        specifier: workspace:*
+        version: link:../types
+      '@tauri-apps/api':
+        specifier: ^2.0.0
+        version: 2.11.1
     devDependencies:
       typescript:
         specifier: ^5.5.0
@@ -143,6 +150,13 @@ importers:
         version: 5.9.3
 
   packages/git-engine:
+    dependencies:
+      '@blueprint/types':
+        specifier: workspace:*
+        version: link:../types
+      '@tauri-apps/api':
+        specifier: ^2.0.0
+        version: 2.11.1
     devDependencies:
       typescript:
         specifier: ^5.5.0

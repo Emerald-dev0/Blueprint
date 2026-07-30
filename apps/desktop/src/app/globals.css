@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Workspace packages live outside this app's directory, so Tailwind's
+   automatic source detection does not reach them. Without these, every class
+   used inside @blueprint/ui components is dropped from the bundle. */
+@source "../../../../packages/ui/src";
+
 @theme {
   --color-ink: #0B0B0B;
   --color-mint: #00FF9D;
