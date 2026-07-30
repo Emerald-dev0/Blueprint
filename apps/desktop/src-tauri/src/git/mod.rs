@@ -35,6 +35,15 @@ impl CredentialManager {
     }
 }
 
+pub fn get_git_state_summary() -> Result<serde_json::Value, String> {
+    // Basic summary for AOS context injection
+    Ok(serde_json::json!({
+        "branch": "develop",
+        "status": "clean",
+        "recent_commits": []
+    }))
+}
+
 #[tauri::command]
 pub async fn set_github_credential(token: String) -> Result<(), String> {
     CredentialManager::set_github_token(&token)
