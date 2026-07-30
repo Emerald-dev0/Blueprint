@@ -14,7 +14,10 @@ import {
 import { ShieldCheck, Key, Globe, Github } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 
+import { usePluginStore } from '../../store/plugins';
+
 export default function SettingsPage() {
+  const { plugins } = usePluginStore();
   const [keys, setKeys] = React.useState({
     gemini: '',
     anthropic: '',
@@ -46,8 +49,35 @@ export default function SettingsPage() {
         <TabsList className="bg-white/5 border border-white/5 p-1 mb-8">
           <TabsTrigger value="ai" className="data-[state=active]:bg-[#00FF9D]/10">AI Providers</TabsTrigger>
           <TabsTrigger value="github" className="data-[state=active]:bg-[#00FF9D]/10">GitHub</TabsTrigger>
+          <TabsTrigger value="plugins" className="data-[state=active]:bg-[#00FF9D]/10">Plugins</TabsTrigger>
           <TabsTrigger value="general" className="data-[state=active]:bg-[#00FF9D]/10">General</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="plugins" className="space-y-6 animate-in fade-in duration-300">
+          <div className="grid gap-4">
+            {plugins.length === 0 ? (
+              <p className="text-sm text-slate-500 font-mono">No plugins installed.</p>
+            ) : (
+              plugins.map((plugin) => (
+                <div key={plugin.id} className="p-6 bg-[#141414] border border-white/5 rounded-2xl flex items-start justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="text-sm font-bold text-white">{plugin.name}</h4>
+                      <Badge variant="outline">v{plugin.version}</Badge>
+                    </div>
+                    <p className="text-xs text-slate-500 font-mono leading-relaxed max-w-md">{plugin.description}</p>
+                    <div className="flex gap-2">
+                      {plugin.permissions.map(p => (
+                        <span key={p} className="text-[9px] px-1.5 py-0.5 bg-white/5 rounded text-slate-400 font-mono uppercase">{p}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-red-500 hover:bg-red-500/10">Disable</Button>
+                </div>
+              ))
+            )}
+          </div>
+        </TabsContent>
 
         <TabsContent value="ai" className="space-y-8 animate-in fade-in duration-300">
           <section className="space-y-6">
