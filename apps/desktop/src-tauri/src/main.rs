@@ -5,17 +5,24 @@ mod ai;
 mod intelligence;
 mod memory;
 mod git;
+mod plugins;
+mod events;
 
 use ai::manager::AIManager;
 use memory::MemoryManager;
+use plugins::manager::PluginManager;
 use std::sync::Arc;
+use std::path::PathBuf;
 
 fn main() {
     let memory_manager = Arc::new(MemoryManager::new("blueprint.db"));
+    let app_data_dir = PathBuf::from(".");
+    let plugin_manager = PluginManager::new(app_data_dir);
 
     tauri::Builder::default()
         .manage(AIManager::new())
         .manage(memory_manager)
+        .manage(plugin_manager)
         .invoke_handler(tauri::generate_handler![
             ai::set_ai_credential,
             ai::generate_ai_completion,
@@ -29,7 +36,10 @@ fn main() {
             git::get_git_status,
             git::create_git_branch,
             git::suggest_git_commit_message,
-            git::generate_github_release_notes
+            git::generate_github_release_notes,
+            plugins::list_installed_plugins,
+            plugins::run_python_tool,
+            events::publish_system_event
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
