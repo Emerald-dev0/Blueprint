@@ -45,9 +45,18 @@ pub async fn run_aos_completion(
     manager: State<'_, AIManager>,
     role_id: String,
     goal: String,
-    context: serde_json::Value
+    mut context: serde_json::Value
 ) -> Result<String, String> {
-    let compiled_prompt = aos.compile_prompt(&role_id, &goal, &context)?;
+    // 1. Inject GitHub context
+    if let Ok(git_summary) = crate::git::get_git_state_summary() {
+        context["git_context"] = git_summary;
+    }
+
+    let compiled_prompt = aos::compiler::PromptCompiler::compile(
+        aos.persona_registry.get(&role_id).ok_or("Persona not found")?,
+        &goal,
+        &context
+    );
 
     // Choose model
     let (provider_id, model_id) = aos::router::ModelRouter::route(aos::router::ModelCapability::Reasoning);
