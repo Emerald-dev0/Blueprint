@@ -3,6 +3,10 @@
   "name": "Architecture Visualizer",
   "version": "0.1.0",
   "author": "Blueprint Team",
-  "description": "Create interactive engineering diagrams from codebase analysis.",
-  "permissions": ["fs.read", "ui.tab"]
+  "description": "Interactive diagrams and system maps.",
+  "permissions": ["ui.panel", "fs.read"],
+  "minBlueprintVersion": "0.1.0",
+  "entrypoints": {
+    "frontend": "src/index.ts"
+  }
 }

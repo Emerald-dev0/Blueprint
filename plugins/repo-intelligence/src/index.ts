@@ -6,13 +6,13 @@ export default class RepoIntelligencePlugin extends BlueprintPlugin {
   }
 
   activate() {
-    this.api.registerCommand('repo.analyze', 'Intelligence: Analyze Repository', () => {
-      this.api.workspace.openTab('repo-analyzer', 'intelligence', 'Repository Analyzer');
+    this.api.registerCommand('repo.scan', 'Intelligence: Scan Repository', () => {
+      this.api.workspace.openTab('repo-scanner', 'intelligence', 'Repository Scanner');
     });
 
-    this.api.events.subscribe('PROJECT_OPENED', (data) => {
-      console.log('Repo Intelligence reacting to Project Opened:', data);
-      // Auto-trigger a shallow scan
+    this.api.events.subscribe('PROJECT_OPENED', async (data: { path: string }) => {
+      console.log('Repo Intelligence: Auto-scanning repository...');
+      this.api.events.publish('ANALYSIS_PROGRESS', { status: 'indexing-files', path: data.path });
     });
 
     console.log('✓ Repository Intelligence Plugin Activated');

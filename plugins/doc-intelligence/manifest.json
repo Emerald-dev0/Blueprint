@@ -3,6 +3,10 @@
   "name": "Documentation Intelligence",
   "version": "0.1.0",
   "author": "Blueprint Team",
-  "description": "Automated generation and improvement of technical documentation.",
-  "permissions": ["fs.read", "fs.write", "ai.complete"]
+  "description": "Automated generation and improvement of technical guides.",
+  "permissions": ["fs.read", "fs.write", "ai.complete"],
+  "minBlueprintVersion": "0.1.0",
+  "entrypoints": {
+    "frontend": "src/index.ts"
+  }
 }

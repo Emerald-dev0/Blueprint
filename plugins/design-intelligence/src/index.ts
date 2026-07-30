@@ -7,8 +7,13 @@ export default class DesignIntelligencePlugin extends BlueprintPlugin {
 
   activate() {
     this.api.registerCommand('design.extract-tokens', 'Design: Extract Tokens', () => {
-      console.log('Design intelligence extracting tokens...');
-      // Logic to trigger AI analysis of active context
+      console.log('Extracting design tokens from current context...');
+    });
+
+    this.api.events.subscribe('ANALYSIS_COMPLETED', (data: any) => {
+      if (data.type === 'web') {
+        console.log('Design Intelligence: Mapping web tokens to Ink & Mint...');
+      }
     });
 
     console.log('✓ Design Intelligence Plugin Activated');
