@@ -8,7 +8,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,rs,json,md}\"",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "check:ipc": "node scripts/check-ipc-contract.mjs"
   },
   "devDependencies": {
     "turbo": "^2.0.0",

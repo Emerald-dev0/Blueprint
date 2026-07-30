@@ -2,35 +2,101 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
-  validate:
+  frontend:
+    name: Frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
-          
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-          
+
       - name: Install dependencies
-        run: pnpm install
-        
+        run: pnpm install --frozen-lockfile
+
       - name: Lint
         run: pnpm lint
-        
+
       - name: Typecheck
         run: pnpm typecheck
-        
+
       - name: Test
         run: pnpm test
+
+      # The app built green for 34 pull requests while shipping zero Tailwind
+      # utilities, because `next build` exits 0 whether or not the CSS pipeline
+      # ran. Building here at least catches a broken bundle.
+      - name: Build
+        run: pnpm --filter blueprint-desktop build
+
+  # The Rust backend was never built in CI, which is how it accumulated six
+  # compile errors without anyone noticing — the desktop binary could not be
+  # produced at all while the frontend job stayed green.
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+
+      - name: Install Tauri system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev
+
+      - name: Check
+        working-directory: apps/desktop/src-tauri
+        run: cargo check --all-targets
+
+      - name: Clippy
+        working-directory: apps/desktop/src-tauri
+        run: cargo clippy --all-targets
+
+      - name: Test
+        working-directory: apps/desktop/src-tauri
+        run: cargo test
+
+  # Cross-checks that every command the UI invokes is registered in main.rs, and
+  # that no #[tauri::command] is defined but left unwired. Six commands the UI
+  # called did not exist in the backend at all; the failures were swallowed at
+  # the call sites, so the UI silently rendered mock data instead.
+  ipc-contract:
+    name: IPC contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check frontend/backend command parity
+        run: node scripts/check-ipc-contract.mjs
