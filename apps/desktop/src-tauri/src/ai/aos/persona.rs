@@ -68,7 +68,7 @@ impl PersonaRegistry {
 
     fn load_persona_dir(&self, path: &Path) -> Result<OperatingManual, String> {
         let manifest_path = path.join("persona.json");
-        let instructions_path = path.join("instructions.md");
+        let framework_path = path.join("thinking-framework.md");
 
         if !manifest_path.exists() {
             return Err("Missing persona.json".to_string());
@@ -77,22 +77,27 @@ impl PersonaRegistry {
         let manifest_content = fs::read_to_string(manifest_path).map_err(|e| e.to_string())?;
         let manifest: PersonaManifest = serde_json::from_str(&manifest_content).map_err(|e| e.to_string())?;
 
-        // For now, we use a basic version of OperatingManual
-        // In later phases, we'll parse the .md files more deeply
-        let instructions = if instructions_path.exists() {
-            fs::read_to_string(instructions_path).unwrap_or_default()
-        } else {
-            String::new()
-        };
+        // Extract thinking framework steps if present
+        let mut thinking_framework = Vec::new();
+        if framework_path.exists() {
+            let content = fs::read_to_string(framework_path).unwrap_or_default();
+            for line in content.lines() {
+                if line.starts_with("## STEP") {
+                    thinking_framework.push(line.replace("## STEP", "").trim().to_string());
+                } else if line.starts_with("- ") {
+                    thinking_framework.push(line.replace("- ", "").trim().to_string());
+                }
+            }
+        }
 
         Ok(OperatingManual {
             id: manifest.id,
             name: manifest.name,
             identity: manifest.identity,
             mission: manifest.mission,
-            expertise: vec![], // To be extracted from docs
-            responsibilities: vec![], // To be extracted from docs
-            thinking_framework: vec![], // To be extracted from docs
+            expertise: vec![],
+            responsibilities: vec![],
+            thinking_framework,
             tools: vec![],
             output_format: "Structured Technical Document".to_string(),
             quality_standards: vec![],
