@@ -1,0 +1,8 @@
+{
+  "id": "io.blueprint.official.db-inspector",
+  "name": "Database Inspector",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Generate ER diagrams and analyze database schemas.",
+  "permissions": ["fs.read", "ai.complete"]
+}

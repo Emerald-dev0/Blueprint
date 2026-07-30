@@ -22,14 +22,18 @@ export function ApplicationShell({ children }: { children: React.ReactNode }) {
       version: '1.0.0',
       author: 'Blueprint Team',
       description: 'Provides deep analysis of React component trees.',
-      permissions: ['fs.read']
+      permissions: ['fs.read'],
+      minBlueprintVersion: '0.1.0',
+      entrypoints: {
+        frontend: 'index.js'
+      }
     });
 
-    registerCommand({
-      id: 'react-intel-scan',
-      label: 'React: Scan Component Tree',
-      handler: () => console.log("Scanning React components...")
-    });
+    registerCommand(
+      'react-intel-scan',
+      'React: Scan Component Tree',
+      () => console.log("Scanning React components...")
+    );
   }, []);
 
   return (

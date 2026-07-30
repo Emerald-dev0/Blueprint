@@ -1,0 +1,25 @@
+{
+  "id": "io.blueprint.official.web-intelligence",
+  "name": "Website Intelligence",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Advanced website understanding and reverse engineering suite.",
+  "permissions": [
+    "network.request",
+    "fs.read",
+    "ai.complete",
+    "ui.panel",
+    "ui.tab"
+  ],
+  "minBlueprintVersion": "0.1.0",
+  "entrypoints": {
+    "frontend": "src/index.ts"
+  },
+  "commands": [
+    {
+      "id": "web.analyze-url",
+      "label": "Intelligence: Analyze URL",
+      "shortcut": "Cmd+Shift+U"
+    }
+  ]
+}

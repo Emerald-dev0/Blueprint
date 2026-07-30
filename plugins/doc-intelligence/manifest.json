@@ -1,0 +1,8 @@
+{
+  "id": "io.blueprint.official.doc-intelligence",
+  "name": "Documentation Intelligence",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Automated generation and improvement of technical documentation.",
+  "permissions": ["fs.read", "fs.write", "ai.complete"]
+}

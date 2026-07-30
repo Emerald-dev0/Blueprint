@@ -1,0 +1,8 @@
+{
+  "id": "io.blueprint.official.deployment-intelligence",
+  "name": "Deployment Intelligence",
+  "version": "0.1.0",
+  "author": "Blueprint Team",
+  "description": "Analyze and plan deployments for Vercel, Docker, and CI/CD.",
+  "permissions": ["network.request", "fs.read"]
+}
