@@ -47,16 +47,6 @@ pub fn plan_goal_execution(goal: String) -> orchestration::tasks::TaskGraph {
                 output: Some("Goal decomposed into 4 sub-tasks.".to_string()),
                 error: None,
             },
-            orchestration::tasks::Task {
-                id: "2".to_string(),
-                title: "Draft Schema".to_string(),
-                description: "Designing data models.".to_string(),
-                role_id: orchestration::roles::AgentRoleId::Database,
-                status: orchestration::tasks::TaskStatus::Active,
-                dependencies: vec!["1".to_string()],
-                output: None,
-                error: None,
-            },
         ],
         status: "executing".to_string(),
     }

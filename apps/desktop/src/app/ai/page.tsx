@@ -8,9 +8,9 @@ import {
   AIProposalSurface,
   ActivityIndicator
 } from '@blueprint/ui';
-import { Send, Bot, User, Sparkles, LayoutList, ShieldCheck } from 'lucide-react';
+import { Send, Bot, User, Sparkles, LayoutList } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
-import { ExecutionTimeline } from '@/components/ai/execution-timeline';
+import { ExecutionTimeline } from '../../components/ai/execution-timeline';
 import { Task, Persona } from '@blueprint/types';
 
 interface Message {
@@ -25,8 +25,7 @@ export default function AIPage() {
   const [showTimeline, setShowTimeline] = React.useState(false);
   const [activePersona, setActivePersona] = React.useState<Persona | null>(null);
 
-  // Mock Tasks for Orchestration visualization
-  const [tasks, setTasks] = React.useState<Task[]>([
+  const [tasks] = React.useState<Task[]>([
     {
       id: '1',
       title: 'Analyze Project Intent',
@@ -45,7 +44,6 @@ export default function AIPage() {
   ]);
 
   React.useEffect(() => {
-    // Load personas on mount
     const fetchPersonas = async () => {
       try {
         const personas: Persona[] = await invoke('get_personas');
@@ -161,14 +159,14 @@ export default function AIPage() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Type your intent..."
-              className="pr-12 h-12 bg-[#141414] border-white/10"
+              className="pr-12 h-12 bg-[#141414] border-white/10 focus-visible:ring-[#00FF9D]/50"
             />
             <Button
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
               variant="ghost"
               size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-[#00FF9D]"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-[#00FF9D] hover:bg-[#00FF9D]/10"
             >
               <Send size={18} />
             </Button>

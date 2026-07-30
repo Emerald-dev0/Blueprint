@@ -19,6 +19,11 @@ futures-util = "0.3"
 async-trait = "0.1"
 log = "0.4"
 env_logger = "0.11"
+walkdir = "2.5"
+scraper = "0.19"
+tree-sitter = "0.22"
+ignore = "0.4"
+# tree-sitter-typescript and others will be added as needed
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
