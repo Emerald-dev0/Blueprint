@@ -25,7 +25,7 @@ export function NavItem({
     <>
       <Icon size={20} aria-hidden="true" />
       {isActive && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-[#00FF9D] rounded-r-full" />
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-mint rounded-r-full" />
       )}
     </>
   )
@@ -43,9 +43,9 @@ export function NavItem({
     <Comp
       className={cn(
         "p-3 rounded-lg transition-colors group relative flex items-center justify-center",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF9D]/60",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/60",
         isActive
-          ? "bg-[#00FF9D]/10 text-[#00FF9D]"
+          ? "bg-mint/10 text-mint"
           : "text-slate-400 hover:bg-white/5 hover:text-white",
         className
       )}

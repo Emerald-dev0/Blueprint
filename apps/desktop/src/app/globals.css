@@ -5,16 +5,42 @@
    used inside @blueprint/ui components is dropped from the bundle. */
 @source "../../../../packages/ui/src";
 
-@theme {
-  --color-ink: #0B0B0B;
-  --color-mint: #00FF9D;
-  --color-mint-dim: rgba(0, 255, 157, 0.1);
-  --color-frost: #F5F5F5;
+/* ---------------------------------------------------------------------------
+   Blueprint design tokens — the single source of truth.
 
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
-  --color-info: #3B82F6;
+   There were previously three parallel token systems: this @theme block, a
+   `--bp-*` scale in packages/ui/src/styles/tokens.css that was imported by
+   nothing, and 150 hardcoded hex literals in TSX (`#00FF9D` alone appeared 97
+   times) which were what actually rendered. Renaming the brand colour meant
+   editing 97 call sites.
+
+   Every token below is a real Tailwind utility namespace: `--color-ink` gives
+   `bg-ink` / `text-ink` / `border-ink`, `--color-surface-1` gives
+   `bg-surface-1`, and so on. Use those utilities — not `bg-[#0B0B0B]`.
+--------------------------------------------------------------------------- */
+@theme {
+  /* Brand */
+  --color-ink: #0b0b0b;
+  --color-mint: #00ff9d;
+  --color-mint-dim: rgba(0, 255, 157, 0.1);
+  --color-frost: #f5f5f5;
+
+  /* Elevation. surface-1 is the raised panel colour that TSX spelled as
+     `bg-[#141414]` 28 times. */
+  --color-surface-1: #141414;
+  --color-surface-2: #1e1e1e;
+  --color-surface-3: #262626;
+
+  /* Hairlines. Previously written inline as `border-white/5`, `/8`, `/10` more
+     or less at random, which is why panel edges did not line up. */
+  --color-edge: rgba(255, 255, 255, 0.06);
+  --color-edge-strong: rgba(255, 255, 255, 0.12);
+
+  /* Semantic */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
 
   --radius-xs: 2px;
   --radius-sm: 4px;
@@ -24,15 +50,18 @@
 
 @layer base {
   :root {
-    --background: #0B0B0B;
-    --foreground: #F5F5F5;
+    /* Aliases for the handful of places that need raw CSS rather than a
+       utility class. These reference the tokens above rather than restating
+       the hex, so there is exactly one definition of each colour. */
+    --background: var(--color-ink);
+    --foreground: var(--color-frost);
 
-    --surface-1: #141414;
-    --surface-2: #1E1E1E;
-    --surface-3: #262626;
+    --surface-1: var(--color-surface-1);
+    --surface-2: var(--color-surface-2);
+    --surface-3: var(--color-surface-3);
 
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.15);
+    --border: var(--color-edge);
+    --border-strong: var(--color-edge-strong);
   }
 
   body {

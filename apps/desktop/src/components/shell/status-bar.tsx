@@ -4,10 +4,10 @@ import { Terminal, Github, Activity } from 'lucide-react';
 
 export function StatusBar() {
   return (
-    <footer className="h-6 w-full bg-[#141414] border-t border-white/5 flex items-center px-3 justify-between text-[10px] font-mono text-slate-500 uppercase tracking-tight">
+    <footer className="h-6 w-full bg-surface-1 border-t border-white/5 flex items-center px-3 justify-between text-[10px] font-mono text-slate-500 uppercase tracking-tight">
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-1 hover:text-white cursor-pointer transition-colors">
-          <Activity size={12} className="text-[#00FF9D]" />
+          <Activity size={12} className="text-mint" />
           <span>System Ready</span>
         </div>
         <div className="flex items-center space-x-1 hover:text-white cursor-pointer transition-colors">
@@ -22,7 +22,7 @@ export function StatusBar() {
           <span>v0.1.0-alpha</span>
         </div>
         <div className="flex items-center space-x-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00FF9D]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-mint" />
           <span>Local Mode</span>
         </div>
       </div>

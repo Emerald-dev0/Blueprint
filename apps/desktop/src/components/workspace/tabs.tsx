@@ -20,7 +20,7 @@ export function WorkspaceTabs() {
   if (tabs.length === 0) return null;
 
   return (
-    <div className="h-9 w-full bg-[#141414] border-b border-white/5 flex items-center overflow-x-auto no-scrollbar">
+    <div className="h-9 w-full bg-surface-1 border-b border-white/5 flex items-center overflow-x-auto no-scrollbar">
       {tabs.map((tab) => {
         const Icon = tabIcons[tab.type];
         const isActive = activeTabId === tab.id;
@@ -31,7 +31,7 @@ export function WorkspaceTabs() {
             onClick={() => setActiveTab(tab.id)}
             className={cn(
               "flex items-center h-full px-4 border-r border-white/5 cursor-pointer transition-all relative min-w-[120px] max-w-[200px] group",
-              isActive ? "bg-[#0B0B0B] text-[#00FF9D]" : "text-slate-500 hover:bg-white/5 hover:text-slate-300"
+              isActive ? "bg-ink text-mint" : "text-slate-500 hover:bg-white/5 hover:text-slate-300"
             )}
           >
             <Icon size={14} className="mr-2 flex-shrink-0" />
@@ -52,7 +52,7 @@ export function WorkspaceTabs() {
             {isActive && (
               <motion.div
                 layoutId="activeTab"
-                className="absolute top-0 left-0 w-full h-0.5 bg-[#00FF9D]"
+                className="absolute top-0 left-0 w-full h-0.5 bg-mint"
               />
             )}
           </div>

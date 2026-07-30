@@ -147,7 +147,7 @@ export default function MemoryPage() {
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           placeholder="Search through decisions, constraints, and intent..."
-          className="pl-12 bg-[#141414] border-white/5 h-14 text-base focus-visible:ring-[#00FF9D]/30"
+          className="pl-12 bg-surface-1 border-white/5 h-14 text-base focus-visible:ring-mint/30"
         />
         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2">
           {isSearching ? (
@@ -163,9 +163,9 @@ export default function MemoryPage() {
 
       <Tabs defaultValue="decisions" className="w-full">
         <TabsList className="bg-transparent border-b border-white/5 rounded-none p-0 h-10 mb-8 w-full justify-start space-x-8">
-          <TabsTrigger value="decisions" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]">Architecture Decisions</TabsTrigger>
-          <TabsTrigger value="knowledge" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]">Project Knowledge</TabsTrigger>
-          <TabsTrigger value="user" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]">Preferences</TabsTrigger>
+          <TabsTrigger value="decisions" className="rounded-none border-b-2 border-transparent data-[state=active]:border-mint data-[state=active]:bg-transparent px-0 text-[10px]">Architecture Decisions</TabsTrigger>
+          <TabsTrigger value="knowledge" className="rounded-none border-b-2 border-transparent data-[state=active]:border-mint data-[state=active]:bg-transparent px-0 text-[10px]">Project Knowledge</TabsTrigger>
+          <TabsTrigger value="user" className="rounded-none border-b-2 border-transparent data-[state=active]:border-mint data-[state=active]:bg-transparent px-0 text-[10px]">Preferences</TabsTrigger>
         </TabsList>
 
         <TabsContent value="decisions" className="animate-in fade-in duration-300">
@@ -226,9 +226,9 @@ export default function MemoryPage() {
           ) : (
             <div className="grid gap-4">
               {memories.map(entry => (
-                <div key={entry.id} className="p-4 bg-[#141414] border border-white/5 rounded-xl flex items-center justify-between group hover:border-white/10 transition-colors">
+                <div key={entry.id} className="p-4 bg-surface-1 border border-white/5 rounded-xl flex items-center justify-between group hover:border-white/10 transition-colors">
                   <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-[#00FF9D] transition-colors">
+                    <div className="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-mint transition-colors">
                       <Brain size={16} />
                     </div>
                     <div>
@@ -244,8 +244,8 @@ export default function MemoryPage() {
         </TabsContent>
 
         <TabsContent value="user" className="animate-in fade-in duration-300">
-           <div className="p-12 bg-[#141414] border border-white/5 rounded-2xl flex flex-col items-center text-center space-y-4">
-             <User size={32} className="text-[#00FF9D]/40" />
+           <div className="p-12 bg-surface-1 border border-white/5 rounded-2xl flex flex-col items-center text-center space-y-4">
+             <User size={32} className="text-mint/40" />
              <div className="space-y-1">
                <h3 className="text-sm font-bold text-white uppercase tracking-widest">Developer DNA</h3>
                <p className="text-xs text-slate-500 font-mono">Blueprint learns your coding style and preferences over time.</p>
@@ -260,17 +260,17 @@ export default function MemoryPage() {
 
 function ADRCard({ adr }: { adr: ADR }) {
   return (
-    <div className="group p-8 bg-[#141414] border border-white/5 rounded-3xl hover:border-[#00FF9D]/20 transition-all duration-500">
+    <div className="group p-8 bg-surface-1 border border-white/5 rounded-3xl hover:border-mint/20 transition-all duration-500">
       <div className="flex items-start justify-between mb-8">
         <div className="space-y-2">
-          <Badge variant="success" className="bg-[#00FF9D]/5 border-[#00FF9D]/20 text-[#00FF9D]">{adr.status}</Badge>
-          <h3 className="text-2xl font-black text-white tracking-tighter uppercase group-hover:text-[#00FF9D] transition-colors">{adr.title}</h3>
+          <Badge variant="success" className="bg-mint/5 border-mint/20 text-mint">{adr.status}</Badge>
+          <h3 className="text-2xl font-black text-white tracking-tighter uppercase group-hover:text-mint transition-colors">{adr.title}</h3>
           <div className="flex items-center space-x-2 text-[10px] text-slate-600 font-mono uppercase tracking-widest">
             <Clock size={12} />
             <span>{adr.created_at}</span>
           </div>
         </div>
-        <div className="p-3 rounded-2xl bg-white/5 text-slate-500 group-hover:text-white group-hover:bg-[#00FF9D]/10 transition-all duration-500">
+        <div className="p-3 rounded-2xl bg-white/5 text-slate-500 group-hover:text-white group-hover:bg-mint/10 transition-all duration-500">
           <History size={24} />
         </div>
       </div>
@@ -290,14 +290,14 @@ function ADRCard({ adr }: { adr: ADR }) {
         <div className="flex items-center space-x-3">
           <div className="flex -space-x-2">
             {[1,2].map(i => (
-              <div key={i} className="w-6 h-6 rounded-full border-2 border-[#141414] bg-slate-800 flex items-center justify-center">
+              <div key={i} className="w-6 h-6 rounded-full border-2 border-surface-1 bg-slate-800 flex items-center justify-center">
                 <User size={12} className="text-slate-400" />
               </div>
             ))}
           </div>
           <span className="text-[10px] font-mono text-slate-500 uppercase tracking-tighter">Verified by Principal Agent</span>
         </div>
-        <Button variant="ghost" size="sm" className="h-8 text-[11px] uppercase font-black tracking-widest hover:text-[#00FF9D] hover:bg-transparent">
+        <Button variant="ghost" size="sm" className="h-8 text-[11px] uppercase font-black tracking-widest hover:text-mint hover:bg-transparent">
           Explore Impact
           <ChevronRight size={14} className="ml-1" />
         </Button>
@@ -310,7 +310,7 @@ function ADRSkeleton() {
   return (
     <div className="space-y-6" aria-busy="true" aria-label="Loading decisions">
       {[0, 1].map(i => (
-        <div key={i} className="p-8 bg-[#141414] border border-white/5 rounded-3xl space-y-8">
+        <div key={i} className="p-8 bg-surface-1 border border-white/5 rounded-3xl space-y-8">
           <div className="space-y-3">
             <div className="h-4 w-20 rounded-full bg-white/5 animate-pulse" />
             <div className="h-7 w-2/3 rounded bg-white/5 animate-pulse" />

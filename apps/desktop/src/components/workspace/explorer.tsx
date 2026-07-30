@@ -97,8 +97,8 @@ function FileRow({ node, level }: { node: FileNode, level: number }) {
         ) : <div className="w-[14px]" />}
 
         <Icon size={14} className={cn(
-          node.type === 'folder' ? "text-[#00FF9D]/60" : "text-slate-500",
-          "group-hover:text-[#00FF9D]"
+          node.type === 'folder' ? "text-mint/60" : "text-slate-500",
+          "group-hover:text-mint"
         )} />
 
         <span className="text-xs font-mono text-slate-400 group-hover:text-white truncate">

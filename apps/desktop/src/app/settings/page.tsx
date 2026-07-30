@@ -62,15 +62,15 @@ export default function SettingsPage() {
 
       <Tabs defaultValue="ai" className="w-full">
         <TabsList className="bg-white/5 border border-white/5 p-1 mb-8">
-          <TabsTrigger value="ai" className="data-[state=active]:bg-[#00FF9D]/10">AI Providers</TabsTrigger>
-          <TabsTrigger value="github" className="data-[state=active]:bg-[#00FF9D]/10">GitHub</TabsTrigger>
-          <TabsTrigger value="plugins" className="data-[state=active]:bg-[#00FF9D]/10">Plugins</TabsTrigger>
-          <TabsTrigger value="general" className="data-[state=active]:bg-[#00FF9D]/10">General</TabsTrigger>
+          <TabsTrigger value="ai" className="data-[state=active]:bg-mint/10">AI Providers</TabsTrigger>
+          <TabsTrigger value="github" className="data-[state=active]:bg-mint/10">GitHub</TabsTrigger>
+          <TabsTrigger value="plugins" className="data-[state=active]:bg-mint/10">Plugins</TabsTrigger>
+          <TabsTrigger value="general" className="data-[state=active]:bg-mint/10">General</TabsTrigger>
         </TabsList>
 
         <TabsContent value="ai" className="space-y-8 animate-in fade-in duration-300">
           <section className="space-y-6">
-            <div className="flex items-center space-x-2 text-[#00FF9D]">
+            <div className="flex items-center space-x-2 text-mint">
               <Key size={16} />
               <h3 className="text-xs font-black uppercase tracking-widest">API Key Management</h3>
             </div>
@@ -107,7 +107,7 @@ export default function SettingsPage() {
               <h4 className="text-sm font-bold text-white">Privacy Seal</h4>
               <p className="text-xs text-slate-500 font-mono">Keys are stored locally in your system keychain. No cloud sync.</p>
             </div>
-            <ShieldCheck size={24} className="text-[#00FF9D] opacity-50" />
+            <ShieldCheck size={24} className="text-mint opacity-50" />
           </section>
         </TabsContent>
 
@@ -125,7 +125,7 @@ export default function SettingsPage() {
               <p className="text-sm text-slate-500 font-mono text-center py-12 border border-dashed border-white/5 rounded-2xl">No plugins installed.</p>
             ) : (
               plugins.map((plugin) => (
-                <div key={plugin.id} className="p-6 bg-[#141414] border border-white/5 rounded-2xl flex items-start justify-between">
+                <div key={plugin.id} className="p-6 bg-surface-1 border border-white/5 rounded-2xl flex items-start justify-between">
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <h4 className="text-sm font-bold text-white">{plugin.name}</h4>
@@ -151,7 +151,7 @@ export default function SettingsPage() {
 
 function ProviderKeyInput({ name, value, onChange, onSave, status }: ProviderKeyInputProps) {
   return (
-    <div className="flex items-center justify-between p-4 bg-[#141414] border border-white/5 rounded-xl transition-all hover:border-white/10">
+    <div className="flex items-center justify-between p-4 bg-surface-1 border border-white/5 rounded-xl transition-all hover:border-white/10">
       <div className="space-y-1">
         <label className="text-[10px] font-black uppercase text-slate-500 tracking-tighter">{name}</label>
         <Input
@@ -163,7 +163,7 @@ function ProviderKeyInput({ name, value, onChange, onSave, status }: ProviderKey
         />
       </div>
       <div className="flex items-center space-x-2">
-        {status && <span className={`text-[10px] font-mono ${status === 'Error' ? 'text-red-500' : 'text-[#00FF9D]'}`}>{status}</span>}
+        {status && <span className={`text-[10px] font-mono ${status === 'Error' ? 'text-red-500' : 'text-mint'}`}>{status}</span>}
         <Button size="sm" variant="ghost" onClick={onSave} className="h-8">Save Key</Button>
       </div>
     </div>

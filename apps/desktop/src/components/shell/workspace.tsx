@@ -35,7 +35,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
       {/* Left Wing */}
       {leftWingOpen && (
         <Panel defaultSize={layout.leftWingWidth} minSize={15} maxSize={40} id="explorer">
-          <div className="h-full bg-[#0B0B0B] border-r border-white/5 overflow-hidden">
+          <div className="h-full bg-ink border-r border-white/5 overflow-hidden">
             <ProjectExplorer />
           </div>
         </Panel>
@@ -45,7 +45,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
 
       {/* Main Workspace */}
       <Panel minSize={30}>
-        <div className="flex flex-col h-full bg-[#0B0B0B]">
+        <div className="flex flex-col h-full bg-ink">
           {isWorkspaceActive && <WorkspaceTabs />}
           <main className="flex-grow relative overflow-auto">
             {isWorkspaceActive && tabs.length === 0 ? (
@@ -64,7 +64,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
       {/* Right Wing */}
       {rightWingOpen && (
         <Panel defaultSize={layout.rightWingWidth} minSize={20} maxSize={50} id="inspector">
-          <div className="h-full bg-[#0B0B0B] border-l border-white/5 overflow-hidden">
+          <div className="h-full bg-ink border-l border-white/5 overflow-hidden">
             <div className="p-4 text-xs font-mono text-slate-500 uppercase tracking-widest text-right">
               Inspector
             </div>
@@ -77,7 +77,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
 
 function ResizeHandle() {
   return (
-    <PanelResizeHandle className="w-[1px] bg-white/5 hover:bg-[#00FF9D]/30 transition-colors relative group">
+    <PanelResizeHandle className="w-[1px] bg-white/5 hover:bg-mint/30 transition-colors relative group">
       <div className="absolute inset-y-0 -left-1 -right-1 z-10 cursor-col-resize" />
     </PanelResizeHandle>
   );
@@ -86,7 +86,7 @@ function ResizeHandle() {
 function EmptyWorkspace() {
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-4 px-8 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 text-[#00FF9D]/20">
+      <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 text-mint/20">
         <Cpu size={32} />
       </div>
       <div className="max-w-md">
