@@ -5,8 +5,6 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useWorkspaceStore } from '../../store/workspace';
 import { ProjectExplorer } from '../workspace/explorer';
 import { WorkspaceTabs } from '../workspace/tabs';
-import { cn } from '../../lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Cpu } from 'lucide-react';
 
 export function Workspace({ children }: { children: React.ReactNode }) {
@@ -25,7 +23,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
     <PanelGroup
       direction="horizontal"
       className="flex-grow overflow-hidden"
-      onLayout={(sizes) => {
+      onLayout={(sizes: number[]) => {
         if (sizes.length === 3) {
           setLayout({
             leftWingWidth: sizes[0],

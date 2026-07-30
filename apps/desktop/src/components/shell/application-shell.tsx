@@ -5,11 +5,32 @@ import { Workspace } from './workspace';
 import { StatusBar } from './status-bar';
 import { CommandBar } from './command-bar';
 import { useWorkspaceStore } from '../../store/workspace';
+import { usePluginStore } from '../../store/plugins';
 import { LayoutGrid, PanelLeft, PanelRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useEffect } from 'react';
 
 export function ApplicationShell({ children }: { children: React.ReactNode }) {
   const { toggleLeftWing, toggleRightWing, leftWingOpen, rightWingOpen } = useWorkspaceStore();
+  const { registerPlugin, registerCommand } = usePluginStore();
+
+  useEffect(() => {
+    // Simulate loading a React Intelligence plugin
+    registerPlugin({
+      id: 'io.blueprint.react-intel',
+      name: 'React Intelligence',
+      version: '1.0.0',
+      author: 'Blueprint Team',
+      description: 'Provides deep analysis of React component trees.',
+      permissions: ['fs.read']
+    });
+
+    registerCommand({
+      id: 'react-intel-scan',
+      label: 'React: Scan Component Tree',
+      handler: () => console.log("Scanning React components...")
+    });
+  }, []);
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-[#0B0B0B] text-white">
