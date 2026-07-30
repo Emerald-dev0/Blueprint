@@ -10,7 +10,7 @@ import {
 } from '@blueprint/ui';
 import { Send, Bot, User, Sparkles, LayoutList } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
-import { ExecutionTimeline } from '@/components/ai/execution-timeline';
+import { ExecutionTimeline } from '../../components/ai/execution-timeline';
 import { Task } from '@blueprint/types';
 
 interface Message {
