@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+// `emit` moved onto the `Emitter` trait in Tauri v2; importing `Manager`
+// (the v1 location) leaves `window.emit` unresolved.
 use tauri::{Emitter, Window};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

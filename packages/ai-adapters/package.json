@@ -14,5 +14,9 @@
   },
   "devDependencies": {
     "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0",
+    "@blueprint/types": "workspace:*"
   }
 }

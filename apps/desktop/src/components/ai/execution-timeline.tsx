@@ -22,7 +22,7 @@ export function ExecutionTimeline({ tasks, className }: ExecutionTimelineProps) 
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Execution Timeline</h3>
-        <span className="text-[10px] font-mono text-[#00FF9D]">{tasks.filter(t => t.status === 'completed').length}/{tasks.length} Tasks</span>
+        <span className="text-[10px] font-mono text-mint">{tasks.filter(t => t.status === 'completed').length}/{tasks.length} Tasks</span>
       </div>
 
       <div className="relative space-y-8 before:absolute before:inset-0 before:ml-2 before:h-full before:w-0.5 before:bg-white/5">
@@ -36,7 +36,7 @@ export function ExecutionTimeline({ tasks, className }: ExecutionTimelineProps) 
               <div className="flex items-center justify-between">
                 <h4 className={cn(
                   "text-xs font-bold uppercase tracking-tight",
-                  task.status === 'active' ? "text-[#00FF9D]" : "text-slate-300"
+                  task.status === 'active' ? "text-mint" : "text-slate-300"
                 )}>
                   {task.title}
                 </h4>
@@ -75,14 +75,14 @@ export function ExecutionTimeline({ tasks, className }: ExecutionTimelineProps) 
 function StatusIcon({ status }: { status: TaskStatus }) {
   switch (status) {
     case 'completed':
-      return <CheckCircle2 size={16} className="text-[#00FF9D] bg-[#0B0B0B]" />;
+      return <CheckCircle2 size={16} className="text-mint bg-ink" />;
     case 'active':
-      return <Circle size={16} className="text-[#00FF9D] animate-pulse bg-[#0B0B0B]" />;
+      return <Circle size={16} className="text-mint animate-pulse bg-ink" />;
     case 'waiting_approval':
-      return <UserCheck size={16} className="text-amber-500 bg-[#0B0B0B]" />;
+      return <UserCheck size={16} className="text-amber-500 bg-ink" />;
     case 'failed':
-      return <AlertCircle size={16} className="text-red-500 bg-[#0B0B0B]" />;
+      return <AlertCircle size={16} className="text-red-500 bg-ink" />;
     default:
-      return <Clock size={16} className="text-slate-700 bg-[#0B0B0B]" />;
+      return <Clock size={16} className="text-slate-700 bg-ink" />;
   }
 }
