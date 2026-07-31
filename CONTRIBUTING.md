@@ -26,7 +26,7 @@ Blueprint is a monorepo:
 
 - **Rust:** Use `cargo test` for backend logic.
 - **TypeScript:** Use `vitest` for frontend and shared packages.
-- **E2E:** We use Playwright for full application flows.
+- **E2E:** Playwright-based end-to-end flows are planned but not yet configured. Until then, cover new functionality with Vitest tests.
 
 ## 💬 Communication
 
