@@ -58,13 +58,6 @@ pub struct ProviderConfig {
 }
 
 impl ProviderConfig {
-    pub fn with_key(key: impl Into<String>) -> Self {
-        Self {
-            api_key: Some(key.into()),
-            base_url: None,
-        }
-    }
-
     /// Returns the API key or the typed missing-credential error, so providers
     /// don't each hand-roll that check.
     pub fn require_key(&self, provider: &str) -> Result<&str, ProviderError> {

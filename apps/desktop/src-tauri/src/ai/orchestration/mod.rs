@@ -1,6 +1,4 @@
 pub mod roles;
-pub mod tasks;
-pub mod tools;
 
 use roles::AgentRegistry;
 
