@@ -8,6 +8,10 @@ on:
   schedule:
     - cron: '0 0 * * 1' # Weekly on Mondays
 
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   audit:
     runs-on: ubuntu-latest
@@ -23,7 +27,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
 
       - name: Audit Node.js dependencies
         # GHSA-mh99-v99m-4gvg (CVE-2026-14257) is a DoS in brace-expansion via
