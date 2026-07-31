@@ -2,3 +2,18 @@ packages:
   - 'apps/*'
   - 'packages/*'
   - 'plugins/*'
+
+overrides:
+  sharp: 0.35.0
+  next@15.5.22>postcss: 8.5.25
+
+allowBuilds:
+  esbuild: true
+  unrs-resolver: true
+
+# GHSA-mh99-v99m-4gvg (CVE-2026-14257): DoS in brace-expansion via minimatch@3.1.5,
+# pulled in only by eslint dev tooling. No patched 1.x exists and upgrading breaks
+# eslint at runtime, so it is allowlisted as a dev-only, upstream-unpatched advisory.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-mh99-v99m-4gvg

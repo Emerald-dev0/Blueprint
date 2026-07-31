@@ -8,6 +8,10 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0",
+    "@blueprint/types": "workspace:*"
+  },
   "devDependencies": {
     "typescript": "^5.5.0"
   }

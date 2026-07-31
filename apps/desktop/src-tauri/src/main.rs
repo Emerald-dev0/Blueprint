@@ -37,7 +37,7 @@ fn main() {
             ai::get_operating_manuals,
             ai::reload_personas,
             ai::plan_aos_workflow,
-            ai::orchestration::assemble_team,
+            ai::orchestration::get_agent_roles,
             intelligence::start_repo_analysis,
             intelligence::analyze_website,
             git::set_github_credential,
@@ -46,6 +46,8 @@ fn main() {
             git::create_git_branch,
             git::suggest_git_commit_message,
             git::generate_github_release_notes,
+            memory::get_adrs,
+            memory::search_memory,
             plugins::list_installed_plugins,
             plugins::run_python_tool,
             events::publish_system_event

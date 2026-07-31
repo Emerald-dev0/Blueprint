@@ -11,7 +11,7 @@ import {
   TabsTrigger,
   TabsContent
 } from '@blueprint/ui';
-import { ShieldCheck, Key, Github } from 'lucide-react';
+import { ShieldCheck, Key, Github, Sparkles } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 import { usePluginStore } from '../../store/plugins';
 
@@ -64,7 +64,8 @@ export default function SettingsPage() {
         <TabsList className="bg-white/5 border border-white/5 p-1 mb-8">
           <TabsTrigger value="ai" className="data-[state=active]:bg-[#00FF9D]/10">AI Providers</TabsTrigger>
           <TabsTrigger value="github" className="data-[state=active]:bg-[#00FF9D]/10">GitHub</TabsTrigger>
-          <TabsTrigger value="plugins" className="data-[state=active]:bg-[#00FF9D]/10">Plugins</TabsTrigger>
+          <TabsTrigger value="plugins" className="data-[state=active]:bg-[#00FF9D]/10">Installed</TabsTrigger>
+          <TabsTrigger value="marketplace" className="data-[state=active]:bg-[#00FF9D]/10">Marketplace</TabsTrigger>
           <TabsTrigger value="general" className="data-[state=active]:bg-[#00FF9D]/10">General</TabsTrigger>
         </TabsList>
 
@@ -144,7 +145,30 @@ export default function SettingsPage() {
             )}
           </div>
         </TabsContent>
+
+        <TabsContent value="marketplace" className="animate-in fade-in duration-300">
+          <div className="p-12 border border-dashed border-white/10 rounded-2xl text-center space-y-4">
+            <Sparkles size={32} className="mx-auto text-[#00FF9D]/40" />
+            <p className="text-slate-400 font-mono text-sm">Blueprint Marketplace registry is ready for the community.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mt-8">
+               <MarketplaceCard title="Framework Intelligence" count={12} />
+               <MarketplaceCard title="Engineering Tools" count={8} />
+            </div>
+          </div>
+        </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+function MarketplaceCard({ title, count }: { title: string, count: number }) {
+  return (
+    <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-[#00FF9D]/30 transition-all">
+      <div className="space-y-1">
+        <h4 className="text-xs font-bold text-white uppercase tracking-tighter">{title}</h4>
+        <p className="text-[10px] text-slate-500 font-mono">{count} verified extensions</p>
+      </div>
+      <Button variant="ghost" size="sm" className="h-8 text-[10px] uppercase font-black tracking-widest text-[#00FF9D]">Explore</Button>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use keyring::Entry;
-use tauri::State;
 use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT, AUTHORIZATION};
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -3,7 +3,7 @@ pub mod python;
 
 use manager::{PluginManager, PluginManifest};
 use python::PythonRunner;
-use tauri::{State, Manager};
+use tauri::State;
 
 #[tauri::command]
 pub fn list_installed_plugins(manager: State<'_, PluginManager>) -> Result<Vec<PluginManifest>, String> {

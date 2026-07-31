@@ -8,31 +8,35 @@ on:
   schedule:
     - cron: '0 0 * * 1' # Weekly on Mondays
 
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
-          
+          run_install: false
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'pnpm'
-          
+          node-version: 22
+
       - name: Audit Node.js dependencies
-        run: pnpm audit
-        
-      - name: Install Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        
-      - name: Install cargo-audit
-        run: cargo install cargo-audit
-        
+        # GHSA-mh99-v99m-4gvg (CVE-2026-14257) is a DoS in brace-expansion via
+        # minimatch@3.1.5, pulled in only by eslint dev tooling. There is no
+        # patched 1.x and upgrading minimatch's brace-expansion to 5.x breaks
+        # eslint at runtime (incompatible API), so it is allowlisted as dev-only.
+        run: pnpm audit --ignore GHSA-mh99-v99m-4gvg
+
       - name: Audit Rust dependencies
-        run: cd apps/desktop/src-tauri && cargo audit
+        uses: rustsec/audit-check@v2.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: apps/desktop/src-tauri

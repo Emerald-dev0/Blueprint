@@ -1,4 +1,3 @@
-use serde::{Deserialize, Serialize};
 
 pub struct ToolRegistry {
     // Placeholder for future tool implementations
