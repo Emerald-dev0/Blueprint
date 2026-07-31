@@ -6,9 +6,9 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,rs,json,md}\"",
-    "test": "turbo run test",
+    "test": "vitest run",
     "typecheck": "turbo run typecheck",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "devDependencies": {
     "turbo": "^2.0.0",
@@ -17,7 +17,9 @@
     "typescript": "^5.5.0",
     "husky": "^9.0.0",
     "commitlint": "^19.0.0",
-    "@commitlint/config-conventional": "^19.0.0"
+    "@commitlint/config-conventional": "^19.0.0",
+    "vitest": "^3.0.0",
+    "@types/node": "^20.0.0"
   },
   "packageManager": "pnpm@9.5.0"
 }

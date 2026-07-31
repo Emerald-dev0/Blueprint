@@ -33,3 +33,6 @@ Thumbs.db
 # Local Cache
 .turbo
 .cache
+
+# TypeScript build info
+*.tsbuildinfo
