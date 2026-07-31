@@ -9,6 +9,7 @@ mod plugins;
 mod events;
 
 use ai::manager::AIManager;
+use ai::aos::AgentOS;
 use memory::MemoryManager;
 use plugins::manager::PluginManager;
 use std::sync::Arc;
@@ -19,16 +20,24 @@ fn main() {
     let app_data_dir = PathBuf::from(".");
     let plugin_manager = PluginManager::new(app_data_dir);
 
+    // Path to personas in development
+    let personas_root = PathBuf::from("../../packages/personas");
+    let agent_os = AgentOS::new(personas_root);
+
     tauri::Builder::default()
         .manage(AIManager::new())
         .manage(memory_manager)
         .manage(plugin_manager)
+        .manage(agent_os)
         .invoke_handler(tauri::generate_handler![
             ai::set_ai_credential,
             ai::generate_ai_completion,
+            ai::run_aos_completion,
             ai::get_personas,
-            ai::plan_goal_execution,
-            ai::orchestration::assemble_team,
+            ai::get_operating_manuals,
+            ai::reload_personas,
+            ai::plan_aos_workflow,
+            ai::orchestration::get_agent_roles,
             intelligence::start_repo_analysis,
             intelligence::analyze_website,
             git::set_github_credential,
@@ -37,6 +46,8 @@ fn main() {
             git::create_git_branch,
             git::suggest_git_commit_message,
             git::generate_github_release_notes,
+            memory::get_adrs,
+            memory::search_memory,
             plugins::list_installed_plugins,
             plugins::run_python_tool,
             events::publish_system_event

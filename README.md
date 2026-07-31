@@ -1,6 +1,6 @@
 # Blueprint: AI Engineering Command Center
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#)
+[![CI](https://github.com/Emerald-dev0/Blueprint/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Emerald-dev0/Blueprint/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-0.1.0--alpha-blue)](#)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -90,9 +90,13 @@ graph LR
 │   ├── ui/             # "Ink & Mint" Design System
 │   ├── ai-adapters/    # Multi-provider AI Layer
 │   ├── git-engine/     # Rust-bound Git Services
-│   └── brain/          # Memory & Vector Indexing
+│   ├── brain/          # Memory & Vector Indexing
+│   ├── core/           # Shared core services
+│   ├── types/          # Shared TypeScript types
+│   └── plugin-sdk/     # Plugin SDK & extensibility platform
+├── plugins/            # Official Blueprint plugins
 ├── docs/               # Detailed Documentation
-└── tests/              # E2E & Integration Tests
+└── tests/              # Unit tests (Vitest)
 ```
 
 ---
@@ -100,7 +104,7 @@ graph LR
 ## 🛠 Getting Started
 
 ### Prerequisites
-- **Node.js** v20+ & **pnpm** v9+
+- **Node.js** v22+ & **pnpm** v11+
 - **Rust** (latest stable)
 - **Tauri dependencies** (OS specific)
 

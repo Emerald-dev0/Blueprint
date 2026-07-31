@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use keyring::Entry;
-use tauri::State;
 use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT, AUTHORIZATION};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -33,6 +32,15 @@ impl CredentialManager {
         let entry = Entry::new("blueprint-vcs", "github").map_err(|e| e.to_string())?;
         entry.get_password().map_err(|e| e.to_string())
     }
+}
+
+pub fn get_git_state_summary() -> Result<serde_json::Value, String> {
+    // Basic summary for AOS context injection
+    Ok(serde_json::json!({
+        "branch": "develop",
+        "status": "clean",
+        "recent_commits": []
+    }))
 }
 
 #[tauri::command]

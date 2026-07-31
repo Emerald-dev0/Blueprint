@@ -1,7 +1,8 @@
 use rusqlite::{params, Connection};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use tauri::State;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -193,4 +194,21 @@ impl MemoryManager {
         ).map_err(|e| e.to_string())?;
         Ok(())
     }
+}
+
+#[tauri::command]
+pub fn get_adrs(
+    memory: State<'_, Arc<MemoryManager>>,
+    project_id: String,
+) -> Result<Vec<ADR>, String> {
+    memory.list_adrs(&project_id)
+}
+
+#[tauri::command]
+pub fn search_memory(
+    memory: State<'_, Arc<MemoryManager>>,
+    project_id: String,
+    query: String,
+) -> Result<Vec<MemoryEntry>, String> {
+    memory.search_memory(&project_id, &query)
 }

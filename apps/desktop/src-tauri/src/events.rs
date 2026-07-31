@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use tauri::{Manager, Window};
+use tauri::{Emitter, Window};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SystemEvent {
