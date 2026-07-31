@@ -51,7 +51,7 @@ export function CommandBar() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="w-full max-w-[640px] bg-[#1E1E1E] border border-white/10 rounded-xl shadow-2xl overflow-hidden shadow-black/50"
+            className="w-full max-w-[640px] bg-surface-2 border border-white/10 rounded-xl shadow-2xl overflow-hidden shadow-black/50"
           >
             <Command label="Command Palette" onKeyDown={(e) => {
               if (e.key === 'Escape') setCommandBarOpen(false);
@@ -120,9 +120,9 @@ function CommandItem({ children, icon: Icon, onSelect }: { children: React.React
   return (
     <Command.Item
       onSelect={onSelect}
-      className="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 aria-selected:bg-white/5 aria-selected:text-[#00FF9D] cursor-pointer transition-colors group"
+      className="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 aria-selected:bg-white/5 aria-selected:text-mint cursor-pointer transition-colors group"
     >
-      <Icon size={16} className="text-slate-500 group-aria-selected:text-[#00FF9D]" />
+      <Icon size={16} className="text-slate-500 group-aria-selected:text-mint" />
       <span className="font-mono">{children}</span>
     </Command.Item>
   );

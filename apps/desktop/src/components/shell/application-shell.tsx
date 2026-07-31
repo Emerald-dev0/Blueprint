@@ -37,10 +37,10 @@ export function ApplicationShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen w-full overflow-hidden bg-[#0B0B0B] text-white">
-      <header className="h-10 w-full bg-[#0B0B0B] border-b border-white/5 flex items-center px-4 justify-between">
+    <div className="flex flex-col h-screen w-full overflow-hidden bg-ink text-white">
+      <header className="h-10 w-full bg-ink border-b border-white/5 flex items-center px-4 justify-between">
         <div className="flex items-center space-x-2">
-          <div className="w-5 h-5 bg-[#00FF9D] rounded-sm flex items-center justify-center">
+          <div className="w-5 h-5 bg-mint rounded-sm flex items-center justify-center">
             <LayoutGrid size={12} className="text-black" />
           </div>
           <span className="text-[10px] font-black tracking-widest uppercase text-slate-500">Blueprint</span>
@@ -51,7 +51,7 @@ export function ApplicationShell({ children }: { children: React.ReactNode }) {
             onClick={toggleLeftWing}
             className={cn(
               "p-1.5 rounded hover:bg-white/5 transition-colors",
-              leftWingOpen ? "text-[#00FF9D]" : "text-slate-500"
+              leftWingOpen ? "text-mint" : "text-slate-500"
             )}
           >
             <PanelLeft size={16} />
@@ -60,7 +60,7 @@ export function ApplicationShell({ children }: { children: React.ReactNode }) {
             onClick={toggleRightWing}
             className={cn(
               "p-1.5 rounded hover:bg-white/5 transition-colors",
-              rightWingOpen ? "text-[#00FF9D]" : "text-slate-500"
+              rightWingOpen ? "text-mint" : "text-slate-500"
             )}
           >
             <PanelRight size={16} />

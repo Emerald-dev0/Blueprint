@@ -57,11 +57,11 @@ export default function DesignSystemPage() {
         <section className="space-y-6">
           <h2 className="text-xs font-mono uppercase tracking-widest text-slate-500">Color Palette</h2>
           <div className="grid grid-cols-5 gap-4">
-            <ColorSwatch color="bg-[#0B0B0B]" label="Ink" hex="#0B0B0B" />
-            <ColorSwatch color="bg-[#00FF9D]" label="Mint" hex="#00FF9D" textColor="text-black" />
-            <ColorSwatch color="bg-[#141414]" label="Surface 1" hex="#141414" />
-            <ColorSwatch color="bg-[#1E1E1E]" label="Surface 2" hex="#1E1E1E" />
-            <ColorSwatch color="bg-[#262626]" label="Surface 3" hex="#262626" />
+            <ColorSwatch color="bg-ink" label="Ink" hex="#0B0B0B" />
+            <ColorSwatch color="bg-mint" label="Mint" hex="#00FF9D" textColor="text-black" />
+            <ColorSwatch color="bg-surface-1" label="Surface 1" hex="#141414" />
+            <ColorSwatch color="bg-surface-2" label="Surface 2" hex="#1E1E1E" />
+            <ColorSwatch color="bg-surface-3" label="Surface 3" hex="#262626" />
           </div>
         </section>
 
@@ -81,8 +81,8 @@ export default function DesignSystemPage() {
             </div>
             <div className="space-y-2">
               <p className="text-[10px] text-slate-600 uppercase font-bold tracking-widest">JetBrains Mono (Data/Code)</p>
-              <div className="p-4 bg-[#141414] rounded-lg border border-white/5">
-                <code className="text-sm text-[#00FF9D]">
+              <div className="p-4 bg-surface-1 rounded-lg border border-white/5">
+                <code className="text-sm text-mint">
                   fn main() &#123; println!("Blueprint initialized"); &#125;
                 </code>
               </div>
@@ -199,7 +199,7 @@ export default function DesignSystemPage() {
               <TabsTrigger value="memory">Memory</TabsTrigger>
               <TabsTrigger value="git">GitHub</TabsTrigger>
             </TabsList>
-            <TabsContent value="architecture" className="p-4 bg-[#141414] rounded-lg border border-white/5 mt-4">
+            <TabsContent value="architecture" className="p-4 bg-surface-1 rounded-lg border border-white/5 mt-4">
               <p className="text-slate-400 font-mono text-sm text-center py-12">Architecture graph will render here.</p>
             </TabsContent>
           </Tabs>
@@ -214,7 +214,7 @@ export default function DesignSystemPage() {
             <AIProposalSurface className="p-6 max-w-2xl" isActive>
               <div className="flex items-center justify-between mb-4">
                 <Badge variant="primary">Implementation Plan</Badge>
-                <span className="text-[10px] font-mono text-[#00FF9D]">Drafting...</span>
+                <span className="text-[10px] font-mono text-mint">Drafting...</span>
               </div>
               <p className="text-sm font-mono text-slate-300 leading-relaxed">
                 Based on your request, I recommend implementing the OAuth2 flow using the `@blueprint/auth` package.
