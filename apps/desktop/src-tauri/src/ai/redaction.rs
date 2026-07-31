@@ -14,7 +14,7 @@ impl RedactionEngine {
                 // Stripe
                 Regex::new(r"sk_live_[0-9a-zA-Z]{24}").unwrap(),
                 // Generic API Keys
-                Regex::new(r"api[-_]key[=: ]+['\"][0-9a-zA-Z]{32,48}['\"]").unwrap(),
+                Regex::new(r#"api[-_]key[=: ]+['\"][0-9a-zA-Z]{32,48}['\"]"#).unwrap(),
                 // Private Keys
                 Regex::new(r"-----BEGIN [A-Z ]+ PRIVATE KEY-----").unwrap(),
             ]

@@ -10,8 +10,8 @@ target
 build
 
 # Tauri
-src-tauri/target
-src-tauri/gen
+apps/desktop/src-tauri/target
+apps/desktop/src-tauri/gen
 
 # IDEs
 .idea

@@ -9,7 +9,7 @@ use providers::AIMessage;
 use redaction::RedactionEngine;
 use aos::AgentOS;
 use aos::persona::OperatingManual;
-use tauri::{State, Manager};
+use tauri::State;
 
 #[tauri::command]
 pub async fn set_ai_credential(
@@ -73,8 +73,8 @@ pub async fn run_aos_completion(
 }
 
 #[tauri::command]
-pub fn get_personas() -> Vec<orchestration::roles::Persona> {
-    orchestration::roles::AgentRegistry::new().personas
+pub fn get_personas() -> Vec<orchestration::roles::AgentRole> {
+    orchestration::roles::AgentRegistry::new().roles
 }
 
 #[tauri::command]
