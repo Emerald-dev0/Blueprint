@@ -17,11 +17,7 @@ tokio = { version = "1", features = ["full"] }
 keyring = "2.3"
 futures-util = "0.3"
 async-trait = "0.1"
-log = "0.4"
-env_logger = "0.11"
-walkdir = "2.5"
 scraper = "0.19"
-tree-sitter = "0.22"
 ignore = "0.4"
 rusqlite = { version = "0.31", features = ["bundled"] }
 regex = "1.10"
