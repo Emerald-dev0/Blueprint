@@ -7,8 +7,8 @@ export default function Home() {
 
   return (
     <div className="p-8 h-full flex flex-col items-center justify-center space-y-6">
-      <div className="p-12 border border-white/5 rounded-2xl bg-[#141414]/50 backdrop-blur-sm flex flex-col items-center space-y-4 max-w-lg text-center">
-        <h2 className="text-2xl font-black tracking-tight text-[#00FF9D]">
+      <div className="p-12 border border-white/5 rounded-2xl bg-surface-1/50 backdrop-blur-sm flex flex-col items-center space-y-4 max-w-lg text-center">
+        <h2 className="text-2xl font-black tracking-tight text-mint">
           {activeSystem.toUpperCase()}
         </h2>
         <p className="text-slate-400 font-mono text-sm leading-relaxed">

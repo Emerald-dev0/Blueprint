@@ -22,7 +22,7 @@ import {
   ChevronRight,
   ShieldCheck
 } from 'lucide-react';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, describeError } from '../../lib/ipc';
 import { GitHubRepository } from '@blueprint/types';
 
 export default function GitHubPage() {
@@ -58,12 +58,12 @@ export default function GitHubPage() {
     <div className="p-8 max-w-6xl mx-auto space-y-12">
       <header className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-black tracking-tight text-white uppercase italic text-[#00FF9D]">GitHub Ecosystem</h1>
+          <h1 className="text-2xl font-black tracking-tight text-white uppercase italic text-mint">GitHub Ecosystem</h1>
           <p className="text-xs text-slate-500 font-mono">Orchestrate your repositories, issues, and deployment cycles.</p>
         </div>
         {isConnected ? (
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 rounded-full bg-[#00FF9D] animate-pulse" />
+            <div className="w-2 h-2 rounded-full bg-mint animate-pulse" />
             <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Connected</span>
           </div>
         ) : (
@@ -72,7 +72,7 @@ export default function GitHubPage() {
       </header>
 
       {!isConnected && !isLoading ? (
-        <div className="p-24 border border-dashed border-white/5 rounded-3xl bg-[#141414]/50 text-center space-y-6">
+        <div className="p-24 border border-dashed border-white/5 rounded-3xl bg-surface-1/50 text-center space-y-6">
           <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto text-slate-600">
             <Github size={32} />
           </div>
@@ -89,7 +89,7 @@ export default function GitHubPage() {
           <div className="lg:col-span-2 space-y-8">
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
-              <Input placeholder="Search your repositories..." className="pl-10 bg-[#141414] border-white/5 h-12" />
+              <Input placeholder="Search your repositories..." className="pl-10 bg-surface-1 border-white/5 h-12" />
             </div>
 
             <div className="grid gap-4">
@@ -106,17 +106,17 @@ export default function GitHubPage() {
           </div>
 
           <aside className="space-y-8">
-            <section className="p-6 bg-[#141414] border border-white/5 rounded-2xl space-y-4">
+            <section className="p-6 bg-surface-1 border border-white/5 rounded-2xl space-y-4">
               <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Engineering Velocity</h4>
               <div className="space-y-6">
                 <VelocityItem label="Open PRs" value="12" icon={GitPullRequest} color="text-blue-500" />
-                <VelocityItem label="Build Success" value="98%" icon={Activity} color="text-[#00FF9D]" />
+                <VelocityItem label="Build Success" value="98%" icon={Activity} color="text-mint" />
                 <VelocityItem label="Avg Review Time" value="4.2h" icon={MessageSquare} color="text-amber-500" />
               </div>
             </section>
 
             <section className="p-6 bg-white/5 border border-white/5 rounded-2xl space-y-4">
-               <div className="flex items-center space-x-2 text-[#00FF9D]">
+               <div className="flex items-center space-x-2 text-mint">
                  <ShieldCheck size={16} />
                  <h4 className="text-[10px] font-black uppercase tracking-widest">Security Guard</h4>
                </div>
@@ -134,9 +134,9 @@ export default function GitHubPage() {
 
 function RepoCard({ repo }: { repo: GitHubRepository }) {
   return (
-    <div className="group p-5 bg-[#141414] border border-white/5 rounded-2xl hover:border-[#00FF9D]/30 transition-all flex items-center justify-between">
+    <div className="group p-5 bg-surface-1 border border-white/5 rounded-2xl hover:border-mint/30 transition-all flex items-center justify-between">
       <div className="flex items-center space-x-4">
-        <div className="p-2.5 rounded-xl bg-white/5 text-slate-500 group-hover:text-[#00FF9D] transition-colors">
+        <div className="p-2.5 rounded-xl bg-white/5 text-slate-500 group-hover:text-mint transition-colors">
           <Github size={20} />
         </div>
         <div className="space-y-1">

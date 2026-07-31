@@ -11,9 +11,9 @@ const AIProposalSurface = React.forwardRef<HTMLDivElement, AIProposalSurfaceProp
       <div
         ref={ref}
         className={cn(
-          "rounded-xl border bg-[#1E1E1E] transition-all duration-300",
+          "rounded-xl border bg-surface-2 transition-all duration-300",
           isActive
-            ? "border-[#00FF9D] shadow-[0_0_20px_rgba(0,255,157,0.15)]"
+            ? "border-mint shadow-[0_0_20px_rgba(0,255,157,0.15)]"
             : "border-white/10 shadow-xl shadow-black/40",
           className
         )}

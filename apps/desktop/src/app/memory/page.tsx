@@ -5,7 +5,6 @@ import {
   Button,
   Input,
   Badge,
-  Separator,
   Tabs,
   TabsList,
   TabsTrigger,
@@ -21,38 +20,52 @@ import {
   History,
   Search,
   Plus,
-  ShieldCheck,
   Brain,
   ChevronRight,
   BookOpen,
   User,
-  Bot,
-  Database
+  Clock,
+  Loader2,
+  AlertTriangle
 } from 'lucide-react';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, describeError } from '../../lib/ipc';
 import { MemoryEntry, ADR } from '@blueprint/types';
+
+type LoadState = 'loading' | 'ready' | 'error';
 
 export default function MemoryPage() {
   const [adrs, setAdrs] = React.useState<ADR[]>([]);
+  const [adrState, setAdrState] = React.useState<LoadState>('loading');
+  const [adrError, setAdrError] = React.useState<string | null>(null);
+
   const [memories, setMemories] = React.useState<MemoryEntry[]>([]);
   const [search, setSearch] = React.useState('');
   const [isSearching, setIsSearching] = React.useState(false);
+  const [searchError, setSearchError] = React.useState<string | null>(null);
+  const [hasSearched, setHasSearched] = React.useState(false);
 
-  const fetchADRs = async () => {
+  const fetchADRs = React.useCallback(async () => {
+    setAdrState('loading');
+    setAdrError(null);
     try {
       const res: ADR[] = await invoke('get_adrs', { projectId: 'default' });
       setAdrs(res);
+      setAdrState('ready');
     } catch (e) {
-      console.error(e);
+      setAdrError(String(e));
+      setAdrState('error');
     }
-  };
+  }, []);
 
   const handleSearch = async () => {
     if (!search.trim()) {
       setMemories([]);
+      setHasSearched(false);
+      setSearchError(null);
       return;
     }
     setIsSearching(true);
+    setSearchError(null);
     try {
       const res: MemoryEntry[] = await invoke('search_memory', {
         projectId: 'default',
@@ -60,21 +73,23 @@ export default function MemoryPage() {
       });
       setMemories(res);
     } catch (e) {
-      console.error(e);
+      setMemories([]);
+      setSearchError(String(e));
     } finally {
+      setHasSearched(true);
       setIsSearching(false);
     }
   };
 
   React.useEffect(() => {
     fetchADRs();
-  }, []);
+  }, [fetchADRs]);
 
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-12">
       <header className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-black tracking-tight text-white uppercase italic text-[#00FF9D]">Institutional Memory</h1>
+          <h1 className="text-2xl font-black tracking-tight text-white uppercase">Institutional Memory</h1>
           <p className="text-xs text-slate-500 font-mono">Capture decisions, reasoning, and system evolution.</p>
         </div>
 
@@ -132,23 +147,40 @@ export default function MemoryPage() {
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           placeholder="Search through decisions, constraints, and intent..."
-          className="pl-12 bg-[#141414] border-white/5 h-14 text-base focus-visible:ring-[#00FF9D]/30"
+          className="pl-12 bg-surface-1 border-white/5 h-14 text-base focus-visible:ring-mint/30"
         />
         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2">
-           <Badge variant="outline" className="font-mono text-[9px]">Vector Search Ready</Badge>
+          {isSearching ? (
+            <span className="flex items-center gap-2 text-[9px] font-mono uppercase tracking-widest text-slate-500">
+              <Loader2 size={12} className="animate-spin" />
+              Searching
+            </span>
+          ) : (
+            <Badge variant="outline" className="font-mono text-[9px]">Press Enter</Badge>
+          )}
         </div>
       </div>
 
       <Tabs defaultValue="decisions" className="w-full">
         <TabsList className="bg-transparent border-b border-white/5 rounded-none p-0 h-10 mb-8 w-full justify-start space-x-8">
-          <TabsTrigger value="decisions" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]">Architecture Decisions</TabsTrigger>
-          <TabsTrigger value="knowledge" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]">Project Knowledge</TabsTrigger>
-          <TabsTrigger value="user" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]">Preferences</TabsTrigger>
+          <TabsTrigger value="decisions" className="rounded-none border-b-2 border-transparent data-[state=active]:border-mint data-[state=active]:bg-transparent px-0 text-[10px]">Architecture Decisions</TabsTrigger>
+          <TabsTrigger value="knowledge" className="rounded-none border-b-2 border-transparent data-[state=active]:border-mint data-[state=active]:bg-transparent px-0 text-[10px]">Project Knowledge</TabsTrigger>
+          <TabsTrigger value="user" className="rounded-none border-b-2 border-transparent data-[state=active]:border-mint data-[state=active]:bg-transparent px-0 text-[10px]">Preferences</TabsTrigger>
         </TabsList>
 
         <TabsContent value="decisions" className="animate-in fade-in duration-300">
           <div className="grid gap-6">
-            {adrs.length === 0 ? (
+            {adrState === 'loading' && <ADRSkeleton />}
+
+            {adrState === 'error' && (
+              <ErrorState
+                message="Could not load architecture decisions."
+                detail={adrError}
+                onRetry={fetchADRs}
+              />
+            )}
+
+            {adrState === 'ready' && adrs.length === 0 && (
               <div className="p-16 border border-dashed border-white/5 rounded-3xl text-center space-y-4 bg-white/[0.01]">
                 <BookOpen size={48} className="mx-auto text-slate-800" />
                 <div className="space-y-1">
@@ -156,40 +188,47 @@ export default function MemoryPage() {
                   <p className="text-xs text-slate-600 font-mono">Formalize your technical choices to build institutional memory.</p>
                 </div>
               </div>
-            ) : (
-              adrs.map(adr => (
-                <ADRCard key={adr.id} adr={adr} />
-              ))
             )}
 
-            {/* Fallback Mock ADR */}
-            {adrs.length === 0 && (
-              <ADRCard adr={{
-                id: 0,
-                title: "Choice of Tauri v2",
-                status: "Accepted",
-                context: "Blueprint requires high performance and local filesystem access.",
-                decision: "Use Tauri v2 with Rust core for bicameral security.",
-                consequences: "Isolated backend logic and minimal resource footprint.",
-                created_at: "2026-07-29 20:00:00"
-              }} />
-            )}
+            {adrState === 'ready' && adrs.map(adr => (
+              <ADRCard key={adr.id} adr={adr} />
+            ))}
           </div>
         </TabsContent>
 
         <TabsContent value="knowledge" className="animate-in fade-in duration-300">
-          {memories.length === 0 ? (
-            <div className="grid grid-cols-3 gap-6">
-              <KnowledgeCard icon={Database} title="Data Models" description="Core schemas and relationships." />
-              <KnowledgeCard icon={ShieldCheck} title="Security Patterns" description="Auth and encryption rules." />
-              <KnowledgeCard icon={Bot} title="Agent Insights" description="Discovered system patterns." />
+          {searchError ? (
+            <ErrorState
+              message="Memory search failed."
+              detail={searchError}
+              onRetry={handleSearch}
+            />
+          ) : isSearching ? (
+            <div className="grid gap-4">
+              {[0, 1, 2].map(i => (
+                <div key={i} className="h-[68px] rounded-xl bg-white/[0.02] border border-white/5 animate-pulse" />
+              ))}
+            </div>
+          ) : memories.length === 0 ? (
+            <div className="p-16 border border-dashed border-white/5 rounded-3xl text-center space-y-4 bg-white/[0.01]">
+              <Brain size={48} className="mx-auto text-slate-800" />
+              <div className="space-y-1">
+                <p className="text-slate-400 font-bold uppercase tracking-tight">
+                  {hasSearched ? `No matches for "${search}"` : 'Search project knowledge'}
+                </p>
+                <p className="text-xs text-slate-600 font-mono">
+                  {hasSearched
+                    ? 'Try a broader term, or capture new knowledge above.'
+                    : 'Query patterns, schemas, and agent findings captured for this project.'}
+                </p>
+              </div>
             </div>
           ) : (
             <div className="grid gap-4">
               {memories.map(entry => (
-                <div key={entry.id} className="p-4 bg-[#141414] border border-white/5 rounded-xl flex items-center justify-between group hover:border-white/10 transition-colors">
+                <div key={entry.id} className="p-4 bg-surface-1 border border-white/5 rounded-xl flex items-center justify-between group hover:border-white/10 transition-colors">
                   <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-[#00FF9D] transition-colors">
+                    <div className="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-mint transition-colors">
                       <Brain size={16} />
                     </div>
                     <div>
@@ -205,8 +244,8 @@ export default function MemoryPage() {
         </TabsContent>
 
         <TabsContent value="user" className="animate-in fade-in duration-300">
-           <div className="p-12 bg-[#141414] border border-white/5 rounded-2xl flex flex-col items-center text-center space-y-4">
-             <User size={32} className="text-[#00FF9D]/40" />
+           <div className="p-12 bg-surface-1 border border-white/5 rounded-2xl flex flex-col items-center text-center space-y-4">
+             <User size={32} className="text-mint/40" />
              <div className="space-y-1">
                <h3 className="text-sm font-bold text-white uppercase tracking-widest">Developer DNA</h3>
                <p className="text-xs text-slate-500 font-mono">Blueprint learns your coding style and preferences over time.</p>
@@ -221,17 +260,17 @@ export default function MemoryPage() {
 
 function ADRCard({ adr }: { adr: ADR }) {
   return (
-    <div className="group p-8 bg-[#141414] border border-white/5 rounded-3xl hover:border-[#00FF9D]/20 transition-all duration-500">
+    <div className="group p-8 bg-surface-1 border border-white/5 rounded-3xl hover:border-mint/20 transition-all duration-500">
       <div className="flex items-start justify-between mb-8">
         <div className="space-y-2">
-          <Badge variant="success" className="bg-[#00FF9D]/5 border-[#00FF9D]/20 text-[#00FF9D]">{adr.status}</Badge>
-          <h3 className="text-2xl font-black text-white tracking-tighter uppercase group-hover:text-[#00FF9D] transition-colors">{adr.title}</h3>
+          <Badge variant="success" className="bg-mint/5 border-mint/20 text-mint">{adr.status}</Badge>
+          <h3 className="text-2xl font-black text-white tracking-tighter uppercase group-hover:text-mint transition-colors">{adr.title}</h3>
           <div className="flex items-center space-x-2 text-[10px] text-slate-600 font-mono uppercase tracking-widest">
             <Clock size={12} />
             <span>{adr.created_at}</span>
           </div>
         </div>
-        <div className="p-3 rounded-2xl bg-white/5 text-slate-500 group-hover:text-white group-hover:bg-[#00FF9D]/10 transition-all duration-500">
+        <div className="p-3 rounded-2xl bg-white/5 text-slate-500 group-hover:text-white group-hover:bg-mint/10 transition-all duration-500">
           <History size={24} />
         </div>
       </div>
@@ -251,14 +290,14 @@ function ADRCard({ adr }: { adr: ADR }) {
         <div className="flex items-center space-x-3">
           <div className="flex -space-x-2">
             {[1,2].map(i => (
-              <div key={i} className="w-6 h-6 rounded-full border-2 border-[#141414] bg-slate-800 flex items-center justify-center">
+              <div key={i} className="w-6 h-6 rounded-full border-2 border-surface-1 bg-slate-800 flex items-center justify-center">
                 <User size={12} className="text-slate-400" />
               </div>
             ))}
           </div>
           <span className="text-[10px] font-mono text-slate-500 uppercase tracking-tighter">Verified by Principal Agent</span>
         </div>
-        <Button variant="ghost" size="sm" className="h-8 text-[11px] uppercase font-black tracking-widest hover:text-[#00FF9D] hover:bg-transparent">
+        <Button variant="ghost" size="sm" className="h-8 text-[11px] uppercase font-black tracking-widest hover:text-mint hover:bg-transparent">
           Explore Impact
           <ChevronRight size={14} className="ml-1" />
         </Button>
@@ -267,18 +306,62 @@ function ADRCard({ adr }: { adr: ADR }) {
   );
 }
 
-function KnowledgeCard({ icon: Icon, title, description }: any) {
+function ADRSkeleton() {
   return (
-    <div className="p-6 bg-[#141414] border border-white/5 rounded-2xl space-y-4 hover:bg-white/[0.02] transition-colors cursor-pointer group">
-      <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 group-hover:text-[#00FF9D] group-hover:bg-[#00FF9D]/10 transition-all">
-        <Icon size={20} />
-      </div>
-      <div className="space-y-1">
-        <h4 className="text-sm font-bold text-white tracking-tight">{title}</h4>
-        <p className="text-xs text-slate-500 font-mono leading-relaxed">{description}</p>
-      </div>
+    <div className="space-y-6" aria-busy="true" aria-label="Loading decisions">
+      {[0, 1].map(i => (
+        <div key={i} className="p-8 bg-surface-1 border border-white/5 rounded-3xl space-y-8">
+          <div className="space-y-3">
+            <div className="h-4 w-20 rounded-full bg-white/5 animate-pulse" />
+            <div className="h-7 w-2/3 rounded bg-white/5 animate-pulse" />
+            <div className="h-3 w-32 rounded bg-white/5 animate-pulse" />
+          </div>
+          <div className="grid grid-cols-2 gap-12">
+            <div className="space-y-2">
+              <div className="h-3 w-16 rounded bg-white/5 animate-pulse" />
+              <div className="h-3 w-full rounded bg-white/5 animate-pulse" />
+              <div className="h-3 w-4/5 rounded bg-white/5 animate-pulse" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-3 w-16 rounded bg-white/5 animate-pulse" />
+              <div className="h-3 w-full rounded bg-white/5 animate-pulse" />
+              <div className="h-3 w-3/5 rounded bg-white/5 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-import { Clock } from 'lucide-react';
+function ErrorState({
+  message,
+  detail,
+  onRetry
+}: {
+  message: string;
+  detail?: string | null;
+  onRetry?: () => void;
+}) {
+  return (
+    <div
+      role="alert"
+      className="p-12 border border-red-500/20 bg-red-500/[0.03] rounded-3xl text-center space-y-4"
+    >
+      <AlertTriangle size={40} className="mx-auto text-red-500/60" />
+      <div className="space-y-2">
+        <p className="text-slate-300 font-bold uppercase tracking-tight">{message}</p>
+        {detail && (
+          <p className="text-xs text-slate-500 font-mono break-words max-w-xl mx-auto leading-relaxed">
+            {detail}
+          </p>
+        )}
+      </div>
+      {onRetry && (
+        <Button variant="outline" size="sm" onClick={onRetry} className="border-white/10">
+          Retry
+        </Button>
+      )}
+    </div>
+  );
+}

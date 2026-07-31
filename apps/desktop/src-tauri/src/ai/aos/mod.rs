@@ -1,10 +1,12 @@
 pub mod persona;
 pub mod compiler;
-pub mod router;
 pub mod workflow;
 pub mod tools;
 pub mod eval;
 
+// `router` is gone: capability routing now lives on `AIManager`, where the user
+// configures it. The old `ModelRouter::route` was a hardcoded vendor match that
+// could not express provider choice at all.
 use persona::PersonaRegistry;
 use compiler::PromptCompiler;
 use workflow::WorkflowEngine;
@@ -26,7 +28,12 @@ impl AgentOS {
     }
 
     pub fn compile_prompt(&self, role_id: &str, goal: &str, context: &Value) -> Result<String, String> {
-        let registry = self.persona_registry.lock().unwrap();
+        // `lock().unwrap()` panics the whole app if any holder ever panicked;
+        // recover the guard instead so one bad turn can't take Blueprint down.
+        let registry = self
+            .persona_registry
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
         let manual = registry.get(role_id)
             .ok_or_else(|| format!("Persona {} not found in registry", role_id))?;
 

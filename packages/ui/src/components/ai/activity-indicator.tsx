@@ -13,9 +13,9 @@ export function ActivityIndicator({ className, label, ...props }: ActivityIndica
         <motion.span
           animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0.2, 0.5] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inline-flex h-full w-full rounded-full bg-[#00FF9D] opacity-75"
+          className="absolute inline-flex h-full w-full rounded-full bg-mint opacity-75"
         />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00FF9D]" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-mint" />
       </div>
       {label && (
         <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500">

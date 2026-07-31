@@ -34,5 +34,5 @@ Thumbs.db
 .turbo
 .cache
 
-# TypeScript build info
+# TypeScript incremental build info
 *.tsbuildinfo

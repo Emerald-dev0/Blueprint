@@ -21,7 +21,7 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, describeError } from '../../lib/ipc';
 
 export default function IntelligencePage() {
   const [url, setUrl] = React.useState('');
@@ -53,8 +53,8 @@ export default function IntelligencePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Web Intelligence Card */}
-        <section className="p-6 bg-[#141414] border border-white/5 rounded-2xl space-y-6">
-          <div className="flex items-center space-x-2 text-[#00FF9D]">
+        <section className="p-6 bg-surface-1 border border-white/5 rounded-2xl space-y-6">
+          <div className="flex items-center space-x-2 text-mint">
             <Globe size={18} />
             <h3 className="text-sm font-black uppercase tracking-widest">Web Reverse Engineering</h3>
           </div>
@@ -99,8 +99,8 @@ export default function IntelligencePage() {
         </section>
 
         {/* Repository Card */}
-        <section className="p-6 bg-[#141414] border border-white/5 rounded-2xl space-y-6">
-          <div className="flex items-center space-x-2 text-[#00FF9D]">
+        <section className="p-6 bg-surface-1 border border-white/5 rounded-2xl space-y-6">
+          <div className="flex items-center space-x-2 text-mint">
             <FolderSearch size={18} />
             <h3 className="text-sm font-black uppercase tracking-widest">Repository Mapping</h3>
           </div>

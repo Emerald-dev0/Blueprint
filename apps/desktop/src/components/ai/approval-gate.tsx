@@ -49,7 +49,7 @@ export function ApprovalGate({
         </DialogHeader>
 
         <div className="p-4 bg-white/5 border border-white/5 rounded-xl space-y-3 mt-2">
-          <h4 className="text-sm font-bold text-[#00FF9D]">{title}</h4>
+          <h4 className="text-sm font-bold text-mint">{title}</h4>
           <p className="text-xs text-slate-400 font-mono leading-relaxed">{description}</p>
         </div>
 

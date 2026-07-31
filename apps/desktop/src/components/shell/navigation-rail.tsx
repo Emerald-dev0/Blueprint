@@ -27,7 +27,7 @@ export function NavigationRail() {
   const pathname = usePathname();
 
   return (
-    <nav className="w-16 h-full flex flex-col items-center py-4 bg-[#141414] border-r border-white/5 space-y-4">
+    <nav className="w-16 h-full flex flex-col items-center py-4 bg-surface-1 border-r border-white/5 space-y-4">
       {navItems.map((item) => {
         const isActive = pathname === item.href || (item.id === 'projects' && pathname === '/');
         return (
