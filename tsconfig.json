@@ -15,14 +15,17 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
+    "types": ["node"],
     "paths": {
       "@blueprint/ui": ["packages/ui/src"],
       "@blueprint/core": ["packages/core/src"],
       "@blueprint/ai-adapters": ["packages/ai-adapters/src"],
       "@blueprint/git-engine": ["packages/git-engine/src"],
       "@blueprint/brain": ["packages/brain/src"],
-      "@blueprint/types": ["packages/types/src"]
+      "@blueprint/types": ["packages/types/src"],
+      "@blueprint/plugin-sdk": ["packages/plugin-sdk/src"]
     }
   },
-  "exclude": ["node_modules"]
+  "include": ["packages/**/*", "plugins/**/*", "tests/**/*", "scripts/**/*", "vitest.config.ts"],
+  "exclude": ["node_modules", "apps", "**/*.tsbuildinfo"]
 }
