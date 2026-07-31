@@ -2,6 +2,9 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use tokio::sync::mpsc;
 
+#[cfg(test)]
+mod tests;
+
 pub mod anthropic;
 pub mod error;
 pub mod gemini;

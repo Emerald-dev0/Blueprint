@@ -272,3 +272,136 @@ impl AIManager {
             .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn target(provider: &str, model: &str) -> RouteTarget {
+        RouteTarget {
+            provider_id: provider.to_string(),
+            model_id: model.to_string(),
+        }
+    }
+
+    #[test]
+    fn every_registered_provider_is_addressable() {
+        // The old router emitted "ollama" as a route target while no such
+        // provider was registered, so that branch was a guaranteed runtime
+        // failure. Anything the router can name must resolve.
+        let manager = AIManager::new();
+        for id in ["anthropic", "openai", "gemini", "ollama", "opencode"] {
+            assert!(
+                manager.provider(id).is_ok(),
+                "provider '{id}' is not registered"
+            );
+        }
+    }
+
+    #[test]
+    fn local_providers_declare_no_api_key() {
+        // This is the property the old `complete(api_key: &str, ..)` signature
+        // could not express, and the reason OpenCode support was impossible.
+        let manager = AIManager::new();
+        for id in ["ollama", "opencode"] {
+            let provider = manager.provider(id).unwrap();
+            assert!(
+                matches!(provider.auth_kind(), AuthKind::LocalEndpoint { .. }),
+                "{id} should be a local endpoint"
+            );
+            let cfg = manager.config_for(provider);
+            assert!(cfg.api_key.is_none(), "{id} must not be handed a credential");
+        }
+    }
+
+    #[test]
+    fn hosted_providers_declare_an_api_key() {
+        let manager = AIManager::new();
+        for id in ["anthropic", "openai", "gemini"] {
+            let provider = manager.provider(id).unwrap();
+            assert!(
+                matches!(provider.auth_kind(), AuthKind::ApiKey { .. }),
+                "{id} should require an API key"
+            );
+        }
+    }
+
+    #[test]
+    fn unknown_provider_is_rejected_not_silently_defaulted() {
+        let manager = AIManager::new();
+        assert!(matches!(
+            manager.provider("does-not-exist"),
+            Err(ProviderError::UnknownProvider { .. })
+        ));
+    }
+
+    #[test]
+    fn overrides_take_precedence_over_the_default() {
+        let mut config = RoutingConfig::default();
+        config
+            .overrides
+            .insert(ModelCapability::Private, target("opencode", "local-model"));
+
+        assert_eq!(config.resolve(ModelCapability::Private).provider_id, "opencode");
+        // Untouched capabilities still fall through to the default.
+        assert_eq!(
+            config.resolve(ModelCapability::Reasoning).provider_id,
+            config.default.provider_id
+        );
+    }
+
+    #[test]
+    fn routing_is_validated_before_it_is_stored() {
+        let manager = AIManager::new();
+        let before = manager.routing();
+
+        let mut bad = RoutingConfig::default();
+        bad.overrides
+            .insert(ModelCapability::Coding, target("not-a-provider", "x"));
+
+        assert!(
+            manager.set_routing(bad).is_err(),
+            "a route to an unregistered provider should be rejected at config time"
+        );
+        assert_eq!(
+            manager.routing().default.provider_id,
+            before.default.provider_id,
+            "rejected config must not be partially applied"
+        );
+    }
+
+    #[test]
+    fn valid_routing_round_trips() {
+        let manager = AIManager::new();
+        let mut config = RoutingConfig::default();
+        config.default = target("ollama", "llama3");
+        config
+            .overrides
+            .insert(ModelCapability::Architecture, target("anthropic", "claude-opus-5"));
+
+        manager.set_routing(config).expect("valid routing rejected");
+
+        assert_eq!(manager.resolve(ModelCapability::Coding).provider_id, "ollama");
+        assert_eq!(
+            manager.resolve(ModelCapability::Architecture).model_id,
+            "claude-opus-5"
+        );
+    }
+
+    #[test]
+    fn endpoint_override_is_applied_and_clearable() {
+        let manager = AIManager::new();
+        let provider = manager.provider("ollama").unwrap();
+
+        assert!(manager.config_for(provider).base_url.is_none());
+
+        manager.set_endpoint("ollama", Some("http://localhost:9999".into()));
+        assert_eq!(
+            manager.config_for(provider).base_url.as_deref(),
+            Some("http://localhost:9999")
+        );
+
+        manager.set_endpoint("ollama", None);
+        assert!(manager.config_for(provider).base_url.is_none());
+    }
+}

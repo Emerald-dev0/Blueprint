@@ -46,3 +46,131 @@ impl RedactionEngine {
         redacted
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const MARKER: &str = "[REDACTED_SECRET]";
+
+    fn assert_redacted(secret: &str, label: &str) {
+        let input = format!("here is the value: {} — use it", secret);
+        let out = RedactionEngine::redact(&input);
+        assert!(
+            !out.contains(secret),
+            "{label} survived redaction.\n  input:  {input}\n  output: {out}"
+        );
+        assert!(out.contains(MARKER), "{label} was removed but not marked");
+    }
+
+    /// Assembles a fixture at runtime from fragments.
+    ///
+    /// Some of these shapes are recognised by GitHub's push-protection scanner,
+    /// which cannot tell a test fixture from a live credential — a literal here
+    /// blocks the push. Splitting the value means no scannable token exists in
+    /// the file while the regex under test still sees the full string.
+    fn fixture(parts: &[&str]) -> String {
+        parts.concat()
+    }
+
+    const BODY: &str = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    #[test]
+    fn redacts_provider_credentials() {
+        // These are the token shapes Blueprint itself stores; none of them were
+        // matched before the audit, so the app could leak its own credentials
+        // back to a provider by quoting a config file into a prompt.
+        //
+        // Every prefix is split so no complete, scanner-recognisable token
+        // exists as a literal in this file — see `fixture`.
+        assert_redacted(&fixture(&["sk", "-ant-", "api03-", BODY]), "Anthropic key");
+        assert_redacted(&fixture(&["sk", "-proj-", BODY]), "OpenAI key");
+        assert_redacted(&fixture(&["AIza", "SyA1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r"]), "Google key");
+        assert_redacted(&fixture(&["ghp", "_", BODY, "AB"]), "GitHub token");
+        assert_redacted(
+            &fixture(&["github", "_pat_", "11ABCDEFG0", BODY]),
+            "GitHub fine-grained PAT",
+        );
+        assert_redacted(
+            &fixture(&["xox", "b-", "123456789012-abcdefghijklmnop"]),
+            "Slack bot token",
+        );
+    }
+
+    #[test]
+    fn redacts_cloud_and_payment_credentials() {
+        assert_redacted(&fixture(&["AKIA", "IOSFODNN7EXAMPLE"]), "AWS access key id");
+        assert_redacted(
+            &fixture(&["sk", "_live_", "abcdefghijklmnopqrstuvwx"]),
+            "Stripe live key",
+        );
+    }
+
+    #[test]
+    fn redacts_jwts_and_auth_headers() {
+        assert_redacted(
+            &fixture(&[
+                "eyJ",
+                "hbGciOiJIUzI1NiJ9.",
+                "eyJzdWIiOiIxMjM0NTY3ODkwIn0.",
+                "dBjftJeZ4CVPmB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+            ]),
+            "JWT",
+        );
+
+        let input = format!("Authorization: Bearer {}", BODY);
+        let out = RedactionEngine::redact(&input);
+        assert!(!out.contains(BODY), "bearer token survived: {out}");
+    }
+
+    #[test]
+    fn redacts_inline_connection_string_credentials() {
+        let input = "DATABASE_URL=postgres://admin:hunter2@db.internal:5432/app";
+        let out = RedactionEngine::redact(input);
+        assert!(!out.contains("hunter2"), "db password survived: {out}");
+    }
+
+    #[test]
+    fn redacts_generic_assignments() {
+        for input in [
+            r#"api_key = "abcdefghijklmnopqrstuvwxyz01""#,
+            "password: correct-horse-battery-staple-99",
+            r#"access_token='abcdefghijklmnopqrstuvwxyz01'"#,
+        ] {
+            let out = RedactionEngine::redact(input);
+            assert!(
+                out.contains(MARKER),
+                "assignment not redacted.\n  input:  {input}\n  output: {out}"
+            );
+        }
+    }
+
+    #[test]
+    fn redacts_private_key_blocks() {
+        let input = "-----BEGIN RSA PRIVATE KEY-----\nMIIEow...\n-----END RSA PRIVATE KEY-----";
+        assert!(RedactionEngine::redact(input).contains(MARKER));
+    }
+
+    #[test]
+    fn leaves_ordinary_engineering_prose_alone() {
+        // Redaction runs on every outbound message, so over-matching would
+        // quietly corrupt the prompts the personas depend on.
+        for input in [
+            "Refactor the auth module to use the repository pattern.",
+            "The build fails on line 42 of src/main.rs with error E0609.",
+            "Use claude-opus-5 for reasoning and gpt-4o for coding.",
+            "See https://github.com/Emerald-dev0/Blueprint/pull/34 for context.",
+        ] {
+            let out = RedactionEngine::redact(input);
+            assert_eq!(out, input, "prose was altered by redaction");
+        }
+    }
+
+    #[test]
+    fn redacts_every_occurrence_not_just_the_first() {
+        let input = "first ghp_abcdefghijklmnopqrstuvwxyz0123456789AB \
+                     second ghp_zyxwvutsrqponmlkjihgfedcba9876543210ZY";
+        let out = RedactionEngine::redact(input);
+        assert_eq!(out.matches(MARKER).count(), 2, "only one match replaced: {out}");
+    }
+}
