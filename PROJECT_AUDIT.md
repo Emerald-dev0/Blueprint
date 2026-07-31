@@ -7,6 +7,21 @@ This document is the **honest state of every subsystem**. Do not read it as a wi
 
 ---
 
+## 1a. Post-Audit Update (2026-07-31)
+
+The `feranmi-edit` branch was audited and **integrated into `develop`** (PR #37) after this audit was written. It fixed a substantial portion of the debt below. Resolved:
+
+- **Rust backend compiles and ships real providers.** Gemini/Anthropic/OpenAI are now real SSE streaming implementations (Anthropic/OpenAI were literal `"<provider> response placeholder"` strings); Ollama + OpenCode added; `ModelRouter` dead-end (`ollama/llama3` with no provider) replaced by a validated user-owned `RoutingConfig`. `Result<_, String>` errors replaced with typed `ProviderError`.
+- **IPC is now enforced.** `scripts/check-ipc-contract.mjs` cross-checks every `invoke()` against `generate_handler!` both directions (18 invoked / 36 registered / 36 defined). The 6 missing commands (`get_adrs`, `search_memory`, `create_git_commit`, `push_git_changes`, `list_github_issues`, `create_github_pull_request`) were implemented. The swallow-into-mock-data pattern was removed via `lib/ipc.ts`.
+- **Git layer is real** (`git2` for status/branches/commit/summary; push shells out to `git`).
+- **Rust CI exists.** `ci.yml` now runs `cargo check --all-targets`, clippy, and `cargo test` (0 → **27 tests**, incl. real TCP-SSE provider transport tests). Branch protection updated to require `Frontend` / `Backend` / `IPC contract` / `audit`.
+- **Security fixes:** Gemini key moved from query param to `x-goog-api-key` header; redaction centralized + broadened (8 tests); HTTP timeouts; no `unwrap()` on poisoned mutex; app-data dirs instead of CWD-relative.
+- **UI:** 3 token systems collapsed to 1 (148 hardcoded hex literals → token utilities); memory-page false-empty-state fixed; loading/error states; Tailwind actually compiles (PostCSS + `@source`).
+
+**Still open (this audit's remaining debt):** Tauri capabilities file (P0), fake plugin registration, persona/task/plugin consolidation, tool-calling loop, marketplace, dead-code cleanup, no Playwright.
+
+---
+
 ## 1. Completed Systems (what actually works)
 
 | System | Evidence |

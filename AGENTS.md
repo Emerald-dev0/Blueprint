@@ -65,18 +65,19 @@ Never bypass this workflow: no direct pushes to `develop`/`main`, no large unstr
 ## 6. CI Requirements
 
 - Every push and PR to `main`/`develop` triggers:
-  - **`validate`** — `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`.
-  - **`audit`** — `pnpm audit` (npm) and `cargo audit` (Rust).
-- CI must also cover the Rust crate: `cargo check` and `cargo test`. (Tracked as debt — see `PROJECT_AUDIT.md`.)
-- A PR is not mergeable until all checks are green.
+  - **Frontend** — `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`.
+  - **Backend** — `cargo check --all-targets`, `cargo clippy`, `cargo test` (Rust).
+  - **IPC contract** — `scripts/check-ipc-contract.mjs` (frontend/backend command parity).
+  - **audit** — `pnpm audit` (npm) and `cargo audit` (Rust).
+- A PR is not mergeable until all checks are green (`Frontend`, `Backend`, `IPC contract`, `audit`).
 - Dependency changes must regenerate `pnpm-lock.yaml`/`Cargo.lock` and must not raise new vulnerabilities without documented justification.
 
 ## 7. Testing Requirements
 
 - **TypeScript/React:** Vitest unit tests for all non-trivial logic. No test is optional for new behavior.
-- **Rust:** `cargo test` for all core services (memory, git, intelligence, AOS).
+- **Rust:** `cargo test` for all core services (memory, git, intelligence, AOS). 27 provider/redaction tests exist; extend, don't reduce.
+- **IPC contract:** `pnpm check:ipc` must stay green — never invoke an unregistered command and never leave a registered command unwired.
 - **E2E:** Playwright planned; until configured, cover functionality with Vitest. Never claim E2E coverage that does not exist.
-- The single repository test that only asserts `true === true` is a placeholder — replace it with real tests as features land.
 - Run the full test suite before opening a PR.
 
 ## 8. Coding Standards

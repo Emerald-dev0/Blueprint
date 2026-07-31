@@ -16,6 +16,7 @@ pnpm lint              # ESLint (flat config)
 pnpm typecheck         # tsc --noEmit across workspaces
 pnpm test              # Vitest (tests/unit)
 pnpm build             # Turbo production build (Next static export)
+pnpm check:ipc         # frontend/backend command parity
 cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
 cargo test  --manifest-path apps/desktop/src-tauri/Cargo.toml
 ```
@@ -36,9 +37,9 @@ A change is done only when **all** of `AGENTS.md` §13 hold — issue linked, fe
 ## 🧪 Testing
 
 - **TypeScript:** Vitest for all non-trivial logic — no test is optional for new behavior.
-- **Rust:** `cargo test` for core services (memory, git, intelligence, AOS). Run before opening a PR.
+- **Rust:** `cargo test` for core services (memory, git, intelligence, AOS). 27 provider/redaction tests exist. Run before opening a PR.
+- **IPC contract:** `pnpm check:ipc` must stay green (invoke/handler parity).
 - **E2E:** Playwright is planned but **not yet configured**. Do not claim E2E coverage.
-- The existing `true === true` test is a placeholder; replace it with real tests as the subsystems they cover land.
 
 ## 📐 Standards
 
