@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useWorkspaceStore } from '../../store/workspace';
 import { NavItem } from '@blueprint/ui';
 import {
   FolderKanban,

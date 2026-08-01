@@ -4,7 +4,6 @@ import * as React from 'react';
 import {
   Button,
   Badge,
-  Separator,
   ActivityIndicator,
   Tabs,
   TabsList,
@@ -18,10 +17,9 @@ import {
   Activity,
   User,
   Zap,
-  BookOpen,
-  LayoutGrid
+  BookOpen
 } from 'lucide-react';
-import { invoke, describeError } from '../../../lib/ipc';
+import { invoke } from '../../../lib/ipc';
 
 export default function AOSDashboard() {
   const [manuals, setManuals] = React.useState<any[]>([]);

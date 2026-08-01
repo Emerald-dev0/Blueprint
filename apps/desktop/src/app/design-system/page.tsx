@@ -28,7 +28,7 @@ import {
   AIProposalSurface,
   ActivityIndicator
 } from '@blueprint/ui';
-import { Terminal, Box, Shield, Zap, Info } from 'lucide-react';
+import { Box, Shield, Zap } from 'lucide-react';
 
 function ColorSwatch({ color, label, hex, textColor = "text-white" }: { color: string; label: string; hex: string; textColor?: string }) {
   return (
