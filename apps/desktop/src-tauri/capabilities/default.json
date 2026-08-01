@@ -1,0 +1,6 @@
+{
+  "identifier": "default",
+  "description": "Default capability for the Blueprint main window. Grants core events (event listen/emit used by the plugin store), window/app/webview defaults, and the app's custom commands.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
