@@ -1,8 +1,6 @@
 pub mod persona;
 pub mod compiler;
 pub mod workflow;
-pub mod tools;
-pub mod eval;
 
 // `router` is gone: capability routing now lives on `AIManager`, where the user
 // configures it. The old `ModelRouter::route` was a hardcoded vendor match that

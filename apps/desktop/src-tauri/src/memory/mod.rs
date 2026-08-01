@@ -84,14 +84,6 @@ impl MemoryManager {
             [],
         ).expect("failed to create memory_entries table");
 
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS user_preferences (
-                key TEXT PRIMARY KEY,
-                value TEXT NOT NULL
-            )",
-            [],
-        ).expect("failed to create user_preferences table");
-
         Self {
             db: Mutex::new(conn),
             session_cache: Mutex::new(HashMap::new()),
@@ -183,15 +175,6 @@ impl MemoryManager {
             results.push(adr.map_err(|e| e.to_string())?);
         }
         Ok(results)
-    }
-
-    pub fn set_preference(&self, key: &str, value: &str) -> Result<(), String> {
-        let db = self.db.lock().map_err(|e| e.to_string())?;
-        db.execute(
-            "INSERT OR REPLACE INTO user_preferences (key, value) VALUES (?, ?)",
-            params![key, value],
-        ).map_err(|e| e.to_string())?;
-        Ok(())
     }
 }
 
