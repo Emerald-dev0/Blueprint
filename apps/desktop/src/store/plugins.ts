@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { PluginManifest, BlueprintAPI } from '@blueprint/plugin-sdk';
+import { PluginManifest } from '@blueprint/plugin-sdk';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 
@@ -15,7 +15,7 @@ interface PluginState {
   publishEvent: (type: string, data: any) => Promise<void>;
 }
 
-export const usePluginStore = create<PluginState>((set, get) => ({
+export const usePluginStore = create<PluginState>((set) => ({
   plugins: [],
   commands: [],
   panels: {},
