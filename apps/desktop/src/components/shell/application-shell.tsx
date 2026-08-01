@@ -12,28 +12,9 @@ import { useEffect } from 'react';
 
 export function ApplicationShell({ children }: { children: React.ReactNode }) {
   const { toggleLeftWing, toggleRightWing, leftWingOpen, rightWingOpen } = useWorkspaceStore();
-  const { registerPlugin, registerCommand } = usePluginStore();
 
   useEffect(() => {
-    // Simulate loading a React Intelligence plugin
-    registerPlugin({
-      id: 'io.blueprint.react-intel',
-      name: 'React Intelligence',
-      version: '1.0.0',
-      author: 'Blueprint Team',
-      description: 'Provides deep analysis of React component trees.',
-      permissions: ['fs.read'],
-      minBlueprintVersion: '0.1.0',
-      entrypoints: {
-        frontend: 'index.js'
-      }
-    });
-
-    registerCommand(
-      'react-intel-scan',
-      'React: Scan Component Tree',
-      () => console.log("Scanning React components...")
-    );
+    usePluginStore.getState().initialize();
   }, []);
 
   return (
