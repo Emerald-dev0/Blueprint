@@ -8,9 +8,7 @@ import {
   Search,
   FolderKanban,
   Settings,
-  Terminal,
   Cpu,
-  ShieldCheck,
   Plus,
   Puzzle
 } from 'lucide-react';

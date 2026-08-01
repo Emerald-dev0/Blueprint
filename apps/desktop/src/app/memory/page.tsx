@@ -28,7 +28,7 @@ import {
   Loader2,
   AlertTriangle
 } from 'lucide-react';
-import { invoke, describeError } from '../../lib/ipc';
+import { invoke } from '../../lib/ipc';
 import { MemoryEntry, ADR } from '@blueprint/types';
 
 type LoadState = 'loading' | 'ready' | 'error';

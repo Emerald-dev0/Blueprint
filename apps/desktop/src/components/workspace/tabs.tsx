@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { useWorkspaceStore, WorkspaceTab } from '@/store/workspace';
+import { useWorkspaceStore } from '@/store/workspace';
 import { X, Cpu, Brain, Bot, FileText, Layout } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, Reorder } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const tabIcons = {
   analysis: Layout,

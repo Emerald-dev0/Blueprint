@@ -9,7 +9,7 @@ import {
   ActivityIndicator
 } from '@blueprint/ui';
 import { Send, Bot, User, Sparkles, LayoutList } from 'lucide-react';
-import { invoke, describeError } from '../../lib/ipc';
+import { invoke } from '../../lib/ipc';
 import { ExecutionTimeline } from '../../components/ai/execution-timeline';
 import { Task, Persona } from '@blueprint/types';
 

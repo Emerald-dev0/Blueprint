@@ -13,15 +13,11 @@ import {
   TabsContent
 } from '@blueprint/ui';
 import {
-  Search,
   Globe,
   FolderSearch,
-  Network,
-  FileWarning,
-  ExternalLink,
-  ChevronRight
+  Network
 } from 'lucide-react';
-import { invoke, describeError } from '../../lib/ipc';
+import { invoke } from '../../lib/ipc';
 
 export default function IntelligencePage() {
   const [url, setUrl] = React.useState('');

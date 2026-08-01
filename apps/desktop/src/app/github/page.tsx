@@ -4,25 +4,18 @@ import * as React from 'react';
 import {
   Button,
   Input,
-  Badge,
-  Separator,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent
+  Badge
 } from '@blueprint/ui';
 import {
   Github,
-  GitBranch,
   GitPullRequest,
   MessageSquare,
   Activity,
   Search,
   ExternalLink,
-  ChevronRight,
   ShieldCheck
 } from 'lucide-react';
-import { invoke, describeError } from '../../lib/ipc';
+import { invoke } from '../../lib/ipc';
 import { GitHubRepository } from '@blueprint/types';
 
 export default function GitHubPage() {
