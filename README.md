@@ -32,7 +32,7 @@ Local-first indexing. Your source code never leaves your machine unless you expl
 
 ---
 
-## 🏗 System Architecture
+##  System Architecture
 
 ### High-Level Overview
 ```mermaid
