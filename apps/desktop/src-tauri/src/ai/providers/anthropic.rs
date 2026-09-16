@@ -8,7 +8,7 @@
 use async_trait::async_trait;
 use serde_json::{json, Value};
 
-use super::{http_error, truncate, AIProvider, AIMessage, CompletionResponse};
+use super::{http_error, truncate, AIMessage, AIProvider, CompletionResponse};
 
 const API_VERSION: &str = "2023-06-01";
 const DEFAULT_MAX_TOKENS: u32 = 4096;
@@ -88,10 +88,7 @@ impl AIProvider for AnthropicProvider {
 
         Ok(CompletionResponse {
             content,
-            model_id: payload["model"]
-                .as_str()
-                .unwrap_or(model_id)
-                .to_string(),
+            model_id: payload["model"].as_str().unwrap_or(model_id).to_string(),
         })
     }
 }

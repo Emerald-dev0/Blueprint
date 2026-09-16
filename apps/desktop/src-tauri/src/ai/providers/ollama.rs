@@ -11,7 +11,7 @@ use async_trait::async_trait;
 use serde_json::{json, Value};
 use std::env;
 
-use super::{truncate, AIProvider, AIMessage, CompletionResponse};
+use super::{truncate, AIMessage, AIProvider, CompletionResponse};
 
 const DEFAULT_HOST: &str = "http://127.0.0.1:11434";
 

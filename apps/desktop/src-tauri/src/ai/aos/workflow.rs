@@ -32,9 +32,7 @@ pub struct WorkflowEngine {
 
 impl WorkflowEngine {
     pub fn new() -> Self {
-        Self {
-            active_graph: None,
-        }
+        Self { active_graph: None }
     }
 
     pub fn plan_workflow(&mut self, goal: &str) -> TaskGraph {
@@ -70,7 +68,8 @@ impl WorkflowEngine {
                 Task {
                     id: "t3".to_string(),
                     role_id: "principal-engineer".to_string(),
-                    goal: "Review the design for production readiness and record the decision.".to_string(),
+                    goal: "Review the design for production readiness and record the decision."
+                        .to_string(),
                     status: TaskStatus::Pending,
                     dependencies: vec!["t2".to_string()],
                     output: None,

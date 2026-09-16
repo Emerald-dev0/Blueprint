@@ -73,20 +73,16 @@ impl CredentialManager {
     pub fn get_github_token() -> Result<String, String> {
         let entry = Entry::new("blueprint-vcs", "github")
             .map_err(|e| format!("could not reach the system credential store: {e}"))?;
-        entry.get_password().map_err(|_| {
-            "No GitHub token is stored. Add one in Settings → GitHub.".to_string()
-        })
+        entry
+            .get_password()
+            .map_err(|_| "No GitHub token is stored. Add one in Settings → GitHub.".to_string())
     }
 }
 
 fn open_repo(project: &ProjectContext) -> Result<git2::Repository, String> {
     let path = project.current()?;
-    git2::Repository::discover(&path).map_err(|e| {
-        format!(
-            "'{}' is not inside a git repository: {e}",
-            path.display()
-        )
-    })
+    git2::Repository::discover(&path)
+        .map_err(|e| format!("'{}' is not inside a git repository: {e}", path.display()))
 }
 
 fn describe(state: git2::Status) -> &'static str {
@@ -370,7 +366,10 @@ pub fn generate_github_release_notes(
                         "test" => "Tests",
                         _ => "Other Changes",
                     };
-                    groups.entry(group).or_default().push(format!("- {summary}"));
+                    groups
+                        .entry(group)
+                        .or_default()
+                        .push(format!("- {summary}"));
                 }
             }
         }

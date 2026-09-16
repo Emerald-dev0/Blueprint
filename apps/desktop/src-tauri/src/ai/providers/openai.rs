@@ -7,7 +7,7 @@
 use async_trait::async_trait;
 use serde_json::{json, Value};
 
-use super::{http_error, truncate, AIProvider, AIMessage, CompletionResponse};
+use super::{http_error, truncate, AIMessage, AIProvider, CompletionResponse};
 
 pub struct OpenAIProvider;
 

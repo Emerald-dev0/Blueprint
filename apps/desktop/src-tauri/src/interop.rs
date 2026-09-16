@@ -202,10 +202,7 @@ pub async fn export_agent_context(
             .get("status")
             .and_then(|v| v.as_str())
             .unwrap_or("unknown");
-        let dirty = git
-            .get("dirty_files")
-            .and_then(|v| v.as_u64())
-            .unwrap_or(0);
+        let dirty = git.get("dirty_files").and_then(|v| v.as_u64()).unwrap_or(0);
         data.git_status = Some(if status == "clean" {
             "clean".to_string()
         } else {
@@ -398,12 +395,7 @@ fn package_scripts(manifest: &serde_json::Value) -> Vec<(String, String)> {
     };
     scripts
         .iter()
-        .map(|(name, body)| {
-            (
-                name.clone(),
-                clip(body.as_str().unwrap_or_default(), 120),
-            )
-        })
+        .map(|(name, body)| (name.clone(), clip(body.as_str().unwrap_or_default(), 120)))
         .collect()
 }
 
@@ -415,7 +407,9 @@ fn makefile_targets(content: &str) -> Vec<String> {
         if line.starts_with('\t') || line.starts_with('#') {
             continue;
         }
-        let Some(colon) = line.find(':') else { continue };
+        let Some(colon) = line.find(':') else {
+            continue;
+        };
         let name = line[..colon].trim();
         let rest = line[colon + 1..].trim();
         if name.is_empty() || name.contains('=') || name.contains('%') || name.contains('.') {
@@ -490,7 +484,10 @@ fn render_agents_md(data: &AgentContextData) -> String {
 
     // Repository
     md.push_str("## Repository\n\n");
-    md.push_str(&format!("- Root: `{}`\n", escape_inline(&data.project_root)));
+    md.push_str(&format!(
+        "- Root: `{}`\n",
+        escape_inline(&data.project_root)
+    ));
     if let Some(branch) = &data.git_branch {
         md.push_str(&format!("- Branch: `{}`\n", escape_inline(branch)));
     }
@@ -682,11 +679,7 @@ fn push_field(md: &mut String, label: &str, value: &str) {
     if trimmed.is_empty() {
         return;
     }
-    md.push_str(&format!(
-        "- {}: {}\n",
-        label,
-        clip(trimmed, MAX_BODY_CHARS)
-    ));
+    md.push_str(&format!("- {}: {}\n", label, clip(trimmed, MAX_BODY_CHARS)));
 }
 
 /// Collapse newlines (they would break list items and table cells), escape pipes
@@ -853,7 +846,8 @@ mod tests {
             serde_json::from_str(r#"{"packageManager":"pnpm@11.5.1"}"#).unwrap();
         assert_eq!(package_runner(&manifest, Path::new("/nonexistent")), "pnpm");
 
-        let yarn: serde_json::Value = serde_json::from_str(r#"{"packageManager":"yarn@4.1.0"}"#).unwrap();
+        let yarn: serde_json::Value =
+            serde_json::from_str(r#"{"packageManager":"yarn@4.1.0"}"#).unwrap();
         assert_eq!(package_runner(&yarn, Path::new("/nonexistent")), "yarn");
 
         let plain: serde_json::Value = serde_json::from_str("{}").unwrap();

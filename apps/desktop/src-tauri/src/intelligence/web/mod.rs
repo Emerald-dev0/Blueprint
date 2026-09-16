@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
-use scraper::{Html, Selector};
 use reqwest::Client;
+use scraper::{Html, Selector};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct WebAnalysis {
@@ -22,7 +22,8 @@ impl WebIntelligence {
             .build()
             .map_err(|e| e.to_string())?;
 
-        let res = client.get(url)
+        let res = client
+            .get(url)
             .header("User-Agent", "Blueprint-Intelligence/1.0")
             .send()
             .await
@@ -43,7 +44,8 @@ impl WebIntelligence {
         let document = Html::parse_document(&html_content);
 
         let title_selector = Selector::parse("title").unwrap();
-        let title = document.select(&title_selector)
+        let title = document
+            .select(&title_selector)
             .next()
             .map(|e| e.inner_html())
             .unwrap_or_else(|| "Unknown".to_string());

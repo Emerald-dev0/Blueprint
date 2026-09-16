@@ -4,8 +4,8 @@ pub mod orchestration;
 pub mod providers;
 pub mod redaction;
 
-use aos::AgentOS;
 use aos::persona::OperatingManual;
+use aos::AgentOS;
 use manager::AIManager;
 use providers::AIMessage;
 use redaction::RedactionEngine;

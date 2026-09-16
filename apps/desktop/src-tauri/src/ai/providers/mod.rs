@@ -48,7 +48,10 @@ pub trait AIProvider: Send + Sync {
 pub async fn http_error(response: reqwest::Response) -> String {
     let status = response.status();
     let provider = response.url().host_str().unwrap_or("provider").to_string();
-    let body = response.text().await.unwrap_or_else(|_| "<unreadable body>".into());
+    let body = response
+        .text()
+        .await
+        .unwrap_or_else(|_| "<unreadable body>".into());
     format!("HTTP {status} from {provider}: {}", truncate(&body, 400))
 }
 

@@ -289,7 +289,10 @@ fn find_next_h2(text: &str) -> usize {
             while j < bytes.len() && (bytes[j] == b' ' || bytes[j] == b'\t') {
                 j += 1;
             }
-            if j + 3 <= bytes.len() && bytes[j] == b'#' && bytes[j + 1] == b'#' && bytes[j + 2] == b' '
+            if j + 3 <= bytes.len()
+                && bytes[j] == b'#'
+                && bytes[j + 1] == b'#'
+                && bytes[j + 2] == b' '
             {
                 return i;
             }
@@ -304,7 +307,10 @@ fn find_next_h2(text: &str) -> usize {
 /// a parsed item reads as plain prose inside a prompt.
 fn strip_markdown(text: &str) -> String {
     let without_markers: String = text.chars().filter(|c| *c != '*' && *c != '`').collect();
-    without_markers.split_whitespace().collect::<Vec<_>>().join(" ")
+    without_markers
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 #[cfg(test)]

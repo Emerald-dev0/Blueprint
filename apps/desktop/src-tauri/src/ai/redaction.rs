@@ -86,7 +86,9 @@ impl RedactionEngine {
         for re in Self::patterns() {
             let matches = re.find_iter(&outcome.text).count();
             if matches > 0 {
-                outcome.text = re.replace_all(&outcome.text, "[REDACTED_SECRET]").into_owned();
+                outcome.text = re
+                    .replace_all(&outcome.text, "[REDACTED_SECRET]")
+                    .into_owned();
                 outcome.secrets_removed += matches;
             }
         }
@@ -121,7 +123,8 @@ mod tests {
 
     #[test]
     fn strips_vendor_tokens() {
-        let input = "key=ghp_abcdefghijklmnopqrstuvwxyz0123456789 and sk-ant-api03-abcdefghijklmnopqrst";
+        let input =
+            "key=ghp_abcdefghijklmnopqrstuvwxyz0123456789 and sk-ant-api03-abcdefghijklmnopqrst";
         let outcome = RedactionEngine::redact(input);
         assert!(!outcome.text.contains("ghp_"));
         assert!(!outcome.text.contains("sk-ant-"));

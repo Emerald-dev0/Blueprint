@@ -43,11 +43,10 @@ pub async fn start_repo_analysis(
     // exactly the "main thread never blocked during indexing" property the
     // performance gates promise.
     let scan_target = target.clone();
-    let (stack, files_scanned) = tauri::async_runtime::spawn_blocking(move || {
-        RepoScanner::scan(&scan_target)
-    })
-    .await
-    .map_err(|e| format!("scan task failed: {e}"))??;
+    let (stack, files_scanned) =
+        tauri::async_runtime::spawn_blocking(move || RepoScanner::scan(&scan_target))
+            .await
+            .map_err(|e| format!("scan task failed: {e}"))??;
 
     audit.record(
         "intelligence.repo.scanned",

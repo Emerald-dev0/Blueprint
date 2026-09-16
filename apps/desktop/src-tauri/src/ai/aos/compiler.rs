@@ -52,7 +52,10 @@ impl PromptCompiler {
         //    and the reason the personas are more than a name and a mission.
         if !manual.instructions.trim().is_empty() {
             prompt.push_str("# OPERATING MANUAL\n");
-            prompt.push_str(&truncate_chars(manual.instructions.trim(), MAX_INSTRUCTIONS_CHARS));
+            prompt.push_str(&truncate_chars(
+                manual.instructions.trim(),
+                MAX_INSTRUCTIONS_CHARS,
+            ));
             prompt.push_str("\n\n");
         }
 
@@ -92,7 +95,10 @@ impl PromptCompiler {
         // Prior turns, when the caller keeps a conversation. Without this the
         // persona path is single-shot and the renderer's chat has no memory of
         // what it just asked.
-        if let Some(history) = context.get("conversation_history").and_then(|h| h.as_array()) {
+        if let Some(history) = context
+            .get("conversation_history")
+            .and_then(|h| h.as_array())
+        {
             if !history.is_empty() {
                 prompt.push_str("## CONVERSATION SO FAR\n");
                 for turn in history {
@@ -176,13 +182,17 @@ mod tests {
             mission: "Prove the compiler works.".to_string(),
             expertise: vec!["testing".to_string()],
             responsibilities: vec!["Write the test".to_string()],
-            thinking_framework: vec!["STEP 1: PLAN".to_string(), "  - What is the goal?".to_string()],
+            thinking_framework: vec![
+                "STEP 1: PLAN".to_string(),
+                "  - What is the goal?".to_string(),
+            ],
             tools: vec!["test_runner".to_string()],
             output_format: "A short report.".to_string(),
             quality_standards: vec!["Tests pass".to_string()],
             version: "1.0.0".to_string(),
             labels: vec!["test".to_string()],
-            instructions: "# TEST OPERATING MANUAL\n\n## DECISION FRAMEWORK\nBe careful.\n".to_string(),
+            instructions: "# TEST OPERATING MANUAL\n\n## DECISION FRAMEWORK\nBe careful.\n"
+                .to_string(),
         }
     }
 

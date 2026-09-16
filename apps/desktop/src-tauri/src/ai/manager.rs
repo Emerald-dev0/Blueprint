@@ -4,7 +4,7 @@ use super::providers::anthropic::AnthropicProvider;
 use super::providers::gemini::GeminiProvider;
 use super::providers::ollama::OllamaProvider;
 use super::providers::openai::OpenAIProvider;
-use super::providers::{AIProvider, AIMessage, CompletionResponse};
+use super::providers::{AIMessage, AIProvider, CompletionResponse};
 
 /// Which OS credential store backs a provider key, for honest error messages.
 fn store_name() -> &'static str {
