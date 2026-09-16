@@ -40,6 +40,10 @@ pub struct MemoryEntry {
     pub created_at: Option<String>,
 }
 
+// `ADR` is the initialism used everywhere else in this repo — `docs/adr/`, the
+// `adrs` table, `add_adr`/`list_adrs`, and the renderer's "New ADR" dialog — so
+// the type keeps the domain spelling instead of clippy's `Adr`.
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ADR {
     pub id: i32,
@@ -238,6 +242,12 @@ impl MemoryManager {
         Ok(results)
     }
 
+    // Write half of the `user_preferences` table. Nothing reads that table yet:
+    // there is no getter, no Tauri command bound to it, and the renderer keeps
+    // its settings in localStorage. Kept because the schema is already shipped,
+    // but it stays dead until a preference surface is actually built — see the
+    // follow-up list in the pull request.
+    #[allow(dead_code)]
     pub fn set_preference(&self, key: &str, value: &str) -> Result<(), String> {
         let db = self.db.lock().map_err(|e| e.to_string())?;
         db.execute(
