@@ -44,7 +44,7 @@ impl RedactionEngine {
                 .expect("private key pattern"),
                 // AWS
                 Regex::new(r"AKIA[0-9A-Z]{16}").expect("aws access key pattern"),
-                Regex::new(r"(?i)aws.{0,20}?['\"][0-9a-zA-Z/+]{40}['\"]").expect("aws secret pattern"),
+                Regex::new(r#"(?i)aws.{0,20}?['"][0-9a-zA-Z/+]{40}['"]"#).expect("aws secret pattern"),
                 // Anthropic (must precede the generic OpenAI `sk-` shape)
                 Regex::new(r"sk-ant-[A-Za-z0-9_-]{20,}").expect("anthropic pattern"),
                 // OpenAI
@@ -68,10 +68,10 @@ impl RedactionEngine {
                 )
                 .expect("connection string pattern"),
                 // api_key = '...' style assignments
-                Regex::new(r"(?i)\bapi[-_]?key\b\s*[:=]\s*['\"]?[A-Za-z0-9_\-]{24,}['\"]?")
+                Regex::new(r#"(?i)\bapi[-_]?key\b\s*[:=]\s*['"]?[A-Za-z0-9_\-]{24,}['"]?"#)
                     .expect("generic api key pattern"),
                 // secret/token/password = '...' style assignments
-                Regex::new(r"(?i)\b(secret|token|passwd|password)\b\s*[:=]\s*['\"][^'\"]{12,}['\"]")
+                Regex::new(r#"(?i)\b(secret|token|passwd|password)\b\s*[:=]\s*['"][^'"]{12,}['"]"#)
                     .expect("generic secret assignment pattern"),
             ]
         })
