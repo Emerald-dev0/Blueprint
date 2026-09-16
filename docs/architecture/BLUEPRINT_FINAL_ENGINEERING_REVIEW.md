@@ -1,8 +1,24 @@
 # Blueprint: Final Principal Engineering & Design Review
 
-**Status:** Action Required (Critical)  
-**Review Date:** 2026-07-29  
-**Panel:** Principal Engineer (Microsoft), Staff Engineer (GitHub), Staff Product Designer (Figma), Principal Designer (Linear), Security Engineer (Cloudflare), Performance Engineer (Chrome), AI Platform Engineer (OpenAI), DevOps Architect, Startup CTO.
+> **⚠️ Provenance note (added 2026-09-15).** This document is a **synthetic
+> self-review**, produced by an AI assistant role-playing a panel of industry
+> engineers. It is **not** a record of an external review by named employees of
+> Microsoft, GitHub, Figma, Linear, Cloudflare, Chrome or OpenAI, and it must not
+> be cited as one. It is retained because several of its recommendations were
+> correct and had been ignored; the table at the end of this note tracks which
+> have now been actioned.
+>
+> | Review recommendation | Status 2026-09-15 |
+> | :--- | :--- |
+> | Drop Website Intelligence from v0.1 | Not actioned — kept, but implemented for real and de-emphasised in UI |
+> | Collapse packages to 3 for velocity | Not actioned — empty packages retained but no longer advertised |
+> | Single orchestrator instead of 5 agents | Partially actioned — no multi-agent loop ships; prompt compilation only |
+> | Prioritise editor bridge / file watcher | Not started |
+> | Sandbox L4 commands / defer plugins | **Actioned** — unsandboxed Python runner removed (ADR 0002) |
+>
+> **Status:** Action Required (Critical)
+> **Review Date:** 2026-07-29
+> **Panel:** synthetic (AI role-play), see note above.
 
 ---
 
