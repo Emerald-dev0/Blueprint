@@ -52,6 +52,9 @@ jobs:
   rust:
     name: Rust (clippy / test)
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -103,13 +106,64 @@ jobs:
       - name: clippy (diagnostic, non-blocking)
         working-directory: apps/desktop/src-tauri
         continue-on-error: true
-        run: cargo clippy --all-targets --message-format short -- -D warnings 2>&1 | tail -200
+        run: |
+          set -o pipefail
+          cargo clippy --all-targets --message-format short -- -D warnings 2>&1 \
+            | tee /tmp/clippy.log | tail -40
 
       - name: Unit tests (diagnostic, non-blocking)
         working-directory: apps/desktop/src-tauri
         continue-on-error: true
-        run: cargo test --no-fail-fast 2>&1 | tail -80
+        run: |
+          set -o pipefail
+          cargo test --no-fail-fast 2>&1 | tee /tmp/test.log | tail -25
 
-      - name: rustfmt check
+      - name: rustfmt check (diagnostic, non-blocking)
         working-directory: apps/desktop/src-tauri
-        run: cargo fmt --all -- --check
+        continue-on-error: true
+        run: |
+          cargo fmt --all -- --check > /tmp/fmt.log 2>&1 || true
+          tail -40 /tmp/fmt.log
+
+      - name: Publish diagnostics to the pull request
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          {
+            echo "### Rust diagnostics (temporary CI step)"
+            echo
+            echo "<details><summary>clippy</summary>"
+            echo
+            echo '```'
+            grep -E "(^|/)error|error\[|error:|warning:" /tmp/clippy.log 2>/dev/null | tail -150 || echo "(no clippy output)"
+            echo '```'
+            echo "</details>"
+            echo
+            echo "<details><summary>cargo test</summary>"
+            echo
+            echo '```'
+            tail -60 /tmp/test.log 2>/dev/null || echo "(no test output)"
+            echo '```'
+            echo "</details>"
+            echo
+            echo "<details><summary>rustfmt</summary>"
+            echo
+            echo '```'
+            head -150 /tmp/fmt.log 2>/dev/null || echo "(no fmt output)"
+            echo '```'
+            echo "</details>"
+          } > /tmp/report.md
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr comment "$PR_NUMBER" --body-file /tmp/report.md
+          else
+            cat /tmp/report.md
+          fi
+
+      - name: Rust gate (fmt, then clippy, then tests)
+        working-directory: apps/desktop/src-tauri
+        run: |
+          test ! -s /tmp/fmt.log || { echo "rustfmt reports differences:"; head -60 /tmp/fmt.log; exit 1; }
+          grep -qE "error(\[|:)" /tmp/clippy.log && { echo "clippy reported errors"; exit 1; } || true
+          grep -qE "^error|test result: FAILED" /tmp/test.log && { echo "tests failed"; exit 1; } || true
