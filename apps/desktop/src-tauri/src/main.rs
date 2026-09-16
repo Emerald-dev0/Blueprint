@@ -14,6 +14,8 @@ mod project;
 
 use std::sync::Arc;
 
+use tauri::Manager;
+
 use ai::aos::AgentOS;
 use ai::manager::AIManager;
 use audit::AuditLog;
