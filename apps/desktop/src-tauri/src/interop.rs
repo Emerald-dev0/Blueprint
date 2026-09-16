@@ -695,8 +695,7 @@ fn clip(text: &str, max_chars: usize) -> String {
 }
 
 fn escape_inline(text: &str) -> String {
-    text.replace('\r', " ")
-        .replace('\n', " ")
+    text.replace(['\r', '\n'], " ")
         .replace('|', "\\|")
         .split_whitespace()
         .collect::<Vec<_>>()
