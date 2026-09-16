@@ -65,7 +65,7 @@
       "icons/icon.ico"
     ],
     "resources": {
-      "../../packages/personas/": "personas/"
+      "../../../packages/personas/": "personas/"
     },
     "linux": {
       "appimage": {
