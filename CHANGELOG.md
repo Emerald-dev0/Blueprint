@@ -118,6 +118,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with "No API key is stored for 'ollama'".
 - The AI Teammate sidebar numbered every framework line 1..N, rendering a
   five-step framework as twenty unrelated items.
+- Four defects that only a real `cargo` run could surface, all in the desktop
+  shell: three redaction regexes were written `r"...\\\"..."` — a backslash does
+  not escape inside a raw string, so each literal ended early and the file did
+  not parse; the command-discovery loop read `for (script, body) = ...` instead
+  of `in`; `main.rs` called `app.manage(...)` without `use tauri::Manager`; and
+  `extract_section` relied on lifetime elision Rust cannot infer from two `&str`
+  inputs.
+- `git/mod.rs` used two git2 APIs that do not exist in that shape: `find_branch`
+  takes `BranchType`, not `Option<BranchType>` (the `Option` form belongs to
+  `branches`), and the short-name resolver is `resolve_reference_from_short_name`.
+- `tauri.conf.json` declared the bundled personas as `../../packages/personas`,
+  which resolves to `apps/packages/personas` from `apps/desktop/src-tauri` and
+  made the Tauri build script abort with "resource path doesn't exist" — every
+  packaged build on Windows and Linux failed before compiling a line of Rust.
+- `Cargo.lock` predated `tauri-plugin-dialog`, so a locked build could not
+  resolve a dependency the crate declares.
 
 ### Removed
 - Unsandboxed `run_python_tool` command (arbitrary code execution from the
@@ -131,6 +147,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Renderer CSP and capabilities now enforce the documented local-first model.
 - Website analysis refuses non-http(s) URLs and caps document size.
+- Bumped the transitive Rust crates behind the advisories that had been failing
+  the scheduled audit on `main` since August: `h2` 0.4.15 -> 0.4.16
+  (RUSTSEC-2026-0258, unbounded empty DATA frames) and `rustls` 0.23.43 ->
+  0.23.45 (RUSTSEC-2026-0285, TLS 1.3 handshake messages accepted across
+  encryption-level boundaries), together with `rustls-webpki` 0.103.13 ->
+  0.103.15, which rustls 0.23.45 requires. Lockfile-only bumps: the dependency
+  sets of all three are unchanged.
+- A `cargo fmt` / `clippy -D warnings` / `cargo test` job now gates every pull
+  request. CI previously never compiled the Rust side, which is how the defects
+  above survived.
 
 ## [0.1.0-alpha] — pre-audit baseline
 
