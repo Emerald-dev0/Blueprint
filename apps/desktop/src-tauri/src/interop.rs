@@ -336,7 +336,7 @@ fn discover_commands(root: &Path) -> Vec<CommandSummary> {
     if let Ok(content) = fs::read_to_string(&manifest_path) {
         if let Ok(manifest) = serde_json::from_str::<serde_json::Value>(&content) {
             let runner = package_runner(&manifest, root);
-            for (script, body) = package_scripts(&manifest) {
+            for (script, body) in package_scripts(&manifest) {
                 commands.push(CommandSummary {
                     command: format!("{runner} run {script}"),
                     source: format!("package.json ({body})"),
