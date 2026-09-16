@@ -267,7 +267,7 @@ fn parse_output_format(markdown: &str) -> Option<String> {
 }
 
 /// Text under `heading` up to (but excluding) the next level-2 heading.
-fn extract_section(markdown: &str, heading: &str) -> Option<&str> {
+fn extract_section<'a>(markdown: &'a str, heading: &str) -> Option<&'a str> {
     let start = markdown.find(heading)?;
     let after = start + heading.len();
     let rest = &markdown[after..];

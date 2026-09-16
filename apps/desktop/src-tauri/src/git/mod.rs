@@ -148,7 +148,7 @@ fn branch_state(repo: &git2::Repository) -> (String, usize, usize) {
 
     let (mut ahead, mut behind) = (0usize, 0usize);
     if head.is_branch() {
-        if let Ok(branch) = repo.find_branch(&name, Some(git2::BranchType::Local)) {
+        if let Ok(branch) = repo.find_branch(&name, git2::BranchType::Local) {
             let local = branch.get().target();
             let upstream = branch.upstream().ok().and_then(|u| u.get().target());
             if let (Some(l), Some(u)) = (local, upstream) {
@@ -341,7 +341,7 @@ pub fn generate_github_release_notes(
 
     // Start from the tag when it exists, otherwise from HEAD.
     let start = repo
-        .resolve_reference_from_shortname(&tag)
+        .resolve_reference_from_short_name(&tag)
         .ok()
         .and_then(|r| r.peel_to_commit().ok())
         .map(|c| c.id())
