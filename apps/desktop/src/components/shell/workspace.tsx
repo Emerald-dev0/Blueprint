@@ -5,6 +5,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useWorkspaceStore } from '../../store/workspace';
 import { ProjectExplorer } from '../workspace/explorer';
 import { WorkspaceTabs } from '../workspace/tabs';
+import { ShortcutHint } from './shortcut-hint';
 import { Cpu } from 'lucide-react';
 
 export function Workspace({ children }: { children: React.ReactNode }) {
@@ -92,7 +93,9 @@ function EmptyWorkspace() {
       <div className="max-w-md">
         <h3 className="text-sm font-bold text-slate-300 uppercase tracking-tight">Workspace Ready</h3>
         <p className="text-xs text-slate-500 font-mono mt-2 leading-relaxed">
-          Open a file from the explorer or use <kbd className="px-1.5 py-0.5 rounded border border-white/10 bg-white/5">Cmd+K</kbd> to initiate an implementation plan.
+          Open a file from the explorer or use{' '}
+          <ShortcutHint keys="K" className="border-white/10" /> to initiate an
+          implementation plan.
         </p>
       </div>
     </div>

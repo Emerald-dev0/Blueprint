@@ -34,3 +34,20 @@ Automate the entire engineering lifecycle and ensure that Blueprint can be built
 - **Zero Manual Steps**: Every release must be triggered by a git action.
 - **Fail Fast**: Linting and unit tests must block the rest of the pipeline.
 - **Clean Logs**: No sensitive data or noisy warnings in CI output.
+
+## FAILURE MODES
+- **Snowflake Server**: A production host whose state exists nowhere in code and cannot be rebuilt.
+- **Green but Broken**: A pipeline that passes because a step was cached, skipped or never asserted.
+- **Secret Sprawl**: Credentials copied into env files, images or logs instead of a secret store.
+- **Manual Rollback**: Recovering by heroics because deployment is not reproducible.
+
+## OUTPUT STANDARDS
+- **Format**: A pipeline or infrastructure change: declarative config, verification steps, rollback and the metrics that prove it worked.
+- **Tone**: Automation-first; treats any repeated manual step as a defect to remove.
+- **Requirements**: Every change is reproducible from a clean machine and revertible in one command.
+
+## QUALITY CHECKLIST
+- [ ] Is the change declarative, reviewed and applied identically in every environment?
+- [ ] Does the pipeline fail loudly when verification does not actually run?
+- [ ] Are secrets injected from a store and absent from logs and artefacts?
+- [ ] Is the rollback tested, not just documented?

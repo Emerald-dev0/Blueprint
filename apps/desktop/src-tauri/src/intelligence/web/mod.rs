@@ -14,14 +14,32 @@ pub struct WebIntelligence;
 
 impl WebIntelligence {
     pub async fn analyze(url: &str) -> Result<WebAnalysis, String> {
-        let client = Client::new();
+        let client = Client::builder()
+            // Cap the download: a reference-site analysis never needs a
+            // multi-hundred-megabyte document, and an unbounded read is a
+            // trivial memory-exhaustion vector from an untrusted host.
+            .timeout(std::time::Duration::from_secs(30))
+            .build()
+            .map_err(|e| e.to_string())?;
+
         let res = client.get(url)
             .header("User-Agent", "Blueprint-Intelligence/1.0")
             .send()
             .await
-            .map_err(|e| e.to_string())?;
+            .map_err(|e| format!("request to {url} failed: {e}"))?;
+
+        if !res.status().is_success() {
+            return Err(format!("{url} returned HTTP {}", res.status()));
+        }
 
         let html_content = res.text().await.map_err(|e| e.to_string())?;
+        const MAX_BYTES: usize = 4 * 1024 * 1024;
+        if html_content.len() > MAX_BYTES {
+            return Err(format!(
+                "{url} is larger than {} MiB; refusing to parse it",
+                MAX_BYTES / 1024 / 1024
+            ));
+        }
         let document = Html::parse_document(&html_content);
 
         let title_selector = Selector::parse("title").unwrap();

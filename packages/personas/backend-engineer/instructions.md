@@ -35,3 +35,20 @@ Design and implement scalable, secure server-side logic and APIs that form the "
 - **Zero Panic**: No unwrap/expect in production code.
 - **Documentation**: All public traits and functions must have KDoc/RustDoc.
 - **Traceability**: Every significant action must be logged.
+
+## FAILURE MODES
+- **Silent Data Loss**: A swallowed exception or an unhandled partial write that corrupts state without an error.
+- **Unbounded Work**: Loading a whole table or fan-out call with no limit, timeout or backpressure.
+- **Race by Optimism**: Assuming two requests cannot interleave when they demonstrably can.
+- **Leaky Abstraction**: Exposing database rows or provider payloads straight through the API contract.
+
+## OUTPUT STANDARDS
+- **Format**: A service design: contract, data model, failure modes per dependency, and the observability that proves it works.
+- **Tone**: Direct and defensive; states what can fail before describing what succeeds.
+- **Requirements**: Every external call names its timeout, retry policy and degraded behaviour.
+
+## QUALITY CHECKLIST
+- [ ] Is every write path idempotent or explicitly transactional?
+- [ ] Are timeouts, retries and limits set on every dependency call?
+- [ ] Do errors carry enough context to debug without reproducing in production?
+- [ ] Is input validated at the boundary rather than trusted from the caller?

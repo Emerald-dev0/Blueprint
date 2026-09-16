@@ -12,16 +12,7 @@ import {
   TabsContent
 } from '@blueprint/ui';
 import { ShieldCheck, Key, Github, Sparkles } from 'lucide-react';
-import { invoke } from '@tauri-apps/api/core';
-import { usePluginStore } from '../../store/plugins';
-
-interface ProviderKeyInputProps {
-  name: string;
-  value: string;
-  onChange: (val: string) => void;
-  onSave: () => void;
-  status?: string;
-}
+import { api, type PluginManifest } from '../../lib/ipc';
 
 interface ProviderKeyInputProps {
   name: string;
@@ -32,7 +23,15 @@ interface ProviderKeyInputProps {
 }
 
 export default function SettingsPage() {
-  const { plugins } = usePluginStore();
+  const [plugins, setPlugins] = React.useState<PluginManifest[]>([]);
+  const [pluginError, setPluginError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    api
+      .listInstalledPlugins()
+      .then(setPlugins)
+      .catch((e) => setPluginError(String(e)));
+  }, []);
   const [keys, setKeys] = React.useState({
     gemini: '',
     anthropic: '',
@@ -42,13 +41,10 @@ export default function SettingsPage() {
 
   const saveKey = async (provider: string) => {
     try {
-      await invoke('set_ai_credential', {
-        providerId: provider,
-        key: (keys as any)[provider]
-      });
+      await api.setAiCredential(provider, (keys as Record<string, string>)[provider]);
       setStatus(prev => ({ ...prev, [provider]: 'Saved' }));
       setTimeout(() => setStatus(prev => ({ ...prev, [provider]: '' })), 2000);
-    } catch (e) {
+    } catch {
       setStatus(prev => ({ ...prev, [provider]: 'Error' }));
     }
   };
@@ -66,7 +62,6 @@ export default function SettingsPage() {
           <TabsTrigger value="github" className="data-[state=active]:bg-[#00FF9D]/10">GitHub</TabsTrigger>
           <TabsTrigger value="plugins" className="data-[state=active]:bg-[#00FF9D]/10">Installed</TabsTrigger>
           <TabsTrigger value="marketplace" className="data-[state=active]:bg-[#00FF9D]/10">Marketplace</TabsTrigger>
-          <TabsTrigger value="general" className="data-[state=active]:bg-[#00FF9D]/10">General</TabsTrigger>
         </TabsList>
 
         <TabsContent value="ai" className="space-y-8 animate-in fade-in duration-300">
@@ -121,6 +116,7 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="plugins" className="space-y-6 animate-in fade-in duration-300">
+          {pluginError && <p className="text-xs text-red-400 font-mono">{pluginError}</p>}
           <div className="grid gap-4">
             {plugins.length === 0 ? (
               <p className="text-sm text-slate-500 font-mono text-center py-12 border border-dashed border-white/5 rounded-2xl">No plugins installed.</p>
@@ -149,11 +145,10 @@ export default function SettingsPage() {
         <TabsContent value="marketplace" className="animate-in fade-in duration-300">
           <div className="p-12 border border-dashed border-white/10 rounded-2xl text-center space-y-4">
             <Sparkles size={32} className="mx-auto text-[#00FF9D]/40" />
-            <p className="text-slate-400 font-mono text-sm">Blueprint Marketplace registry is ready for the community.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mt-8">
-               <MarketplaceCard title="Framework Intelligence" count={12} />
-               <MarketplaceCard title="Engineering Tools" count={8} />
-            </div>
+            <p className="text-slate-400 font-mono text-sm">
+              The community marketplace is not live yet. Nothing is listed here because no
+              registry exists to list from.
+            </p>
           </div>
         </TabsContent>
       </Tabs>
@@ -161,17 +156,6 @@ export default function SettingsPage() {
   );
 }
 
-function MarketplaceCard({ title, count }: { title: string, count: number }) {
-  return (
-    <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-[#00FF9D]/30 transition-all">
-      <div className="space-y-1">
-        <h4 className="text-xs font-bold text-white uppercase tracking-tighter">{title}</h4>
-        <p className="text-[10px] text-slate-500 font-mono">{count} verified extensions</p>
-      </div>
-      <Button variant="ghost" size="sm" className="h-8 text-[10px] uppercase font-black tracking-widest text-[#00FF9D]">Explore</Button>
-    </div>
-  );
-}
 
 function ProviderKeyInput({ name, value, onChange, onSave, status }: ProviderKeyInputProps) {
   return (

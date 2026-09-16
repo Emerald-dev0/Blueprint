@@ -5,36 +5,22 @@ import { Workspace } from './workspace';
 import { StatusBar } from './status-bar';
 import { CommandBar } from './command-bar';
 import { useWorkspaceStore } from '../../store/workspace';
-import { usePluginStore } from '../../store/plugins';
 import { LayoutGrid, PanelLeft, PanelRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useEffect } from 'react';
 
+/**
+ * Application chrome.
+ *
+ * A `useEffect` here previously registered a hard-coded "React Intelligence"
+ * plugin into the store on every mount, which is why Settings → Installed
+ * always showed a plugin that was never installed and whose `index.js`
+ * entrypoint does not exist. Installed plugins are now read from the Rust
+ * plugin manager in Settings, and extension-provided commands arrive through
+ * the plugin runtime once it exists.
+ */
 export function ApplicationShell({ children }: { children: React.ReactNode }) {
-  const { toggleLeftWing, toggleRightWing, leftWingOpen, rightWingOpen } = useWorkspaceStore();
-  const { registerPlugin, registerCommand } = usePluginStore();
-
-  useEffect(() => {
-    // Simulate loading a React Intelligence plugin
-    registerPlugin({
-      id: 'io.blueprint.react-intel',
-      name: 'React Intelligence',
-      version: '1.0.0',
-      author: 'Blueprint Team',
-      description: 'Provides deep analysis of React component trees.',
-      permissions: ['fs.read'],
-      minBlueprintVersion: '0.1.0',
-      entrypoints: {
-        frontend: 'index.js'
-      }
-    });
-
-    registerCommand(
-      'react-intel-scan',
-      'React: Scan Component Tree',
-      () => console.log("Scanning React components...")
-    );
-  }, []);
+  const { toggleLeftWing, toggleRightWing, leftWingOpen, rightWingOpen } =
+    useWorkspaceStore();
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-[#0B0B0B] text-white">
@@ -43,24 +29,30 @@ export function ApplicationShell({ children }: { children: React.ReactNode }) {
           <div className="w-5 h-5 bg-[#00FF9D] rounded-sm flex items-center justify-center">
             <LayoutGrid size={12} className="text-black" />
           </div>
-          <span className="text-[10px] font-black tracking-widest uppercase text-slate-500">Blueprint</span>
+          <span className="text-[10px] font-black tracking-widest uppercase text-slate-500">
+            Blueprint
+          </span>
         </div>
 
         <div className="flex items-center space-x-2">
           <button
             onClick={toggleLeftWing}
+            aria-pressed={leftWingOpen}
+            aria-label="Toggle explorer panel"
             className={cn(
-              "p-1.5 rounded hover:bg-white/5 transition-colors",
-              leftWingOpen ? "text-[#00FF9D]" : "text-slate-500"
+              'p-1.5 rounded hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF9D]/60',
+              leftWingOpen ? 'text-[#00FF9D]' : 'text-slate-500'
             )}
           >
             <PanelLeft size={16} />
           </button>
           <button
             onClick={toggleRightWing}
+            aria-pressed={rightWingOpen}
+            aria-label="Toggle inspector panel"
             className={cn(
-              "p-1.5 rounded hover:bg-white/5 transition-colors",
-              rightWingOpen ? "text-[#00FF9D]" : "text-slate-500"
+              'p-1.5 rounded hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-[#00FF9D]/60',
+              rightWingOpen ? 'text-[#00FF9D]' : 'text-slate-500'
             )}
           >
             <PanelRight size={16} />
@@ -70,9 +62,7 @@ export function ApplicationShell({ children }: { children: React.ReactNode }) {
 
       <div className="flex flex-grow overflow-hidden">
         <NavigationRail />
-        <Workspace>
-          {children}
-        </Workspace>
+        <Workspace>{children}</Workspace>
       </div>
       <StatusBar />
       <CommandBar />

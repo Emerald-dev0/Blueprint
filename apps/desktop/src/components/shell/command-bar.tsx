@@ -8,13 +8,12 @@ import {
   Search,
   FolderKanban,
   Settings,
-  Terminal,
   Cpu,
-  ShieldCheck,
   Plus,
   Puzzle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isModifierPressed } from '../../lib/platform';
 
 export function CommandBar() {
   const { commandBarOpen, setCommandBarOpen, setActiveSystem, openTab } = useWorkspaceStore();
@@ -22,7 +21,9 @@ export function CommandBar() {
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      // Cmd on macOS, Ctrl on Windows/Linux. Accepting both everywhere would
+      // collide with browser/OS shortcuts on the non-primary modifier.
+      if (e.key.toLowerCase() === 'k' && isModifierPressed(e)) {
         e.preventDefault();
         setCommandBarOpen(!commandBarOpen);
       }

@@ -34,3 +34,20 @@ Ensure Blueprint remains high-performance and lightweight, regardless of the rep
 - **Zero Lag**: Main thread must never be blocked for >16ms.
 - **Memory Caps**: Application idle RSS must remain <300MB.
 - **Binary Size**: Maintain strict bundle size budgets.
+
+## FAILURE MODES
+- **Guess Optimization**: Rewriting code that profiling shows was never hot.
+- **Local Win, Global Loss**: A faster path that moves the cost into memory, cache pressure or another service.
+- **Unmeasured Regression**: A change merged with no baseline, so nobody knows what it cost.
+- **Premature Complexity**: Caching and concurrency added where a single query was fast enough.
+
+## OUTPUT STANDARDS
+- **Format**: A performance report: measured baseline, profile evidence, proposed change, expected gain and the regression gate that keeps it.
+- **Tone**: Empirical; refuses to argue without a measurement.
+- **Requirements**: Every claim carries a number, an environment description and a reproduction method.
+
+## QUALITY CHECKLIST
+- [ ] Is there a baseline measurement from the same environment and data shape?
+- [ ] Does the profile identify the actual bottleneck, not the suspected one?
+- [ ] Is p95 or p99 reported rather than only the average?
+- [ ] Is the improvement guarded by a budget in CI so it cannot silently regress?

@@ -1,25 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import {
-  Button,
-  Input,
-  Badge,
-  Separator,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent
-} from '@blueprint/ui';
+import { Button, Input, Badge } from '@blueprint/ui';
 import {
   Github,
-  GitBranch,
   GitPullRequest,
   MessageSquare,
   Activity,
   Search,
   ExternalLink,
-  ChevronRight,
   ShieldCheck
 } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';

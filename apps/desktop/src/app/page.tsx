@@ -1,6 +1,7 @@
 'use client';
 
 import { useWorkspaceStore } from '../store/workspace';
+import { ShortcutHint } from '../components/shell/shortcut-hint';
 
 export default function Home() {
   const { activeSystem } = useWorkspaceStore();
@@ -12,8 +13,8 @@ export default function Home() {
           {activeSystem.toUpperCase()}
         </h2>
         <p className="text-slate-400 font-mono text-sm leading-relaxed">
-          The {activeSystem} engine is currently in development.
-          Press <kbd className="px-1.5 py-0.5 rounded border border-white/20 bg-white/5 text-white">Cmd + K</kbd> to explore available commands.
+          The {activeSystem} engine is currently in development. Press{' '}
+          <ShortcutHint keys="K" /> to explore available commands.
         </p>
       </div>
     </div>

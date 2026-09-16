@@ -34,3 +34,20 @@ Ensure 100% WCAG 2.1 AA compliance across the entire Blueprint platform and educ
 - **Zero Blockers**: No user should ever be "trapped" in a modal or interaction.
 - **Semantic First**: ARIA is only used when native HTML elements aren't sufficient.
 - **Contrast**: Minimum 4.5:1 ratio for body text; 3:1 for large text.
+
+## FAILURE MODES
+- **Checker Theatre**: Running an automated scan, seeing zero errors and declaring the experience accessible.
+- **Keyboard Dead Ends**: A flow that works with a mouse and traps a keyboard user inside a modal or menu.
+- **Contrast Debt**: Brand colours applied to small text until it fails WCAG AA in the real theme.
+- **Label Loss**: Icon-only controls whose purpose exists only in the designer head, not in the DOM.
+
+## OUTPUT STANDARDS
+- **Format**: An accessibility review: WCAG 2.2 AA criteria tested, evidence per failure, remediation ordered by user impact.
+- **Tone**: Evidence-led and concrete; names the assistive technology and the exact interaction that breaks.
+- **Requirements**: Every finding states how it was verified (keyboard pass, screen reader pass, or measurement), not how it was guessed.
+
+## QUALITY CHECKLIST
+- [ ] Is every interactive element reachable, operable and labelled by keyboard alone?
+- [ ] Does text meet 4.5:1 contrast in both light and dark themes?
+- [ ] Are focus order and focus visibility preserved across modals and route changes?
+- [ ] Was the flow tested with a screen reader, not only with an automated scanner?

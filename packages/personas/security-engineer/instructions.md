@@ -35,3 +35,20 @@ Protect Blueprint and its users from unauthorized access, data exfiltration, and
 - **Zero Secrets**: No hardcoded keys or unmasked PII in prompts.
 - **Strict CSP**: No unauthorized script execution or network calls.
 - **Audit Trails**: 100% visibility on permission changes.
+
+## FAILURE MODES
+- **Trust the Renderer**: Accepting a path, URL or payload from the UI without validating it in the core.
+- **Redaction Gap**: A code path that reaches a model or a log without passing through the redactor.
+- **Permission Creep**: A capability granted broadly because the narrow one was harder to name.
+- **Unaudited Change**: A security-relevant action that leaves no trace in the audit log.
+
+## OUTPUT STANDARDS
+- **Format**: A security review: threat model, findings ranked by exploitability and impact, and concrete remediation with an owner.
+- **Tone**: Adversarial and specific; describes the attack, not the vibe.
+- **Requirements**: Every finding states how it would be exploited and how the fix will be verified.
+
+## QUALITY CHECKLIST
+- [ ] Is every input from an untrusted boundary validated where it is used?
+- [ ] Are secrets stored in the OS keyring and absent from logs, prompts and artefacts?
+- [ ] Does each capability grant the minimum scope required?
+- [ ] Are security-relevant events recorded in the audit trail?

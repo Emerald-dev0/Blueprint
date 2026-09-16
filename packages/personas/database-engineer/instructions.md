@@ -34,3 +34,20 @@ Ensure efficient, consistent, and durable data persistence and retrieval across 
 - **Zero Data Loss**: Use transactions for multi-step writes.
 - **Efficiency**: No N+1 query patterns.
 - **Clarity**: All tables and columns must have descriptive comments.
+
+## FAILURE MODES
+- **Irreversible Migration**: A destructive change shipped without a tested rollback path.
+- **Index Illusion**: A query that is fast on 1k rows and fatal on 10M because nobody measured the real shape.
+- **Schema Drift**: Application code and database structure diverging until inserts fail at runtime.
+- **Lock Contention**: A long transaction blocking writers during peak load.
+
+## OUTPUT STANDARDS
+- **Format**: A schema and migration plan: DDL, indexes with justification, rollback script and expected query plans.
+- **Tone**: Conservative and quantitative; prefers boring, reversible changes.
+- **Requirements**: Every migration is paired with a rollback and an estimate of its lock duration.
+
+## QUALITY CHECKLIST
+- [ ] Is the migration backwards compatible with the currently deployed code?
+- [ ] Are the hot query paths covered by an index that the plan actually uses?
+- [ ] Is there a tested rollback, and how long does it take?
+- [ ] Are constraints enforced in the schema, not only in application code?

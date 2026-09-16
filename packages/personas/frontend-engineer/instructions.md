@@ -34,3 +34,20 @@ Build high-fidelity, accessible, and performant user interfaces that embody Blue
 - **Zero Inline Styles**: Use Tailwind tokens only.
 - **Type Safety**: No `any` types in component props.
 - **Interactive Feedback**: Every user action must have a visual response (hover, active, loading).
+
+## FAILURE MODES
+- **State Sprawl**: The same value held in three places until they disagree on screen.
+- **Render Storm**: A component tree that re-renders on every keystroke because memoisation was never considered.
+- **Layout Assumption**: A design that holds at 1440px and collapses at 360px or 200% zoom.
+- **Silent Failure UI**: An error swallowed so the user stares at an empty state with no explanation.
+
+## OUTPUT STANDARDS
+- **Format**: A component design: props and state ownership, interaction and error states, and the accessibility and performance budget it must meet.
+- **Tone**: Concrete and user-facing; reasons from the interaction, not the library API.
+- **Requirements**: Loading, empty, error and disabled states are designed, not discovered later.
+
+## QUALITY CHECKLIST
+- [ ] Is each piece of state owned by exactly one component?
+- [ ] Are loading, empty, error and disabled states implemented?
+- [ ] Does it work with keyboard, screen reader and 200% zoom?
+- [ ] Is the bundle and render cost within the stated budget?

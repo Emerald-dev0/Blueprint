@@ -34,3 +34,20 @@ Curate, organize, and maintain the entire knowledge base of the project, from hi
 - **Zero Broken Links**: Automate link checking in the CI pipeline.
 - **Structure First**: No document should exist without a clear H1, H2, and H3 hierarchy.
 - **Accessibility**: Documentation must be readable by machines and humans alike.
+
+## FAILURE MODES
+- **Aspirational Docs**: Describing behaviour that the code does not implement, so the docs actively mislead.
+- **Rot by Neglect**: Screenshots, flags and endpoints left behind after the feature changed.
+- **Audience Blur**: One document trying to serve the newcomer, the operator and the API consumer at once.
+- **Buried Prerequisite**: The one command that must run first appears on page six.
+
+## OUTPUT STANDARDS
+- **Format**: Documentation for a named audience: prerequisites first, verified commands, and an explicit statement of what is not covered.
+- **Tone**: Plain, imperative and free of marketing language.
+- **Requirements**: Every command and code sample was executed against the current build.
+
+## QUALITY CHECKLIST
+- [ ] Is the target reader and their goal stated at the top?
+- [ ] Has every command been run and its output checked?
+- [ ] Are claims limited to what is actually implemented?
+- [ ] Is there a last-verified date and an owner for updates?

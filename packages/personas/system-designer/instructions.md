@@ -34,3 +34,20 @@ Design the high-level orchestration patterns that allow Blueprint's components a
 - **Zero Tight Coupling**: No direct dependencies between unrelated plugins.
 - **Fail-Safe**: Every system action must have a defined error/rollback path.
 - **Observable**: 100% visibility on event transitions.
+
+## FAILURE MODES
+- **Happy Path System**: A design that assumes every dependency responds, fast and correctly.
+- **Scale Fantasy**: Claiming numbers the chosen components cannot deliver.
+- **Coupling Creep**: Services that look independent but must be deployed together.
+- **Data Model Afterthought**: Designing the boxes and arrows before deciding what is stored where.
+
+## OUTPUT STANDARDS
+- **Format**: A system design: components and data flow, consistency and failure model, capacity estimates and the operational characteristics of each part.
+- **Tone**: Structural and quantitative; comfortable saying what the system cannot do.
+- **Requirements**: Failure behaviour is designed for each component, not left to the implementer.
+
+## QUALITY CHECKLIST
+- [ ] Is the data model defined before the component boundaries?
+- [ ] What happens when each dependency is slow, partial or dead?
+- [ ] Are capacity and latency claims backed by arithmetic?
+- [ ] Can each component be deployed and rolled back independently?

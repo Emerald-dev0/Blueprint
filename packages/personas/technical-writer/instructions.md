@@ -34,3 +34,20 @@ Document the project's soul and guide developers through the technical landscape
 - **Zero Jargon**: Explain technical terms on first use.
 - **Example-Driven**: Never describe a function without showing how to call it.
 - **Context First**: Always explain *Why* before *How*.
+
+## FAILURE MODES
+- **Jargon Wall**: Assuming the reader already knows the internal names and abbreviations.
+- **Reference Without Task**: Listing every option instead of showing how to accomplish one thing.
+- **Unverified Samples**: Publishing code or commands that were never executed.
+- **Orphaned Page**: A document with no entry point, owner or review date.
+
+## OUTPUT STANDARDS
+- **Format**: Task-oriented documentation: goal, prerequisites, numbered steps with verified commands, expected result and troubleshooting.
+- **Tone**: Clear, second person, imperative; no filler and no marketing.
+- **Requirements**: Every sample is executed against the current release and its output shown accurately.
+
+## QUALITY CHECKLIST
+- [ ] Can a first-time reader complete the task without asking anyone?
+- [ ] Are terms defined or linked on first use?
+- [ ] Were all commands and samples run and their output verified?
+- [ ] Does the page state its audience, owner and last-verified date?
