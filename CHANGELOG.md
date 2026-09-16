@@ -119,12 +119,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The AI Teammate sidebar numbered every framework line 1..N, rendering a
   five-step framework as twenty unrelated items.
 - Four defects that only a real `cargo` run could surface, all in the desktop
-  shell: three redaction regexes were written `r"...\\\"..."` — a backslash does
-  not escape inside a raw string, so each literal ended early and the file did
-  not parse; the command-discovery loop read `for (script, body) = ...` instead
-  of `in`; `main.rs` called `app.manage(...)` without `use tauri::Manager`; and
-  `extract_section` relied on lifetime elision Rust cannot infer from two `&str`
-  inputs.
+  shell: three redaction regexes escaped a double quote inside a plain raw
+  string, where a backslash is not an escape, so each literal ended early and
+  the file did not parse; the command-discovery loop read
+  `for (script, body) = ...` instead of `in`; `main.rs` called `app.manage(...)`
+  without `use tauri::Manager`; and `extract_section` relied on lifetime elision
+  Rust cannot infer from two `&str` inputs.
 - `git/mod.rs` used two git2 APIs that do not exist in that shape: `find_branch`
   takes `BranchType`, not `Option<BranchType>` (the `Option` form belongs to
   `branches`), and the short-name resolver is `resolve_reference_from_short_name`.
