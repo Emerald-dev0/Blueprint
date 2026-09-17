@@ -57,6 +57,12 @@ jobs:
   rust:
     name: Rust (fmt / clippy / test)
     runs-on: ubuntu-22.04
+    # TEMPORARY (bring-up): publishing the rustfmt diff as a pull request comment
+    # needs `pull-requests: write`. Drop this block together with the diagnostic
+    # step once the tree is formatted.
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -113,6 +119,7 @@ jobs:
       # diff on the pull request instead. Remove this step and restore the plain
       # `cargo fmt --all -- --check` gate once the tree is formatted.
       - name: Publish rustfmt diff (bring-up only)
+        continue-on-error: true
         if: steps.rustfmt.outcome == 'failure' && github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -129,7 +136,7 @@ jobs:
             --body-file /tmp/rustfmt-comment.md
 
       - name: rustfmt (gate)
-        if: steps.rustfmt.outcome == 'failure'
+        if: always() && steps.rustfmt.outcome == 'failure'
         run: |
           echo "::error::cargo fmt --check reported differences; the diff is in a comment on the pull request."
           exit 1
