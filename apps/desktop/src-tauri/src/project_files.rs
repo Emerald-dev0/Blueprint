@@ -178,8 +178,8 @@ fn walk(dir: &Path, prefix: &str, depth_left: usize, walker: &mut Walker) -> Vec
         let relative = join_rel(prefix, &name);
         // `bool::then` keeps the recursion lazy: a directory at the depth cap is
         // not walked at all, rather than walked and discarded.
-        let children = (is_dir && depth_left > 1)
-            .then(|| walk(&path, &relative, depth_left - 1, walker));
+        let children =
+            (is_dir && depth_left > 1).then(|| walk(&path, &relative, depth_left - 1, walker));
 
         nodes.push(FileNode {
             name,
