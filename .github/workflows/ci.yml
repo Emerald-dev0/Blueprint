@@ -100,8 +100,39 @@ jobs:
         run: pnpm build
 
       - name: rustfmt
+        id: rustfmt
         working-directory: apps/desktop/src-tauri
-        run: cargo fmt --all -- --check
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          cargo fmt --all -- --check 2>&1 | tee /tmp/rustfmt.diff
+
+      # TEMPORARY bring-up scaffolding. This branch is maintained from an
+      # environment that cannot download Actions logs (the results-receiver host
+      # is unreachable), so a formatting failure is invisible there. Publish the
+      # diff on the pull request instead. Remove this step and restore the plain
+      # `cargo fmt --all -- --check` gate once the tree is formatted.
+      - name: Publish rustfmt diff (bring-up only)
+        if: steps.rustfmt.outcome == 'failure' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo '### `cargo fmt --check` reported differences'
+            echo
+            echo '```diff'
+            head -c 60000 /tmp/rustfmt.diff
+            echo '```'
+          } > /tmp/rustfmt-comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}" \
+            --body-file /tmp/rustfmt-comment.md
+
+      - name: rustfmt (gate)
+        if: steps.rustfmt.outcome == 'failure'
+        run: |
+          echo "::error::cargo fmt --check reported differences; the diff is in a comment on the pull request."
+          exit 1
 
       - name: clippy
         working-directory: apps/desktop/src-tauri

@@ -90,7 +90,10 @@ struct Walker {
 
 impl Walker {
     fn new() -> Self {
-        Self { remaining: MAX_ENTRIES, truncated: false }
+        Self {
+            remaining: MAX_ENTRIES,
+            truncated: false,
+        }
     }
 
     /// Claim one entry slot. Returns false once the budget is spent.
@@ -134,11 +137,10 @@ fn clamp_depth(depth: Option<usize>) -> usize {
 }
 
 fn walk(dir: &Path, prefix: &str, depth_left: usize, walker: &mut Walker) -> Vec<FileNode> {
-    let read = match fs::read_dir(dir) {
-        Ok(entries) => entries,
-        // An unreadable directory (permissions, vanished mount, a symlink that
-        // does not resolve) must not fail the whole tree.
-        Err(_) => return Vec::new(),
+    // An unreadable directory (permissions, a vanished mount, a symlink that does
+    // not resolve) must not fail the whole tree.
+    let Ok(read) = fs::read_dir(dir) else {
+        return Vec::new();
     };
 
     let mut entries: Vec<(PathBuf, bool, String)> = read
@@ -281,7 +283,10 @@ mod tests {
 
     #[test]
     fn walker_records_when_the_entry_cap_is_hit() {
-        let mut walker = Walker { remaining: 2, truncated: false };
+        let mut walker = Walker {
+            remaining: 2,
+            truncated: false,
+        };
         assert!(walker.take());
         assert!(walker.take());
         assert!(!walker.take(), "the third entry must be refused");
