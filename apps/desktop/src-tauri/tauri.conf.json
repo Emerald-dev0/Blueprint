@@ -51,7 +51,7 @@
     "longDescription": "Blueprint is a local-first engineering workspace that unifies project intelligence, architectural memory and AI orchestration into a single command center.",
     "copyright": "Copyright © 2026 Blueprint Founding Team",
     "license": "MIT",
-    "licenseFile": "../../LICENSE",
+    "licenseFile": "../../../LICENSE",
     "homepage": "https://github.com/Emerald-dev0/Blueprint",
     "publisher": "Blueprint",
     "useLocalToolsDir": true,
