@@ -1,8 +1,10 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { ActivityIndicator, AIProposalSurface, Badge, Button, Input } from '@blueprint/ui';
-import { Bot, ChevronRight, Send, ShieldCheck, Sparkles, User } from 'lucide-react';
+import { Bot, ChevronRight, Cpu, Send, ShieldCheck, Sparkles, User } from 'lucide-react';
+import { ROUTES } from '../../lib/routes';
 import {
   api,
   type CompletionResult,
@@ -122,6 +124,15 @@ export default function AIPage() {
             </div>
           </div>
           <div className="flex items-center space-x-2">
+            {/* The Agent OS dashboard (persona registry + workflow planner) had
+                no link from anywhere in the UI, only a command-palette entry. */}
+            <Link
+              href={ROUTES.aos}
+              className="flex h-8 items-center rounded-lg border border-white/10 px-3 text-[10px] font-mono uppercase tracking-widest text-slate-400 transition-colors hover:border-[#00FF9D]/30 hover:text-[#00FF9D]"
+            >
+              <Cpu size={11} className="mr-1.5" />
+              Agent OS
+            </Link>
             <Button
               variant="outline"
               size="sm"

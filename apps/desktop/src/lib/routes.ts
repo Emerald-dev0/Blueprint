@@ -3,15 +3,17 @@
  *
  * Route strings were previously duplicated between the navigation rail, the
  * command bar and the workspace store, and the store's `activeSystem` union
- * drifted from the actual App Router pages (`projects` and `workspace` are not
- * both real routes; `/design-system` existed with no nav entry). Keeping them
- * here means a rename is a one-line change and the nav can never point at a
- * route that does not exist.
+ * drifted from the actual App Router pages (`/design-system` existed with no nav
+ * entry). Keeping them here means a rename is a one-line change and the nav can
+ * never point at a route that does not exist.
+ *
+ * `workspace` was dropped along with its page: `/` is the project home and shows
+ * the open repository, so a second route for the same single-project concept
+ * only produced a placeholder.
  */
 
 export const ROUTES = {
   projects: '/',
-  workspace: '/workspace',
   intelligence: '/intelligence',
   ai: '/ai',
   aos: '/ai/aos',

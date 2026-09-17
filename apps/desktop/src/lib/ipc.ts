@@ -11,6 +11,22 @@
 
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
+import type { GitHubRepository } from '@blueprint/types';
+import * as git from '@blueprint/git-engine';
+
+/**
+ * The git and GitHub types live in `@blueprint/git-engine`, next to the code
+ * that invokes the commands producing them, so the shapes cannot drift from the
+ * Rust core independently. They are re-exported here because pages already reach
+ * for `ipc.ts` as the renderer's single entry point.
+ */
+export type {
+  CommitSummary,
+  FileStatus,
+  GitHubRepoPayload,
+  GitStatusReport,
+} from '@blueprint/git-engine';
+export { toGitHubRepository } from '@blueprint/git-engine';
 
 export interface CompletionResult {
   content: string;
@@ -30,21 +46,6 @@ export interface RepoReport {
   stack: TechStack;
   path: string;
   files_scanned: number;
-}
-
-export interface FileStatus {
-  path: string;
-  state: string;
-}
-
-export interface GitStatusReport {
-  repository_root: string;
-  branch: string;
-  is_clean: boolean;
-  ahead: number;
-  behind: number;
-  files: FileStatus[];
-  recent_commits: { id: string; summary: string; author: string; time: number }[];
 }
 
 export interface OperatingManual {
@@ -114,6 +115,25 @@ export interface TaskGraph {
   goal: string;
   tasks: WorkflowTask[];
   status: string;
+}
+
+/** One entry of the project file tree (`list_project_files`). */
+export interface FileNode {
+  name: string;
+  /** Relative to the project root, always `/`-separated. */
+  path: string;
+  kind: 'file' | 'directory';
+  /** Absent for files and for directories at the depth cap. */
+  children?: FileNode[];
+}
+
+export interface ProjectTree {
+  /** Absolute path of the project that was walked. */
+  root: string;
+  nodes: FileNode[];
+  /** True when the 2000-entry cap cut the walk short. */
+  truncated: boolean;
+  maxDepth: number;
 }
 
 export interface ExportedFile {
@@ -198,8 +218,47 @@ export const api = {
     return invoke('start_repo_analysis', { path: path ?? null });
   },
 
-  getGitStatus(): Promise<GitStatusReport> {
-    return invoke('get_git_status');
+  /** Branch, divergence and working-tree state of the open repository. */
+  getGitStatus(): Promise<git.GitStatusReport> {
+    return git.getGitStatus();
+  },
+
+  /** Create a branch off HEAD in the open repository. */
+  createBranch(name: string): Promise<void> {
+    return git.createGitBranch(name);
+  },
+
+  /**
+   * Release notes for `tag`, grouped by conventional-commit prefix and derived
+   * from the real history of the open repository. Falls back to HEAD when the
+   * tag does not exist.
+   */
+  generateReleaseNotes(tag: string): Promise<string> {
+    return git.generateReleaseNotes(tag);
+  },
+
+  /** Deterministic commit message derived from the real working tree. */
+  suggestCommitMessage(diff: string): Promise<string> {
+    return git.suggestCommitMessage(diff);
+  },
+
+  /** Store a GitHub personal access token in the OS credential store. */
+  setGitHubCredential(token: string): Promise<void> {
+    return git.setGitHubCredential(token);
+  },
+
+  /** Repositories of the authenticated GitHub account (up to 50, most recent first). */
+  listGitHubRepositories(): Promise<GitHubRepository[]> {
+    return git.listGitHubRepositories();
+  },
+
+  /**
+   * Read-only walk of the open project for the explorer panel. Skips `.git`,
+   * dependency directories, build output and caches; capped at 2000 entries and
+   * 6 levels deep (`truncated` says when the cap was hit).
+   */
+  listProjectFiles(depth?: number): Promise<ProjectTree> {
+    return invoke('list_project_files', { depth: depth ?? null });
   },
 
   getAdrs(): Promise<ADR[]> {

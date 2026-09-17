@@ -4,21 +4,20 @@ import * as React from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useWorkspaceStore } from '../../store/workspace';
 import { ProjectExplorer } from '../workspace/explorer';
-import { WorkspaceTabs } from '../workspace/tabs';
-import { ShortcutHint } from './shortcut-hint';
-import { Cpu } from 'lucide-react';
+import { Inspector } from '../workspace/inspector';
 
+/**
+ * The three-column shell: explorer, routed page, inspector.
+ *
+ * The tab strip that used to sit above the page is gone. Its tabs were stored
+ * and rendered as chips, but no code ever drew a tab's contents, so activating
+ * one changed a highlight and nothing else - and one command in the palette
+ * created a tab called `mock-analysis` that persisted into localStorage.
+ * Blueprint navigates by route; the columns either show real state or say they
+ * have none.
+ */
 export function Workspace({ children }: { children: React.ReactNode }) {
-  const {
-    leftWingOpen,
-    rightWingOpen,
-    layout,
-    setLayout,
-    tabs,
-    activeSystem
-  } = useWorkspaceStore();
-
-  const isWorkspaceActive = activeSystem === 'workspace';
+  const { leftWingOpen, rightWingOpen, layout, setLayout } = useWorkspaceStore();
 
   return (
     <PanelGroup
@@ -28,15 +27,14 @@ export function Workspace({ children }: { children: React.ReactNode }) {
         if (sizes.length === 3) {
           setLayout({
             leftWingWidth: sizes[0],
-            rightWingWidth: sizes[2]
+            rightWingWidth: sizes[2],
           });
         }
       }}
     >
-      {/* Left Wing */}
       {leftWingOpen && (
         <Panel defaultSize={layout.leftWingWidth} minSize={15} maxSize={40} id="explorer">
-          <div className="h-full bg-[#0B0B0B] border-r border-white/5 overflow-hidden">
+          <div className="h-full overflow-hidden border-r border-white/5 bg-[#0B0B0B]">
             <ProjectExplorer />
           </div>
         </Panel>
@@ -44,31 +42,16 @@ export function Workspace({ children }: { children: React.ReactNode }) {
 
       {leftWingOpen && <ResizeHandle />}
 
-      {/* Main Workspace */}
       <Panel minSize={30}>
-        <div className="flex flex-col h-full bg-[#0B0B0B]">
-          {isWorkspaceActive && <WorkspaceTabs />}
-          <main className="flex-grow relative overflow-auto">
-            {isWorkspaceActive && tabs.length === 0 ? (
-              <EmptyWorkspace />
-            ) : (
-              <div className="h-full">
-                {children}
-              </div>
-            )}
-          </main>
-        </div>
+        <main className="relative h-full flex-grow overflow-auto bg-[#0B0B0B]">{children}</main>
       </Panel>
 
       {rightWingOpen && <ResizeHandle />}
 
-      {/* Right Wing */}
       {rightWingOpen && (
         <Panel defaultSize={layout.rightWingWidth} minSize={20} maxSize={50} id="inspector">
-          <div className="h-full bg-[#0B0B0B] border-l border-white/5 overflow-hidden">
-            <div className="p-4 text-xs font-mono text-slate-500 uppercase tracking-widest text-right">
-              Inspector
-            </div>
+          <div className="h-full overflow-hidden border-l border-white/5 bg-[#0B0B0B]">
+            <Inspector />
           </div>
         </Panel>
       )}
@@ -78,26 +61,8 @@ export function Workspace({ children }: { children: React.ReactNode }) {
 
 function ResizeHandle() {
   return (
-    <PanelResizeHandle className="w-[1px] bg-white/5 hover:bg-[#00FF9D]/30 transition-colors relative group">
+    <PanelResizeHandle className="group relative w-[1px] bg-white/5 transition-colors hover:bg-[#00FF9D]/30">
       <div className="absolute inset-y-0 -left-1 -right-1 z-10 cursor-col-resize" />
     </PanelResizeHandle>
-  );
-}
-
-function EmptyWorkspace() {
-  return (
-    <div className="h-full flex flex-col items-center justify-center space-y-4 px-8 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 text-[#00FF9D]/20">
-        <Cpu size={32} />
-      </div>
-      <div className="max-w-md">
-        <h3 className="text-sm font-bold text-slate-300 uppercase tracking-tight">Workspace Ready</h3>
-        <p className="text-xs text-slate-500 font-mono mt-2 leading-relaxed">
-          Open a file from the explorer or use{' '}
-          <ShortcutHint keys="K" className="border-white/10" /> to initiate an
-          implementation plan.
-        </p>
-      </div>
-    </div>
   );
 }

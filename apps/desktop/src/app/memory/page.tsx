@@ -21,7 +21,6 @@ import {
   Search,
   Plus,
   Brain,
-  ChevronRight,
   BookOpen,
   User,
   Bot,
@@ -362,12 +361,8 @@ function ADRCard({ adr }: { adr: ADR }) {
         </div>
       )}
 
-      <div className="mt-8 pt-8 border-t border-white/[0.03] flex items-center justify-end">
-        <Button variant="ghost" size="sm" className="h-8 text-[11px] uppercase font-black tracking-widest hover:text-[#00FF9D] hover:bg-transparent">
-          Explore Impact
-          <ChevronRight size={14} className="ml-1" />
-        </Button>
-      </div>
+      {/* The "Explore Impact" button that used to sit here had no handler:
+          there is no impact graph in the core to explore. */}
     </div>
   );
 }

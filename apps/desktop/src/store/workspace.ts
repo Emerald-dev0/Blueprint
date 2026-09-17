@@ -1,102 +1,86 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-export type WorkspaceTabType = 'analysis' | 'ai' | 'browser' | 'editor' | 'github';
+/**
+ * Shell layout state: which wings are open, how wide they are, and what the
+ * explorer has selected.
+ *
+ * Three things were removed because they duplicated state that lives elsewhere
+ * and had already drifted from it:
+ *
+ * - `activeSystem` claimed to track the current page, but only the command bar
+ *   ever set it, so it said "projects" on every route. The navigation rail
+ *   derives the active entry from `usePathname()`; the router is the only
+ *   source of truth for where the user is.
+ * - `tabs` / `activeTabId` backed a tab strip whose contents were never
+ *   rendered - clicking a tab highlighted a chip and nothing else. Blueprint is
+ *   route-based, so the strip was decoration that implied a capability (an
+ *   in-app editor with open documents) that does not exist.
+ * - `activeProjectId` competed with the Rust `ProjectContext`, which is what
+ *   every command actually reads. Nothing ever set it.
+ */
 
-export interface WorkspaceTab {
-  id: string;
-  type: WorkspaceTabType;
-  title: string;
-  metadata?: Record<string, any>;
+/** The explorer entry mirrored into the inspector panel. */
+export interface ExplorerSelection {
+  name: string;
+  /** Relative to the open project root, `/`-separated. */
+  path: string;
+  kind: 'file' | 'directory';
 }
 
 interface WorkspaceState {
-  activeProjectId: string | null;
   leftWingOpen: boolean;
   rightWingOpen: boolean;
   commandBarOpen: boolean;
-  activeSystem: 'projects' | 'workspace' | 'intelligence' | 'ai' | 'github' | 'memory' | 'settings';
-
-  // Tab System
-  tabs: WorkspaceTab[];
-  activeTabId: string | null;
-
-  // Layout State
+  selection: ExplorerSelection | null;
+  /** Bumped to ask the explorer to walk the project again. */
+  explorerNonce: number;
   layout: {
     leftWingWidth: number;
     rightWingWidth: number;
   };
 
-  setActiveProject: (id: string | null) => void;
   toggleLeftWing: () => void;
   toggleRightWing: () => void;
   setCommandBarOpen: (open: boolean) => void;
-  setActiveSystem: (system: WorkspaceState['activeSystem']) => void;
-
-  // Tab Actions
-  openTab: (tab: WorkspaceTab) => void;
-  closeTab: (id: string) => void;
-  setActiveTab: (id: string) => void;
-
-  // Layout Actions
+  select: (selection: ExplorerSelection | null) => void;
+  refreshExplorer: () => void;
   setLayout: (layout: Partial<WorkspaceState['layout']>) => void;
 }
 
 export const useWorkspaceStore = create<WorkspaceState>()(
   persist(
     (set) => ({
-      activeProjectId: null,
       leftWingOpen: true,
       rightWingOpen: false,
       commandBarOpen: false,
-      activeSystem: 'projects',
-      tabs: [],
-      activeTabId: null,
+      selection: null,
+      explorerNonce: 0,
       layout: {
         leftWingWidth: 20,
         rightWingWidth: 25,
       },
 
-      setActiveProject: (id) => set({ activeProjectId: id }),
       toggleLeftWing: () => set((state) => ({ leftWingOpen: !state.leftWingOpen })),
       toggleRightWing: () => set((state) => ({ rightWingOpen: !state.rightWingOpen })),
       setCommandBarOpen: (open) => set({ commandBarOpen: open }),
-      setActiveSystem: (system) => set({ activeSystem: system }),
-
-      openTab: (tab) => set((state) => {
-        const exists = state.tabs.find(t => t.id === tab.id);
-        if (exists) return { activeTabId: tab.id, activeSystem: 'workspace' };
-        return {
-          tabs: [...state.tabs, tab],
-          activeTabId: tab.id,
-          activeSystem: 'workspace'
-        };
-      }),
-
-      closeTab: (id) => set((state) => {
-        const newTabs = state.tabs.filter(t => t.id !== id);
-        let newActiveId = state.activeTabId;
-        if (state.activeTabId === id) {
-          newActiveId = newTabs.length > 0 ? newTabs[newTabs.length - 1].id : null;
-        }
-        return { tabs: newTabs, activeTabId: newActiveId };
-      }),
-
-      setActiveTab: (id) => set({ activeTabId: id, activeSystem: 'workspace' }),
-
-      setLayout: (layout) => set((state) => ({
-        layout: { ...state.layout, ...layout }
-      })),
+      select: (selection) => set({ selection }),
+      refreshExplorer: () =>
+        set((state) => ({ explorerNonce: state.explorerNonce + 1 })),
+      setLayout: (layout) =>
+        set((state) => ({
+          layout: { ...state.layout, ...layout },
+        })),
     }),
     {
       name: 'blueprint-workspace-storage',
       storage: createJSONStorage(() => localStorage),
+      // Only the layout is worth restoring across launches. What was selected
+      // and when the tree was last refreshed belong to the session, and the
+      // selection refers to a project that may not be open any more.
       partialize: (state) => ({
-        activeProjectId: state.activeProjectId,
         leftWingOpen: state.leftWingOpen,
         rightWingOpen: state.rightWingOpen,
-        tabs: state.tabs,
-        activeTabId: state.activeTabId,
         layout: state.layout,
       }),
     }

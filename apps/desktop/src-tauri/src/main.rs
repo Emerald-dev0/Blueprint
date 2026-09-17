@@ -11,6 +11,7 @@ mod memory;
 mod paths;
 mod plugins;
 mod project;
+mod project_files;
 
 use std::sync::Arc;
 
@@ -67,11 +68,9 @@ fn main() {
             ai::set_ai_credential,
             ai::generate_ai_completion,
             ai::run_aos_completion,
-            ai::get_personas,
             ai::get_operating_manuals,
             ai::reload_personas,
             ai::plan_aos_workflow,
-            ai::orchestration::get_agent_roles,
             intelligence::start_repo_analysis,
             intelligence::analyze_website,
             git::set_github_credential,
@@ -88,6 +87,7 @@ fn main() {
             events::publish_system_event,
             project::set_project_path,
             project::get_project_path,
+            project_files::list_project_files,
             interop::export_agent_context
         ])
         .run(tauri::generate_context!())

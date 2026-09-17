@@ -54,55 +54,23 @@ export interface AIProviderConfig {
 }
 
 // --- Orchestration & Persona Types ---
+//
+// This section used to declare `AgentRoleId` (a 13-value union of ids such as
+// 'architect', 'frontend' and 'pm'), a `Persona` interface keyed by it, and a
+// `Task` / `TaskGraph` / `TaskStatus` trio with lowercase statuses. None of it
+// described the product: personas are authored on disk under
+// `packages/personas/<id>/persona.json` (24 of them, discovered at runtime by
+// the Rust registry), and the planner in `ai/aos/workflow.rs` emits those
+// directory ids together with serde's capitalized status variants ('Pending',
+// 'Active', 'Completed', 'Failed').
+//
+// A union that lists ids which never existed - and omits every id that does -
+// is worse than no type at all, because it type-checks against fiction. The
+// live models are `OperatingManual` and `WorkflowTask` / `TaskGraph` in
+// `apps/desktop/src/lib/ipc.ts`, which mirror what the core actually
+// serializes. They are deliberately not duplicated here: a second copy is how
+// the drift happened in the first place.
 
-export type AgentRoleId =
-  | 'architect'
-  | 'frontend'
-  | 'backend'
-  | 'designer'
-  | 'security'
-  | 'database'
-  | 'devops'
-  | 'qa'
-  | 'pm'
-  | 'writer'
-  | 'principal'
-  | 'reference_specialist'
-  | 'investigator';
-
-export interface Persona {
-  id: AgentRoleId;
-  name: string;
-  identity: string;
-  mission: string;
-  expertise: string[];
-  responsibilities: string[];
-  thinkingFramework: string[];
-  tools: string[];
-  outputFormat: string;
-  qualityStandards: string[];
-  version: string;
-}
-
-export type TaskStatus = 'pending' | 'active' | 'waiting_approval' | 'completed' | 'failed';
-
-export interface Task {
-  id: string;
-  title: string;
-  description: string;
-  roleId: AgentRoleId;
-  status: TaskStatus;
-  dependencies: string[];
-  output?: string;
-  error?: string;
-}
-
-export interface TaskGraph {
-  id: string;
-  goal: string;
-  tasks: Task[];
-  status: 'planning' | 'executing' | 'completed' | 'failed';
-}
 
 // --- Project Intelligence Types ---
 
@@ -154,6 +122,15 @@ export interface ADR {
 
 // --- GitHub Ecosystem Types ---
 
+/**
+ * GitHub entities in the camelCase shape the renderer uses.
+ *
+ * Only `GitHubRepository` is produced today, by `list_github_repositories`
+ * through the mapping in `@blueprint/git-engine`. `GitHubIssue` and
+ * `GitHubPullRequest` describe what the core will return once issue and
+ * pull-request commands exist; nothing produces them yet, so no UI may render
+ * them (see the roadmap in the README).
+ */
 export interface GitHubRepository {
   id: number;
   name: string;

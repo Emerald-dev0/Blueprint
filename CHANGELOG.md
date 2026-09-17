@@ -8,6 +8,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `list_project_files`: a capped, read-only walk of the open project (2000
+  entries, 6 levels, skipping `.git`, dependency, build and cache directories)
+  that reports when the cap cut it short. Seven Rust tests pin its ordering,
+  skip list, path joining, depth clamping and entry budget.
+- A real explorer and inspector in the shell: the left wing renders the tree the
+  command returns, with a working name filter, expand/collapse, refresh and an
+  "open a repository" affordance when nothing is open; the right wing shows the
+  selected entry's name, kind, project-relative and absolute path, with a copy
+  button that reports whether the webview allowed it.
+- **Workflow Planner** on `/ai/aos`, surfacing `plan_aos_workflow` — implemented
+  in the core but never called by any UI, under a tab that read "not yet
+  implemented". The panel states that the decomposition is a fixed three-step
+  scaffold and that nothing executes the tasks.
+- Local git state, release-note drafting and a project scan on `/github`, all
+  from commands that already existed in the core (`get_git_status`,
+  `generate_github_release_notes`, `start_repo_analysis`) and had no UI.
+- Settings → GitHub: save a personal access token to the OS credential store and
+  check that it works, reporting how many repositories it can see.
+- `tests/unit/git-engine.test.ts` (12 cases): asserts the exact command names and
+  argument keys the SDK invokes, and reads `main.rs` to fail if any of them is
+  missing from `generate_handler!`. Plus `tests/unit/tree.test.ts` (17 cases) for
+  the tree helpers, and route-table tests that derive the expected route set from
+  `apps/desktop/src/app/**/page.tsx` instead of restating it.
+- `tests/stubs/tauri-core.ts`, aliased in `vitest.config.ts` and in the root
+  `tsconfig.json` paths, so code that calls `invoke` can be unit-tested at all.
+- A `build:bundles` label trigger on `desktop.yml`, so the three-platform bundle
+  matrix can be proven on a pull request. It ran for the first time on this
+  branch: Windows (NSIS + MSI), Linux (deb + rpm + AppImage) and macOS (app +
+  dmg) all built.
 - **Agent interoperability export** (`export_agent_context`, ADR 0003): writes
   `AGENTS.md` into the open project plus `CLAUDE.md` / `GEMINI.md` import
   pointers plus `knowledge.md` for Freebuff/Codebuff (which resolve that name
@@ -65,6 +94,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ADR 0002 documenting the packaging and truthfulness decisions.
 
 ### Changed
+- `/` is now the project home: the open repository's branch, divergence, changed
+  files, recent commits, file counts and the next actions available for it. It
+  previously rendered "The projects engine is currently in development", reading
+  a store field that no navigation ever updated.
+- The `/workspace` route is gone. Blueprint opens one project at a time, so a
+  second route for the same concept produced a placeholder page and a tab strip
+  whose tab contents were never rendered by anything.
+- `@blueprint/git-engine` is now the single typed surface for git and GitHub, and
+  `apps/desktop/src/lib/ipc.ts` delegates to it. Both previously declared their
+  own versions of the same commands and payload shapes, which is how they
+  diverged.
+- `@blueprint/types` no longer declares orchestration types; the live models are
+  `OperatingManual` and `WorkflowTask` / `TaskGraph` in `ipc.ts`.
+- The command palette navigates through the `ROUTES` map, so it cannot offer a
+  route that does not exist, and every entry has a handler.
 - `OperatingManual` now carries `instructions`, `labels` and parsed
   `responsibilities`, `quality_standards` and `output_format`; the prompt
   compiler injects the verbatim operating manual (capped at 8 000 characters)
@@ -105,6 +149,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   "Final Engineering Review" is relabelled as AI-generated self-review.
 
 ### Fixed
+- `tauri.conf.json` pointed `licenseFile` at `../../LICENSE`, which resolves to
+  `apps/LICENSE` — the same off-by-one class as the bundled personas path. The
+  licence sits at the repository root, three levels up from `src-tauri`. Nothing
+  caught it because the packaging workflow had never run.
+- The GitHub repository mapping read `r.url` and `r.stars`, neither of which
+  exists on the wire (GitHub sends `html_url` and `stargazers_count`), so
+  repository links and star counts were silently `undefined`. The mapping now
+  lives in `@blueprint/git-engine` under test.
+- Fabricated data on `/github`: "Open PRs 12", "Build Success 98%", "Avg Review
+  Time 4.2h" and "monitoring 5 repositories for secret exposure" were string
+  literals in JSX. Nothing in Blueprint reads pull requests, CI runs or review
+  times, and secret redaction happens in the AI path, not here. They are replaced
+  by a footprint derived from the repositories the API actually returned and by
+  the real repository scan.
+- Settings → GitHub claimed the integration "is currently being scaffolded"
+  behind a disabled button, while the Rust credential store's error message told
+  users to add a token in exactly that tab.
+- `ExecutionTimeline` compared against lowercase statuses (`'completed'`,
+  `'waiting_approval'`) while the core serializes serde unit variants
+  (`'Completed'`, `'Failed'`), and rendered `task.title` / `task.description`,
+  which do not exist on the payload. Every branch of it was dead.
+- The explorer's hardcoded `mockFiles` tree, shown whether or not a project was
+  open.
 - `backend-engineer` and `frontend-engineer` shipped `instructions.md` with no
   `persona.json`, so the loader silently skipped two of the advertised personas.
 - `instructions.md` was never read at all: every behavioural rule the personas
@@ -136,6 +203,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   resolve a dependency the crate declares.
 
 ### Removed
+- `get_personas` and `get_agent_roles`: two identical commands returning the same
+  static role list, called by nothing, along with the `ai/orchestration/` module
+  that existed only to serve them. The filesystem registry behind
+  `get_operating_manuals` is the single source of truth for personas.
+- `commit`, `push`, `listIssues` and `createPullRequest` from
+  `@blueprint/git-engine`. They invoked `create_git_commit`, `push_git_changes`,
+  `list_github_issues` and `create_github_pull_request`, none of which the core
+  implements, so all four rejected at runtime with "command not found" — and
+  since nothing imported the package, nothing ever noticed.
+- The stale `AgentRoleId` union (13 ids such as `'architect'` and `'pm'` that
+  were never persona ids, while omitting all 24 that are), and the unused
+  `Persona` / `Task` / `TaskGraph` types keyed to it.
+- Dead controls: "Run Full Audit" and the repository external-link button on
+  `/github`, "Disable" on installed plugins, "Explore Impact" on an ADR, and
+  "New Blueprint Project" in the palette. A control that cannot act is worse than
+  no control.
+- The workspace tab system (`tabs`, `activeTabId`, `WorkspaceTabs`) and the dead
+  `activeSystem` / `activeProjectId` store fields that duplicated route and
+  project state the router and the Rust `ProjectContext` already own.
 - Unsandboxed `run_python_tool` command (arbitrary code execution from the
   renderer with no permission checks).
 - Unused dependencies `tree-sitter`, `walkdir`, `futures-util`; the README's

@@ -17,6 +17,10 @@
     "baseUrl": ".",
     "types": ["node"],
     "paths": {
+      // Mirrors the vitest alias so tests typecheck against the same inert stub
+      // they run against. `apps/` is excluded from this project, so the desktop
+      // app still resolves the real Tauri API through its own tsconfig.
+      "@tauri-apps/api/core": ["tests/stubs/tauri-core.ts"],
       "@blueprint/ui": ["packages/ui/src"],
       "@blueprint/core": ["packages/core/src"],
       "@blueprint/ai-adapters": ["packages/ai-adapters/src"],

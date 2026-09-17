@@ -39,6 +39,50 @@ export default function SettingsPage() {
   });
   const [status, setStatus] = React.useState<Record<string, string>>({});
 
+  // GitHub token. The Rust credential store refuses to list repositories until
+  // one exists and its error says "Add one in Settings -> GitHub", so this tab
+  // has to actually accept one. It used to be a disabled button under the text
+  // "GitHub integration is currently being scaffolded", which sent the user to a
+  // dead end for a feature that was already implemented.
+  const [token, setToken] = React.useState('');
+  const [tokenStatus, setTokenStatus] = React.useState<string | null>(null);
+  const [tokenError, setTokenError] = React.useState<string | null>(null);
+  const [isSavingToken, setIsSavingToken] = React.useState(false);
+  const [isVerifying, setIsVerifying] = React.useState(false);
+  const [visibleRepos, setVisibleRepos] = React.useState<number | null>(null);
+
+  const saveToken = async () => {
+    setIsSavingToken(true);
+    setTokenError(null);
+    try {
+      await api.setGitHubCredential(token.trim());
+      // Clear the field: the token now lives in the OS credential store, and
+      // keeping it in renderer state would only widen its exposure.
+      setToken('');
+      setTokenStatus('Saved');
+      setTimeout(() => setTokenStatus(null), 2000);
+    } catch (e) {
+      setTokenStatus(null);
+      setTokenError(String(e));
+    } finally {
+      setIsSavingToken(false);
+    }
+  };
+
+  const verifyToken = async () => {
+    setIsVerifying(true);
+    setTokenError(null);
+    try {
+      const repos = await api.listGitHubRepositories();
+      setVisibleRepos(repos.length);
+    } catch (e) {
+      setVisibleRepos(null);
+      setTokenError(String(e));
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
   const saveKey = async (provider: string) => {
     try {
       await api.setAiCredential(provider, (keys as Record<string, string>)[provider]);
@@ -107,16 +151,89 @@ export default function SettingsPage() {
           </section>
         </TabsContent>
 
-        <TabsContent value="github" className="animate-in fade-in duration-300">
-          <div className="p-12 border border-dashed border-white/10 rounded-2xl text-center space-y-4">
-            <Github size={32} className="mx-auto text-slate-600" />
-            <p className="text-slate-400 font-mono text-sm">GitHub integration is currently being scaffolded.</p>
-            <Button variant="outline" disabled>Connect GitHub</Button>
-          </div>
+        <TabsContent value="github" className="space-y-8 animate-in fade-in duration-300">
+          <section className="space-y-5">
+            <div className="flex items-center space-x-2 text-[#00FF9D]">
+              <Github size={16} />
+              <h3 className="text-xs font-black uppercase tracking-widest">Personal access token</h3>
+            </div>
+
+            <p className="max-w-2xl font-mono text-xs leading-relaxed text-slate-500">
+              Blueprint stores the token in your operating system credential store - not in a
+              config file - and sends it only to api.github.com. Its audit log records the byte
+              length of what was stored, never the token. A read-only token with the{' '}
+              <span className="text-slate-300">repo</span> scope is enough for everything
+              implemented today.
+            </p>
+
+            <div className="flex items-center justify-between rounded-xl border border-white/5 bg-[#141414] p-4 transition-all hover:border-white/10">
+              <div className="space-y-1">
+                <label
+                  htmlFor="github-token"
+                  className="text-[10px] font-black uppercase tracking-tighter text-slate-500"
+                >
+                  GitHub token
+                </label>
+                <Input
+                  id="github-token"
+                  type="password"
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
+                  placeholder="ghp_..."
+                  autoComplete="off"
+                  className="h-8 w-64 border-none bg-transparent p-0 focus-visible:ring-0"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                {tokenStatus && (
+                  <span className="font-mono text-[10px] text-[#00FF9D]">{tokenStatus}</span>
+                )}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8"
+                  onClick={saveToken}
+                  disabled={isSavingToken || token.trim().length === 0}
+                >
+                  Save token
+                </Button>
+              </div>
+            </div>
+
+            {tokenError && <p className="font-mono text-xs text-red-400">{tokenError}</p>}
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Button size="sm" variant="outline" onClick={verifyToken} disabled={isVerifying}>
+                {isVerifying ? 'Checking...' : 'Check that it works'}
+              </Button>
+              {visibleRepos !== null && (
+                <span className="font-mono text-xs text-slate-400">
+                  {visibleRepos} {visibleRepos === 1 ? 'repository' : 'repositories'} visible to
+                  this token
+                </span>
+              )}
+            </div>
+          </section>
+
+          <Separator />
+
+          <section className="space-y-2 rounded-2xl border border-white/5 bg-white/5 p-6">
+            <h4 className="text-sm font-bold text-white">What the token is used for</h4>
+            <ul className="space-y-1 font-mono text-xs text-slate-500">
+              <li>· Listing your repositories on the GitHub page.</li>
+              <li>
+                · Nothing else yet. Issues, pull requests, commits and pushes are not implemented
+                in the core, so no command can act on your behalf.
+              </li>
+            </ul>
+          </section>
         </TabsContent>
 
         <TabsContent value="plugins" className="space-y-6 animate-in fade-in duration-300">
           {pluginError && <p className="text-xs text-red-400 font-mono">{pluginError}</p>}
+          {/* Manifests are read from the Rust plugin manager. There is no
+              enable/disable/uninstall command in the core, so the panel does not
+              offer one - the previous "Disable" button had no handler. */}
           <div className="grid gap-4">
             {plugins.length === 0 ? (
               <p className="text-sm text-slate-500 font-mono text-center py-12 border border-dashed border-white/5 rounded-2xl">No plugins installed.</p>
@@ -135,7 +252,6 @@ export default function SettingsPage() {
                       ))}
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:bg-red-500/10">Disable</Button>
                 </div>
               ))
             )}

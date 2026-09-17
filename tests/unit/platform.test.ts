@@ -1,7 +1,25 @@
+import { readdirSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { normalizePath } from '../../apps/desktop/src/lib/platform';
 import { ROUTES } from '../../apps/desktop/src/lib/routes';
+
+const APP_DIR = resolve(process.cwd(), 'apps/desktop/src/app');
+
+/** Every route the App Router will actually serve, read off the filesystem. */
+function pageRoutes(dir: string = APP_DIR, base = ''): string[] {
+  const routes: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = resolve(dir, entry.name);
+    if (entry.isDirectory()) {
+      routes.push(...pageRoutes(full, `${base}/${entry.name}`));
+    } else if (entry.name === 'page.tsx') {
+      routes.push(base === '' ? '/' : base);
+    }
+  }
+  return routes.sort();
+}
 
 describe('normalizePath', () => {
   it('maps the root to itself', () => {
@@ -29,9 +47,22 @@ describe('route table', () => {
     expect(new Set(paths).size).toBe(paths.length);
   });
 
-  it('keeps the workspace root and the projects route distinct', () => {
+  it('puts the project home at the root', () => {
     expect(ROUTES.projects).toBe('/');
-    expect(ROUTES.workspace).not.toBe(ROUTES.projects);
+  });
+
+  it('never points at a page that does not exist', () => {
+    // The navigation rail, the command palette and every in-page link are built
+    // from ROUTES, so a stale entry here is a dead control in the UI.
+    const served = pageRoutes();
+    for (const [key, path] of Object.entries(ROUTES)) {
+      expect(served, `ROUTES.${key} -> ${path} has no page.tsx`).toContain(path);
+    }
+  });
+
+  it('leaves no page unreachable from the route table', () => {
+    const declared = Object.values(ROUTES).slice().sort();
+    expect(declared).toEqual(pageRoutes());
   });
 });
 

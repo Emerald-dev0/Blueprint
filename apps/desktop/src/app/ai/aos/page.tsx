@@ -11,9 +11,10 @@ import {
   TabsList,
   TabsTrigger,
 } from '@blueprint/ui';
-import { BookOpen, Cpu, RefreshCw, Terminal, User } from 'lucide-react';
+import { BookOpen, Cpu, RefreshCw, User, Workflow } from 'lucide-react';
 import { api, type OperatingManual } from '../../../lib/ipc';
 import { groupThinkingFramework, hasOperatingManual } from '../../../lib/personas';
+import { WorkflowPlanner } from '../../../components/ai/workflow-planner';
 
 export default function AOSDashboard() {
   const [manuals, setManuals] = React.useState<OperatingManual[]>([]);
@@ -35,6 +36,13 @@ export default function AOSDashboard() {
   React.useEffect(() => {
     load();
   }, [load]);
+
+  /** Persona id -> display name, so the planner can label tasks with the
+   *  persona a human recognises instead of its directory slug. */
+  const personaNames = React.useMemo(
+    () => Object.fromEntries(manuals.map((manual) => [manual.id, manual.name])),
+    [manuals]
+  );
 
   if (isLoading) {
     return (
@@ -87,7 +95,7 @@ export default function AOSDashboard() {
       <Tabs defaultValue="registry" className="w-full">
         <TabsList className="bg-white/5 border border-white/5 h-10 mb-8">
           <TabsTrigger value="registry">Persona Registry</TabsTrigger>
-          <TabsTrigger value="runtime">Execution Runtime</TabsTrigger>
+          <TabsTrigger value="runtime">Workflow Planner</TabsTrigger>
         </TabsList>
 
         <TabsContent value="registry" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -96,11 +104,25 @@ export default function AOSDashboard() {
           ))}
         </TabsContent>
 
-        <TabsContent value="runtime" className="p-12 border border-dashed border-white/5 rounded-3xl text-center space-y-4">
-          <Terminal size={48} className="mx-auto text-slate-800" />
-          <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">
-            Tool runtime monitoring is not yet implemented
-          </p>
+        <TabsContent value="runtime" className="space-y-8">
+          <div className="flex items-start justify-between gap-6 border-b border-white/5 pb-6">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2 text-slate-300">
+                <Workflow size={16} />
+                <h2 className="text-sm font-bold uppercase tracking-tight">Workflow Planner</h2>
+              </div>
+              <p className="max-w-xl font-mono text-[11px] leading-relaxed text-slate-500">
+                Returns the core&apos;s three-step plan for a goal - requirements, architecture,
+                review - each naming the persona that should execute it. Runs entirely locally;
+                the decomposition is a fixed scaffold, not an LLM plan.
+              </p>
+            </div>
+            <Badge variant="outline" className="shrink-0 border-white/10 text-[9px] text-slate-500">
+              {manuals.length} personas available
+            </Badge>
+          </div>
+
+          <WorkflowPlanner personaNames={personaNames} />
         </TabsContent>
       </Tabs>
     </div>

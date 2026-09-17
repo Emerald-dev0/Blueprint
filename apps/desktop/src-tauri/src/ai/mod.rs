@@ -1,6 +1,5 @@
 pub mod aos;
 pub mod manager;
-pub mod orchestration;
 pub mod providers;
 pub mod redaction;
 
@@ -152,19 +151,6 @@ pub async fn run_aos_completion(
         provider_id: provider_id.to_string(),
         secrets_redacted,
     })
-}
-
-/// Legacy static role catalogue.
-///
-/// **The source of truth for personas is the filesystem registry** exposed by
-/// [`get_operating_manuals`]: `packages/personas/<id>/persona.json` plus
-/// `instructions.md`. This command returns the older hard-coded list, which
-/// carries only a one-line prompt per role and does not know about personas
-/// added to the registry. It is kept for the `AgentRoleId` contract in
-/// `@blueprint/types`; new UI must call `get_operating_manuals`.
-#[tauri::command]
-pub fn get_personas() -> Vec<orchestration::roles::AgentRole> {
-    orchestration::roles::AgentRegistry::new().roles
 }
 
 #[tauri::command]

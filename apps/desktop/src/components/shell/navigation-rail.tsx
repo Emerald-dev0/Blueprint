@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { NavItem } from '@blueprint/ui';
 import {
   FolderKanban,
-  Cpu,
   Brain,
   Bot,
   Github,
@@ -16,8 +15,7 @@ import { ROUTES } from '../../lib/routes';
 import { normalizePath } from '../../lib/platform';
 
 const primaryNav = [
-  { id: 'projects', icon: FolderKanban, label: 'Projects', href: ROUTES.projects },
-  { id: 'workspace', icon: Cpu, label: 'Workspace', href: ROUTES.workspace },
+  { id: 'projects', icon: FolderKanban, label: 'Project', href: ROUTES.projects },
   { id: 'intelligence', icon: Brain, label: 'Intelligence', href: ROUTES.intelligence },
   { id: 'ai', icon: Bot, label: 'AI Teammate', href: ROUTES.ai },
   { id: 'github', icon: Github, label: 'GitHub', href: ROUTES.github },

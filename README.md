@@ -100,12 +100,15 @@ for the unvarnished product critique that guides what gets built next.
 | Agent OS | Prompt compiler: manual + framework + quality gates + live context | ✅ Implemented |
 | Agent OS | Secret redaction on every outbound message, measured | ✅ Implemented |
 | Agent OS | Model routing across Anthropic / OpenAI / Gemini / local Ollama, with credential-aware fallback | ✅ Implemented |
-| Agent OS | Workflow planning | ⚠️ Fixed three-task heuristic scaffold |
-| Git | Status, ahead/behind, branch creation, commit-message drafting, release notes | ✅ Implemented |
+| Agent OS | Workflow planning, surfaced in Agent OS → Workflow Planner | ⚠️ Fixed three-task scaffold (requirements → architecture → review); no LLM decomposition |
+| Git | Status, ahead/behind, changed files, recent commits, branch creation, commit-message drafting, release notes | ✅ Implemented in the core; status, commits and release notes are surfaced on `/github` |
 | Git | Pull requests, issues, review automation | ❌ Not started |
+| Git | Commits and pushes from inside the app | ❌ Not started |
 | Interop | `AGENTS.md` / `CLAUDE.md` / `GEMINI.md` export | ✅ Implemented |
+| Workspace | Read-only file tree of the open project (explorer panel, inspector, project home) | ✅ Implemented (capped at 2000 entries / 6 levels, and it says so) |
+| Credentials | GitHub personal access token in the OS credential store, with a check that it works | ✅ Implemented |
 | Plugins | Manifest discovery and listing | ⚠️ Loads manifests; no runtime execution surface |
-| Desktop | Windows / Linux / macOS bundles built in CI | ✅ Implemented (unsigned) |
+| Desktop | Windows / Linux / macOS bundles built in CI | ✅ Implemented (unsigned); verified on a pull request with the `build:bundles` label |
 
 ## Personas
 
@@ -168,14 +171,19 @@ alternatives considered are recorded in
 
 | Route | What it does |
 | --- | --- |
-| `/` | Projects: open a repository through the native directory picker |
+| `/` | Project home: open a repository through the native directory picker, then see its branch, divergence, changed files, recent commits and file counts |
 | `/intelligence` | Repository scan, website reference analysis, agent-context export |
 | `/ai` | AI Teammate chat: pick a persona, converse, see the model and redaction count per run |
-| `/ai/aos` | Agent OS kernel: the loaded persona registry, manual by manual |
+| `/ai/aos` | Agent OS kernel: the loaded persona registry, manual by manual, plus the workflow planner |
 | `/memory` | ADRs and knowledge entries: create, search, inspect |
-| `/github` | Local git state: branch, ahead/behind, changed files, recent commits, release notes |
-| `/settings` | Provider API keys (stored in the OS credential store) and GitHub token |
+| `/github` | Local git state (branch, ahead/behind, changed files, recent commits), release notes drafted from real history, your GitHub repositories with a working filter, and a scan of the open project |
+| `/settings` | Provider API keys and the GitHub token (both in the OS credential store), plus installed plugin manifests |
 | `/design-system` | The "Ink & Mint" component library, live |
+
+Around those routes sits the shell: a file explorer that walks the project you
+opened (`list_project_files` - read-only, skipping `.git`, dependencies and build
+output), an inspector for whatever the explorer has selected, and a `Cmd/Ctrl+K`
+palette whose entries all navigate somewhere real or act on the open project.
 
 ## Architecture
 
@@ -243,6 +251,7 @@ More detail: [`ARCHITECTURE.md`](ARCHITECTURE.md),
 │           ├── src/intelligence/ # repo scanner, web analysis
 │           ├── src/git/          # git2 commands
 │           ├── src/interop.rs    # AGENTS.md / CLAUDE.md / GEMINI.md export
+│           ├── src/project_files.rs # capped, read-only file tree for the explorer
 │           ├── src/paths.rs      # per-user directory resolution
 │           ├── capabilities/     # Tauri v2 ACL
 │           └── icons/            # branded .png / .ico / .icns set
@@ -250,10 +259,11 @@ More detail: [`ARCHITECTURE.md`](ARCHITECTURE.md),
 │   ├── ui/                       # "Ink & Mint" design system (React 19)
 │   ├── personas/                 # 24 persona operating manuals (bundle resource)
 │   ├── types/                    # shared TypeScript contracts
-│   ├── core/ · brain/ · ai-adapters/ · git-engine/ · plugin-sdk/
+│   ├── git-engine/               # git + GitHub command surface, under contract test
+│   ├── core/ · brain/ · ai-adapters/ · plugin-sdk/
 ├── plugins/                      # first-party plugin manifests
 ├── docs/                         # architecture, guides, product, ADRs
-├── tests/unit/                   # Vitest suites
+├── tests/unit/                   # Vitest suites (+ tests/stubs for the Tauri IPC stub)
 └── .github/workflows/            # ci.yml · security.yml · desktop.yml
 ```
 
@@ -351,8 +361,11 @@ substitution in the audit log and the session panel rather than failing.
 
 ## Packaging and releases
 
-`.github/workflows/desktop.yml` builds installers on three runners for every
-push:
+`.github/workflows/desktop.yml` builds installers on three runners for every push
+to `main` or `develop`. On a pull request it runs only when the `build:bundles`
+label is applied, so the three-OS matrix can be proven before a merge without
+paying for a cold Rust compile on three platforms for every push; remove and
+re-add the label to run it again.
 
 | Platform | Artefacts | Notes |
 | --- | --- | --- |
@@ -376,15 +389,29 @@ in `apps/desktop/src-tauri/target/release/bundle/`.
 ```bash
 pnpm lint          # ESLint across every workspace + next lint
 pnpm typecheck     # tsc --noEmit across every workspace
-pnpm test          # Vitest: 110 tests (persona registry contract, platform/route helpers)
+pnpm test          # Vitest: 141 tests (persona registry contract, platform/route helpers,
+                   # git-engine command contract, file-tree helpers)
 pnpm build         # Next.js static export consumed by Tauri
 ```
 
 `ci.yml` runs those plus a Rust job (`cargo fmt --check`, `cargo clippy
--- -D warnings`, `cargo test` — 16 tests covering redaction, the repo scanner,
-prompt compilation, persona parsing and the date maths behind the export).
-`security.yml` runs dependency and secret scanning; `desktop.yml` builds the
-installers.
+-- -D warnings`, `cargo test` — 27 tests covering redaction, the repo scanner,
+prompt compilation, persona parsing, the file-tree walk's bounds and the date
+maths behind the export). `security.yml` runs dependency and secret scanning;
+`desktop.yml` builds the installers.
+
+Two suites exist purely to stop the UI claiming things the core cannot do, which
+is how the fabricated surfaces in earlier revisions survived:
+
+- `tests/unit/git-engine.test.ts` reads `main.rs` and fails if the SDK invokes a
+  command that is not in `generate_handler!` — the check that would have caught
+  four methods whose commands never existed.
+- The route-table tests in `tests/unit/platform.test.ts` fail if navigation
+  offers a route with no `page.tsx`, or if a page exists that no route declares.
+
+Tauri's IPC is aliased to `tests/stubs/tauri-core.ts` in `vitest.config.ts`: the
+real module needs `window.__TAURI_INTERNALS__`, and pnpm's strict layout means
+`vi.mock` cannot intercept the copy a package under test loads.
 
 Rust tests need the frontend export to exist first:
 
@@ -423,15 +450,22 @@ Details: [`docs/architecture/SECURITY_ARCHITECTURE.md`](docs/architecture/SECURI
 Known gaps, stated plainly:
 
 - Workflow planning returns a fixed three-task scaffold
-  (`product-manager` → `software-architect` → `principal-engineer`); it is not
-  LLM-decomposed yet.
+  (`product-manager` → `software-architect` → `principal-engineer`) and only the
+  first task quotes your goal; it is not LLM-decomposed yet. The planner panel
+  says so rather than implying the goal was analysed.
 - Memory search is SQL `LIKE`; there is no embedding index, so recall on
   paraphrased queries is poor.
 - The plugin system loads and lists manifests but does not execute plugin code.
 - No architecture graph: the Intelligence page shows the placeholder until a
   real dependency graph exists.
 - The GitHub surface reads local git state and drafts release notes; it does not
-  create pull requests or issues.
+  create pull requests or issues, and it does not commit or push. Nothing in the
+  SDK advertises those operations, so there is no method to call by mistake.
+- Repository links are copied, not opened: launching a browser from a Tauri
+  webview needs `tauri-plugin-opener`, which is not a dependency. A link button
+  that silently did nothing was worse than a copy button that reports success.
+- The explorer's tree is capped (2000 entries, 6 levels) and skips dependency,
+  build and cache directories; it reports when the cap was hit.
 - Installers are unsigned; no auto-update channel.
 - Single project at a time: the memory layer keys everything to one workspace id.
 
