@@ -106,45 +106,64 @@ jobs:
         run: pnpm build
 
       - name: rustfmt
-        id: rustfmt
+        working-directory: apps/desktop/src-tauri
+        run: cargo fmt --all -- --check
+
+      - name: clippy
+        id: clippy
         working-directory: apps/desktop/src-tauri
         continue-on-error: true
         run: |
           set -o pipefail
-          cargo fmt --all -- --check 2>&1 | tee /tmp/rustfmt.diff
+          cargo clippy --all-targets -- -D warnings 2>&1 | tee /tmp/clippy.log
+
+      # Tests still run when clippy fails, so one push reports both.
+      - name: Unit tests
+        id: tests
+        working-directory: apps/desktop/src-tauri
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          cargo test 2>&1 | tee /tmp/test.log
 
       # TEMPORARY bring-up scaffolding. This branch is maintained from an
       # environment that cannot download Actions logs (the results-receiver host
-      # is unreachable), so a formatting failure is invisible there. Publish the
-      # diff on the pull request instead. Remove this step and restore the plain
-      # `cargo fmt --all -- --check` gate once the tree is formatted.
-      - name: Publish rustfmt diff (bring-up only)
+      # is unreachable), so a clippy or test failure is invisible there. Publish
+      # the relevant output on the pull request instead, then remove this step
+      # and restore the plain gates.
+      - name: Publish Rust diagnostics (bring-up only)
         continue-on-error: true
-        if: steps.rustfmt.outcome == 'failure' && github.event_name == 'pull_request'
+        if: >-
+          always() && github.event_name == 'pull_request' &&
+          (steps.clippy.outcome == 'failure' || steps.tests.outcome == 'failure')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           {
-            echo '### `cargo fmt --check` reported differences'
-            echo
-            echo '```diff'
-            head -c 60000 /tmp/rustfmt.diff
-            echo '```'
-          } > /tmp/rustfmt-comment.md
+            echo '### Rust diagnostics (temporary CI step)'
+            if [ "${{ steps.clippy.outcome }}" = "failure" ]; then
+              echo
+              echo '`cargo clippy --all-targets -- -D warnings` failed:'
+              echo
+              echo '```'
+              grep -E '^(error|warning)' -A 25 /tmp/clippy.log | head -c 45000
+              echo '```'
+            fi
+            if [ "${{ steps.tests.outcome }}" = "failure" ]; then
+              echo
+              echo '`cargo test` failed:'
+              echo
+              echo '```'
+              grep -E '^(error|failures:|---- |test .* FAILED)' -A 20 /tmp/test.log | head -c 20000
+              echo '```'
+            fi
+          } > /tmp/rust-report.md
           gh pr comment "${{ github.event.pull_request.number }}" \
             --repo "${{ github.repository }}" \
-            --body-file /tmp/rustfmt-comment.md
+            --body-file /tmp/rust-report.md
 
-      - name: rustfmt (gate)
-        if: always() && steps.rustfmt.outcome == 'failure'
+      - name: Rust gate (clippy, tests)
+        if: always() && (steps.clippy.outcome == 'failure' || steps.tests.outcome == 'failure')
         run: |
-          echo "::error::cargo fmt --check reported differences; the diff is in a comment on the pull request."
+          echo "::error::clippy or cargo test failed; the output is in a comment on the pull request."
           exit 1
-
-      - name: clippy
-        working-directory: apps/desktop/src-tauri
-        run: cargo clippy --all-targets -- -D warnings
-
-      - name: Unit tests
-        working-directory: apps/desktop/src-tauri
-        run: cargo test
