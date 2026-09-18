@@ -1,159 +1,33 @@
-// Blueprint Shared Types
+/**
+ * Contracts that cross a package boundary.
+ *
+ * This file used to hold the entire domain vocabulary - AI providers and models,
+ * project intelligence, design tokens, memory tiers, ADRs, GitHub issues and
+ * pull requests - and almost none of it was imported. The app's real contracts
+ * live next to the code that produces or consumes them:
+ * `apps/desktop/src/lib/ipc.ts` mirrors what the Rust commands serialize, and
+ * `@blueprint/git-engine` owns the git/GitHub surface under contract test.
+ *
+ * The duplicates here did not merely go unused, they drifted: `TechStack`
+ * declared `language` where the scanner sends `languages`, `MemoryEntry`
+ * declared `metadata?: string` where the core sends `metadata: string | null`,
+ * and the AI block described model selection and sampling options
+ * (`temperature`, `maxTokens`, `topP`, `stop`) that no command accepts.
+ *
+ * Types for capabilities that do not exist yet are deliberately absent. A
+ * declared `GitHubIssue` is exactly what a fabricated `listIssues()` gets
+ * written against - four such methods shipped once, invoking commands the core
+ * never implemented. When issue and pull-request commands are added, their wire
+ * types come with them.
+ */
 
-export type AIProviderId = 'openai' | 'anthropic' | 'gemini' | 'ollama' | 'custom';
-
-export interface AIModel {
-  id: string;
-  name: string;
-  provider: AIProviderId;
-  contextWindow: number;
-  capabilities: {
-    reasoning: boolean;
-    tools: boolean;
-    vision: boolean;
-    streaming: boolean;
-  };
-}
-
-export interface AIMessage {
-  role: 'system' | 'user' | 'assistant' | 'tool';
-  content: string;
-  name?: string;
-}
-
-export interface AIChatOptions {
-  modelId?: string;
-  temperature?: number;
-  maxTokens?: number;
-  topP?: number;
-  stop?: string[];
-}
-
-export interface AICompletionResponse {
-  content: string;
-  modelId: string;
-  usage?: {
-    promptTokens: number;
-    completionTokens: number;
-    totalTokens: number;
-  };
-}
-
-export interface AIError {
-  code: string;
-  message: string;
-  provider: AIProviderId;
-}
-
-export interface AIProviderConfig {
-  id: AIProviderId;
-  enabled: boolean;
-  apiKey?: string;
-  baseUrl?: string;
-  defaultModelId?: string;
-}
-
-// --- Orchestration & Persona Types ---
-
-export type AgentRoleId =
-  | 'architect'
-  | 'frontend'
-  | 'backend'
-  | 'designer'
-  | 'security'
-  | 'database'
-  | 'devops'
-  | 'qa'
-  | 'pm'
-  | 'writer'
-  | 'principal'
-  | 'reference_specialist'
-  | 'investigator';
-
-export interface Persona {
-  id: AgentRoleId;
-  name: string;
-  identity: string;
-  mission: string;
-  expertise: string[];
-  responsibilities: string[];
-  thinkingFramework: string[];
-  tools: string[];
-  outputFormat: string;
-  qualityStandards: string[];
-  version: string;
-}
-
-export type TaskStatus = 'pending' | 'active' | 'waiting_approval' | 'completed' | 'failed';
-
-export interface Task {
-  id: string;
-  title: string;
-  description: string;
-  roleId: AgentRoleId;
-  status: TaskStatus;
-  dependencies: string[];
-  output?: string;
-  error?: string;
-}
-
-export interface TaskGraph {
-  id: string;
-  goal: string;
-  tasks: Task[];
-  status: 'planning' | 'executing' | 'completed' | 'failed';
-}
-
-// --- Project Intelligence Types ---
-
-export interface TechStack {
-  language: string[];
-  frontend?: string[];
-  backend?: string[];
-  database?: string[];
-  infrastructure?: string[];
-}
-
-export interface DesignTokens {
-  colors: Record<string, string>;
-  typography: Record<string, any>;
-  spacing: string[];
-}
-
-export interface ProjectIntelligence {
-  id: string;
-  intent: string;
-  stack: TechStack;
-  design?: DesignTokens;
-  architectureMap?: any;
-  risks: string[];
-}
-
-// --- Memory Types ---
-
-export type MemoryTier = 'session' | 'project' | 'decision' | 'knowledge' | 'user' | 'agent';
-
-export interface MemoryEntry {
-  id: number;
-  tier: MemoryTier;
-  key: string;
-  content: string;
-  metadata?: string;
-  created_at: string;
-}
-
-export interface ADR {
-  id: number;
-  title: string;
-  status: string;
-  context: string;
-  decision: string;
-  consequences: string;
-  created_at: string;
-}
-
-// --- GitHub Ecosystem Types ---
-
+/**
+ * A repository as the renderer sees it: GitHub's own payload mapped to
+ * camelCase by `toGitHubRepository` in `@blueprint/git-engine`.
+ *
+ * Declared here rather than in the app because a workspace package cannot
+ * import from an app, and both the SDK and the renderer need it.
+ */
 export interface GitHubRepository {
   id: number;
   name: string;
@@ -163,28 +37,5 @@ export interface GitHubRepository {
   isPrivate: boolean;
   language: string | null;
   stars: number;
-  updatedAt: string;
-}
-
-export interface GitHubIssue {
-  id: number;
-  number: number;
-  title: string;
-  body: string | null;
-  state: 'open' | 'closed';
-  labels: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface GitHubPullRequest {
-  id: number;
-  number: number;
-  title: string;
-  body: string | null;
-  state: 'open' | 'closed' | 'merged';
-  branch: string;
-  baseBranch: string;
-  createdAt: string;
   updatedAt: string;
 }

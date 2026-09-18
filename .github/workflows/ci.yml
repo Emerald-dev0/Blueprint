@@ -6,25 +6,48 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+# The job names below are load-bearing.
+#
+# Branch protection on `main` requires four status checks by name: `Frontend`,
+# `Backend` and `IPC contract` from this file, plus `audit` from security.yml.
+# Those were the names CI produced when the rule was written. The jobs were later
+# renamed to describe their contents, and because a required check that never
+# reports blocks a pull request indefinitely, `main` became mergeable only by
+# admin override - which is how this was found. Renaming a job here therefore
+# breaks merging until Settings -> Branches is updated to match: change both
+# together, or neither.
+#
+# The names still say what each job covers - the Next.js renderer, the Rust core,
+# and the tests that hold the boundary between the two to account.
 jobs:
-  validate:
+  # Renderer, design system and shared packages: formatting, ESLint, TypeScript,
+  # the full Vitest suite, and the static export Tauri embeds.
+  web:
+    name: Frontend
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           run_install: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      # `pnpm format` used to glob `**/*.rs`, which Prettier cannot parse, so it
+      # exited with "No parser could be inferred" and formatted nothing. Rust is
+      # rustfmt's job (see the `rust` job); this checks the rest, against the
+      # style the workspace actually uses, which .prettierrc.json now records.
+      - name: Check formatting
+        run: pnpm format:check
 
       - name: Lint
         run: pnpm lint
@@ -35,5 +58,107 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - name: Build
+      # The renderer is a static export consumed by Tauri; a green typecheck
+      # does not prove it can be exported (the Google-Fonts fetch made it fail
+      # here historically).
+      - name: Export renderer
         run: pnpm build
+
+  # Rust core: formatting, clippy and unit tests.
+  #
+  # This job did not exist before: CI never compiled the Rust side, so the
+  # desktop binary could rot (and did) while every badge stayed green. Bringing
+  # it up found a raw-string parse error in the redaction patterns, a malformed
+  # `for` loop, a missing `use tauri::Manager`, three git2 API mistakes and a
+  # bundle resource path that pointed outside the repository - any one of which
+  # breaks `tauri build` on Windows and Linux.
+  #
+  # `generate_context!()` embeds `frontendDist`, so the renderer must be
+  # exported before the crate can compile.
+  rust:
+    name: Backend
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: System dependencies (WebKitGTK, GTK, OpenSSL)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libssl-dev \
+            pkg-config \
+            build-essential \
+            file
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Export renderer (required by tauri generate_context!)
+        run: pnpm build
+
+      - name: rustfmt
+        working-directory: apps/desktop/src-tauri
+        run: cargo fmt --all -- --check
+
+      - name: clippy
+        working-directory: apps/desktop/src-tauri
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Unit tests
+        working-directory: apps/desktop/src-tauri
+        run: cargo test
+
+  # The suites that read Rust source to pin what the renderer is allowed to
+  # claim: every command `@blueprint/git-engine` invokes must appear in
+  # `generate_handler!`, and every plugin manifest must declare only keys
+  # `plugins/manager.rs` parses and only permissions a registered command can
+  # exercise. They also run inside `Frontend`; giving them a job of their own
+  # means a broken contract is named by the check that fails instead of surfacing
+  # as one red job somewhere inside 170 tests.
+  ipc-contract:
+    name: IPC contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # No Rust toolchain here: these tests read the .rs files as text.
+      - name: Contract tests
+        run: pnpm exec vitest run tests/unit/git-engine.test.ts tests/unit/plugins.test.ts

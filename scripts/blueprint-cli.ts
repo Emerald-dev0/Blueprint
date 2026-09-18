@@ -24,14 +24,11 @@ if (command === 'init' && name) {
     permissions: ['fs.read'] as string[],
     minBlueprintVersion: '0.1.0',
     entrypoints: {
-      frontend: 'index.js'
-    }
+      frontend: 'index.js',
+    },
   };
 
-  fs.writeFileSync(
-    path.join(pluginDir, 'manifest.json'),
-    JSON.stringify(manifest, null, 2)
-  );
+  fs.writeFileSync(path.join(pluginDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
   console.log(`✓ Plugin ${name} initialized in ${pluginDir}`);
 } else {
