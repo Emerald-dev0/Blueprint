@@ -44,7 +44,7 @@ impl AgentOS {
         goal: &str,
         context: &Value,
     ) -> Result<String, String> {
-        let registry = self.persona_registry.lock().unwrap();
+        let registry = self.persona_registry.lock().map_err(|e| e.to_string())?;
         let manual = registry
             .get(role_id)
             .ok_or_else(|| format!("Persona {} not found in registry", role_id))?;

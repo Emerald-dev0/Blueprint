@@ -155,6 +155,8 @@ pub async fn run_aos_completion(
 
 #[tauri::command]
 pub fn get_operating_manuals(aos: State<'_, AgentOS>) -> Vec<OperatingManual> {
+    // Poisoning means an earlier panic already broke the registry, and this
+    // command returns a plain Vec, so there is no Result to report it through.
     let registry = aos.persona_registry.lock().unwrap();
     let mut manuals: Vec<OperatingManual> = registry.manuals.values().cloned().collect();
     // HashMap iteration order is random; the registry UI must be stable.
@@ -164,12 +166,14 @@ pub fn get_operating_manuals(aos: State<'_, AgentOS>) -> Vec<OperatingManual> {
 
 #[tauri::command]
 pub fn reload_personas(aos: State<'_, AgentOS>) -> Result<(), String> {
-    let mut registry = aos.persona_registry.lock().unwrap();
+    let mut registry = aos.persona_registry.lock().map_err(|e| e.to_string())?;
     registry.reload()
 }
 
 #[tauri::command]
 pub fn plan_aos_workflow(aos: State<'_, AgentOS>, goal: String) -> aos::workflow::TaskGraph {
+    // Same trade-off as `get_operating_manuals`: no Result to carry a poisoned
+    // lock, and a poisoned engine means an earlier panic.
     let mut engine = aos.workflow_engine.lock().unwrap();
     engine.plan_workflow(&goal)
 }

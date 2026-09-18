@@ -43,7 +43,7 @@ impl WebIntelligence {
         }
         let document = Html::parse_document(&html_content);
 
-        let title_selector = Selector::parse("title").unwrap();
+        let title_selector = Selector::parse("title").map_err(|e| e.to_string())?;
         let title = document
             .select(&title_selector)
             .next()
@@ -51,7 +51,7 @@ impl WebIntelligence {
             .unwrap_or_else(|| "Unknown".to_string());
 
         let mut headings = Vec::new();
-        let h1_selector = Selector::parse("h1").unwrap();
+        let h1_selector = Selector::parse("h1").map_err(|e| e.to_string())?;
         for h1 in document.select(&h1_selector) {
             headings.push(h1.text().collect());
         }
