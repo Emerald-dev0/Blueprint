@@ -154,22 +154,25 @@ Rationale and trade-offs: [ADR 0003](../adr/0003-agent-interop-through-agents-md
 pnpm exec tauri build
 ```
 
-| OS      | Outputs                                        |
-| ------- | ---------------------------------------------- |
-| Linux   | `.deb`, `.rpm`, `.AppImage`                     |
-| Windows | NSIS `.exe` installer, `.msi`                   |
-| macOS   | `.app`, `.dmg`                                  |
+| OS      | Outputs                       |
+| ------- | ----------------------------- |
+| Linux   | `.deb`, `.rpm`, `.AppImage`   |
+| Windows | NSIS `.exe` installer, `.msi` |
+| macOS   | `.app`, `.dmg`                |
 
-GitHub Actions builds all three on every push (`.github/workflows/desktop.yml`)
-and uploads the artifacts.
+`.github/workflows/desktop.yml` builds all three and uploads the artifacts. It
+runs on pushes to `main`, on manual dispatch, and on a pull request only when the
+`build:bundles` label is applied - three cold Rust compiles per run is too slow
+for ordinary PR feedback, which `ci.yml` covers by compiling and linting the
+crate graph instead.
 
 ## 9. Useful environment variables
 
-| Variable                 | Purpose                                            |
-| ------------------------ | -------------------------------------------------- |
+| Variable                 | Purpose                                                |
+| ------------------------ | ------------------------------------------------------ |
 | `BLUEPRINT_PERSONAS_DIR` | Override where persona operating manuals are read from |
-| `OLLAMA_HOST`            | Point the local-model provider at another host/port |
-| `RUST_LOG`               | Diagnostic log level (e.g. `RUST_LOG=debug`)        |
+| `OLLAMA_HOST`            | Point the local-model provider at another host/port    |
+| `RUST_LOG`               | Diagnostic log level (e.g. `RUST_LOG=debug`)           |
 
 ---
 
@@ -180,4 +183,4 @@ and uploads the artifacts.
 - Browse the [persona registry](../../packages/personas/README.md) and add a
   persona for the role your team keeps re-explaining.
 - Read the [strategic assessment](../product/STRATEGIC_ASSESSMENT.md) if you want
-  to know what Blueprint is deliberately *not* trying to be.
+  to know what Blueprint is deliberately _not_ trying to be.

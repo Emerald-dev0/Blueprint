@@ -12,16 +12,16 @@ system prompt on demand.
 A persona is not a role name and a vibe. When you send a goal to a persona,
 `PromptCompiler` builds the system prompt from that persona's files:
 
-| Prompt section | Source |
-| --- | --- |
-| `IDENTITY`, `MISSION` | `persona.json` → `identity`, `mission` |
-| `EXPERTISE & CAPABILITIES` | `persona.json` → `capabilities` |
-| `CORE RESPONSIBILITIES` | `instructions.md` → `## CORE RESPONSIBILITIES` numbered items |
-| `OPERATING MANUAL` | `instructions.md`, verbatim (capped at 8 000 chars) |
-| `THINKING FRAMEWORK` | `thinking-framework.md` → `## STEP` headings and their bullets |
-| `QUALITY STANDARDS` | `instructions.md` → `## QUALITY CHECKLIST` items |
-| `OUTPUT FORMAT` | `instructions.md` → `- **Format**:` under `## OUTPUT STANDARDS` |
-| `PROJECT CONTEXT` | live: git state, open project path, conversation history |
+| Prompt section             | Source                                                          |
+| -------------------------- | --------------------------------------------------------------- |
+| `IDENTITY`, `MISSION`      | `persona.json` → `identity`, `mission`                          |
+| `EXPERTISE & CAPABILITIES` | `persona.json` → `capabilities`                                 |
+| `CORE RESPONSIBILITIES`    | `instructions.md` → `## CORE RESPONSIBILITIES` numbered items   |
+| `OPERATING MANUAL`         | `instructions.md`, verbatim (capped at 8 000 chars)             |
+| `THINKING FRAMEWORK`       | `thinking-framework.md` → `## STEP` headings and their bullets  |
+| `QUALITY STANDARDS`        | `instructions.md` → `## QUALITY CHECKLIST` items                |
+| `OUTPUT FORMAT`            | `instructions.md` → `- **Format**:` under `## OUTPUT STANDARDS` |
+| `PROJECT CONTEXT`          | live: git state, open project path, conversation history        |
 
 Then the whole prompt passes through the local secret redactor before it leaves
 the machine.
@@ -73,10 +73,12 @@ Two of those sections are parsed, not just read:
 
 ```markdown
 ## STEP 1: CONTRACT FIRST
+
 - What is the exact output schema, and who consumes it?
 - Which fields may be null, and what does null mean?
 
 ## STEP 2: FAILURE ENUMERATION
+
 - For each hop, what happens on timeout or duplicate delivery?
 ```
 
@@ -85,32 +87,32 @@ become their sub-questions, and the renderer groups them again for display.
 
 ## Catalogue
 
-| Persona | Id | Labels | Manual | Framework |
-| --- | --- | --- | :---: | :---: |
-| Accessibility Engineer | `accessibility-engineer` | a11y, inclusive, standards | yes | yes |
-| API Designer | `api-designer` | api, contract, integration | yes | yes |
-| Backend Engineer | `backend-engineer` | backend, apis, services | yes | yes |
-| Data Engineer | `data-engineer` | data, pipelines, etl | yes | yes |
-| Database Engineer | `database-engineer` | data, performance, backend | yes | yes |
-| DevOps Engineer | `devops-engineer` | infra, automation, reliability | yes | yes |
-| Documentation Specialist | `documentation-specialist` | docs, knowledge, structure | yes | yes |
-| Engineering Manager | `engineering-manager` | management, delivery, planning | yes | yes |
-| Frontend Engineer | `frontend-engineer` | frontend, ui, react | yes | yes |
-| Machine Learning Engineer | `machine-learning-engineer` | ml, llm, evals | yes | yes |
-| Mobile Engineer | `mobile-engineer` | mobile, ios, android | yes | yes |
-| Performance Engineer | `performance-engineer` | performance, speed, optimization | yes | yes |
-| Platform Engineer | `platform-engineer` | platform, devex, cicd | yes | yes |
-| Principal Engineer | `principal-engineer` | lead, review, standards | yes | yes |
-| Product Manager | `product-manager` | product, strategy, requirements | yes | yes |
-| QA Engineer | `qa-engineer` | quality, testing, assurance | yes | yes |
-| Reference Analyst | `reference-analyst` | research, analysis, deconstruction | yes | yes |
-| Security Engineer | `security-engineer` | security, safety, adversarial | yes | yes |
-| Site Reliability Engineer | `site-reliability-engineer` | sre, reliability, observability | yes | yes |
-| Software Architect | `software-architect` | senior, strategy, design | yes | yes |
-| System Designer | `system-designer` | system, macro, protocol | yes | yes |
-| Technical Writer | `technical-writer` | writing, clarity, onboarding | yes | yes |
-| UI Designer | `ui-designer` | design, ui, visual | yes | yes |
-| UX Designer | `ux-designer` | design, ux, usability | yes | yes |
+| Persona                   | Id                          | Labels                             | Manual | Framework |
+| ------------------------- | --------------------------- | ---------------------------------- | :----: | :-------: |
+| Accessibility Engineer    | `accessibility-engineer`    | a11y, inclusive, standards         |  yes   |    yes    |
+| API Designer              | `api-designer`              | api, contract, integration         |  yes   |    yes    |
+| Backend Engineer          | `backend-engineer`          | backend, apis, services            |  yes   |    yes    |
+| Data Engineer             | `data-engineer`             | data, pipelines, etl               |  yes   |    yes    |
+| Database Engineer         | `database-engineer`         | data, performance, backend         |  yes   |    yes    |
+| DevOps Engineer           | `devops-engineer`           | infra, automation, reliability     |  yes   |    yes    |
+| Documentation Specialist  | `documentation-specialist`  | docs, knowledge, structure         |  yes   |    yes    |
+| Engineering Manager       | `engineering-manager`       | management, delivery, planning     |  yes   |    yes    |
+| Frontend Engineer         | `frontend-engineer`         | frontend, ui, react                |  yes   |    yes    |
+| Machine Learning Engineer | `machine-learning-engineer` | ml, llm, evals                     |  yes   |    yes    |
+| Mobile Engineer           | `mobile-engineer`           | mobile, ios, android               |  yes   |    yes    |
+| Performance Engineer      | `performance-engineer`      | performance, speed, optimization   |  yes   |    yes    |
+| Platform Engineer         | `platform-engineer`         | platform, devex, cicd              |  yes   |    yes    |
+| Principal Engineer        | `principal-engineer`        | lead, review, standards            |  yes   |    yes    |
+| Product Manager           | `product-manager`           | product, strategy, requirements    |  yes   |    yes    |
+| QA Engineer               | `qa-engineer`               | quality, testing, assurance        |  yes   |    yes    |
+| Reference Analyst         | `reference-analyst`         | research, analysis, deconstruction |  yes   |    yes    |
+| Security Engineer         | `security-engineer`         | security, safety, adversarial      |  yes   |    yes    |
+| Site Reliability Engineer | `site-reliability-engineer` | sre, reliability, observability    |  yes   |    yes    |
+| Software Architect        | `software-architect`        | senior, strategy, design           |  yes   |    yes    |
+| System Designer           | `system-designer`           | system, macro, protocol            |  yes   |    yes    |
+| Technical Writer          | `technical-writer`          | writing, clarity, onboarding       |  yes   |    yes    |
+| UI Designer               | `ui-designer`               | design, ui, visual                 |  yes   |    yes    |
+| UX Designer               | `ux-designer`               | design, ux, usability              |  yes   |    yes    |
 
 ## Loading, resolution and hot reload
 

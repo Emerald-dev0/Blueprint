@@ -32,21 +32,23 @@ graph LR
         Plan[Plans]
         Meta[Metadata]
     end
-    
+
     subgraph "Vector (planned)"
         Code[Code Embeddings - not implemented]
         Doc[Doc Embeddings - not implemented]
     end
-    
+
     Brain[Project Brain]
     Brain --- Relational
     Brain -.-> Vector
 ```
 
 ### 1. Relational Memory (SQLite)
+
 Tracks **Architecture Decision Records (ADRs)** and implementation history. This is the "Why" behind the code.
 
 ### 2. Semantic Memory (planned, not implemented)
+
 The intended design is a local, serverless vector store (LanceDB) for semantic
 search across large codebases. **This does not exist yet**: `search_memory` is a
 SQL `LIKE` query over the relational store. It is shown here as design, and the
@@ -156,6 +158,7 @@ Rationale and alternatives: [ADR 0003](docs/adr/0003-agent-interop-through-agent
 ---
 
 ## 📖 Related Docs
+
 - [Data Architecture & Memory](docs/architecture/DATA_ARCHITECTURE_AND_MEMORY_SYSTEM.md)
 - [AI Intelligence Layer](docs/architecture/AI_INTELLIGENCE_ARCHITECTURE.md)
 - [Security Model](docs/architecture/SECURITY_ARCHITECTURE.md)

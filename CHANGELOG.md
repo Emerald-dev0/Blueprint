@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - `list_project_files`: a capped, read-only walk of the open project (2000
   entries, 6 levels, skipping `.git`, dependency, build and cache directories)
   that reports when the cap cut it short. Seven Rust tests pin its ordering,
@@ -94,6 +95,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ADR 0002 documenting the packaging and truthfulness decisions.
 
 ### Changed
+
+- The four surviving plugins now register a palette command and publish an
+  intent on the event bus, which is all a plugin can honestly do without a
+  runtime. `web-intelligence` no longer publishes an `ANALYSIS_COMPLETED` event
+  carrying a hard-coded "Mock result" report, and `workflow-pack` no longer logs
+  an orchestration ("Reference Analyst -> UX Designer -> Frontend Engineer") it
+  never performed against a hard-coded URL.
+- `@blueprint/plugin-sdk`'s `PluginManifest` now matches the Rust struct that
+  parses these files: `minBlueprintVersion` and `entrypoints` are optional, as
+  they are in `src/plugins/manager.rs`.
+- `@blueprint/types` is reduced to what genuinely crosses a package boundary -
+  `GitHubRepository`, needed by both `@blueprint/git-engine` and the renderer,
+  since a workspace package cannot import from an app. Command contracts live in
+  `apps/desktop/src/lib/ipc.ts`, next to the code that calls them.
 - `/` is now the project home: the open repository's branch, divergence, changed
   files, recent commits, file counts and the next actions available for it. It
   previously rendered "The projects engine is currently in development", reading
@@ -149,6 +164,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   "Final Engineering Review" is relabelled as AI-generated self-review.
 
 ### Fixed
+
+- `pnpm typecheck` never covered the root project, so `@blueprint/plugin-sdk`
+  and everything under `plugins/` went unchecked in CI even though the root
+  `tsconfig.json` includes them. The root script now runs `tsc --noEmit` on that
+  project before delegating to turbo.
 - `tauri.conf.json` pointed `licenseFile` at `../../LICENSE`, which resolves to
   `apps/LICENSE` — the same off-by-one class as the bundled personas path. The
   licence sits at the repository root, three levels up from `src-tauri`. Nothing
@@ -203,6 +223,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   resolve a dependency the crate declares.
 
 ### Removed
+
+- Five manifest-only plugin directories - `api-explorer`, `arch-visualizer`,
+  `db-inspector`, `deployment-intelligence` and `doc-intelligence`. Each
+  declared `"entrypoints": { "frontend": "src/index.ts" }` for a file that did
+  not exist, and requested permissions such as `fs.write` and `ai.complete` that
+  nothing could have enforced or used. They are listed on the roadmap to return
+  with implementations.
+- Plugin SDK members with no host implementation: `WorkspaceAPI` (whose
+  `openTab`/`closeTab` targeted the shell's removed tab strip), `AIAPI` (whose
+  `complete` typed the core's object result as a string and whose
+  `registerPersona` described registration for personas that are files on disk),
+  `GitHubAPI` (whose `createIssue` invoked a command that does not exist), and
+  `registerPanel` together with the store's unrendered `panels` registry. The
+  `ui.tab`, `ui.panel` and `python.execute` permissions went with them. `git.write`
+  stays: `create_git_branch` is a real write.
+- The unused half of the plugin store: `plugins`, `initialize()` (never called by
+  any component, so the array was always empty), `registerPlugin` and
+  `publishEvent`. `commands` and `registerCommand` stay - the palette renders and
+  invokes them.
+- `packages/core` and `packages/brain`: one-line placeholders (`// Blueprint Core
+Logic`, `// Blueprint Project Brain`) imported by nothing. The real brain is
+  the Rust SQLite layer in `src/memory/`; a TypeScript package named after it
+  only suggested otherwise.
+- `packages/ai-adapters`: an unused second AI surface. Its `listModels()`
+  returned a hardcoded two-model list ("Gemini 1.5 Flash", "Claude 3.5 Sonnet")
+  that contradicted the core's provider routing, it accepted
+  `temperature`/`maxTokens`/`topP`/`stop` options no command reads, and it typed
+  `generate_ai_completion` as returning a string when the core returns an object
+  - the exact drift `ipc.ts` was written to prevent.
+- Most of `@blueprint/types`. Its AI, project-intelligence, memory and ADR types
+  were duplicates that had drifted from the versions the app actually uses
+  (`TechStack.language` versus the scanner's `languages`,
+  `MemoryEntry.metadata?: string` versus the core's `string | null`), and
+  `GitHubIssue` / `GitHubPullRequest` described payloads no command produces -
+  the bait that four fabricated SDK methods were written against. Types for
+  unimplemented capabilities now arrive with the commands that implement them.
 - `get_personas` and `get_agent_roles`: two identical commands returning the same
   static role list, called by nothing, along with the `ai/orchestration/` module
   that existed only to serve them. The filesystem registry behind
@@ -231,6 +287,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The placeholder `expect(true).toBe(true)` test.
 
 ### Security
+
 - Renderer CSP and capabilities now enforce the documented local-first model.
 - Website analysis refuses non-http(s) URLs and caps document size.
 - Bumped the transitive Rust crates behind the advisories that had been failing
@@ -247,12 +304,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0-alpha] — pre-audit baseline
 
 ### Added
+
 - Initial monorepo foundation with pnpm and Turborepo.
 - Comprehensive engineering documentation (Founding Charter, Architecture, Design System, Implementation Roadmap).
 - Repository standards (Conventional Commits, Branching Strategy, CI/CD design).
 - GitHub Issue and PR templates.
 
 ### Changed
+
 - Standardized the toolchain on `pnpm@11` (workspace config, overrides, audit settings).
 - Verified `lint`, `typecheck`, `test`, `build`, and Rust checks across all workspaces.
 - Repaired the desktop Rust build and wired missing Tauri commands.
@@ -260,5 +319,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added MIT License.
 
 ### Security
+
 - Remediated npm advisories via pnpm overrides (`sharp`, `postcss`); allowlisted an unpatched dev-only advisory (`GHSA-mh99-v99m-4gvg`).
 - Zero cargo audit vulnerabilities (informational warnings only).

@@ -8,8 +8,8 @@
 **The problem is real and the idea is valid. The execution plan was not.**
 
 The pain Blueprint names — engineering context scattered across Notion/Figma/IDE/chat,
-decisions forgotten, AI answers ungrounded in *your* architecture — is genuine and
-under-served. "Owning the *why* (ADRs) where competitors own the *what* (code)" is a
+decisions forgotten, AI answers ungrounded in _your_ architecture — is genuine and
+under-served. "Owning the _why_ (ADRs) where competitors own the _what_ (code)" is a
 defensible wedge: Cursor, Copilot and Claude Code all forget between sessions, and
 none of them treat architectural memory as the product.
 
@@ -19,8 +19,8 @@ reverse-engineering, global project memory, semantic vector search, deep GitHub
 integration, and a full design system — before any one of them worked. The repository
 at audit contained ~5,200 lines of code against ~3,300 lines of documentation and a
 production-readiness checklist that checked boxes with no implementation behind them.
-That ratio is the disease: the project was being *described* faster than it was being
-*built*.
+That ratio is the disease: the project was being _described_ faster than it was being
+_built_.
 
 ## The three strategic errors
 
@@ -33,7 +33,7 @@ That ratio is the disease: the project was being *described* faster than it was 
    icon, and a "final review" attributed to a fictional panel of big-tech engineers.
    Each individually is small; together they mean nobody could trust any number or
    badge in the product — including the true ones. For a product whose pitch is
-   *trustworthy institutional memory*, that is fatal.
+   _trustworthy institutional memory_, that is fatal.
 3. **Shipping nothing to anyone.** The desktop app had never been packaged on any
    OS. A desktop product with no installer has no users, no feedback, and no way to
    discover that its premises are wrong.
@@ -49,7 +49,7 @@ Ship exactly one loop, end to end, on all three desktop OSes:
    redacted locally and the redaction count shown.
 3. **Seal an ADR** from the answer → it persists and changes the next answer.
 
-That loop is now *implemented* (see ROADMAP). Everything else — multi-agent graphs,
+That loop is now _implemented_ (see ROADMAP). Everything else — multi-agent graphs,
 marketplace, Wasm sandbox, website intelligence, GitHub PR sync — stays in the
 backlog until the loop has real users. The repository's own synthetic review said
 this in 2026-07 and was ignored; this assessment repeats it with the force of an
@@ -75,6 +75,7 @@ audit behind it.
 ### If the wedge fails
 
 The honest fallbacks, in order:
+
 1. **CLI-first Blueprint** (`blueprint seal`, `blueprint ask`) that writes ADRs into
    the repo and plugs into the editors people already use — same memory asset, no
    new surface to adopt. The ADR file format is the portable moat.

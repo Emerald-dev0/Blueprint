@@ -18,7 +18,7 @@ the UI makes correspond to something real.
 ### 1. Hermetic renderer build (self-hosted fonts)
 
 `next/font/google` fetched font CSS and binaries from `fonts.googleapis.com`
-*during* `next build`. The build therefore failed on any machine without egress
+_during_ `next build`. The build therefore failed on any machine without egress
 (airgapped CI, offline `tauri build`) and made a local-first product depend on a
 third-party network service. We vendor the same faces through
 `@fontsource-variable/*` npm packages, so the export is reproducible offline.

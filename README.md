@@ -86,29 +86,29 @@ for the unvarnished product critique that guides what gets built next.
 
 ## Feature status
 
-| Area | Capability | Status |
-| --- | --- | --- |
-| Project intelligence | Local repository scan (languages, frameworks, data stores, file count) | ✅ Implemented |
-| Project intelligence | Website reference analysis (title, headings, framework detection) | ✅ Implemented |
-| Project intelligence | Tree-sitter semantic parsing / AST analysis | ❌ Not started |
-| Project intelligence | Architecture graph rendering | ❌ Not started |
-| Memory | ADR create / list / search, persisted to SQLite | ✅ Implemented |
-| Memory | Tiered knowledge entries (session, project, decision, knowledge, user, agent) | ✅ Implemented |
-| Memory | Append-only local audit log (`audit.jsonl`) | ✅ Implemented |
-| Memory | Vector / semantic retrieval | ❌ Not started (SQL `LIKE` only) |
-| Agent OS | Persona registry loaded from disk with hot reload | ✅ Implemented (24 personas) |
-| Agent OS | Prompt compiler: manual + framework + quality gates + live context | ✅ Implemented |
-| Agent OS | Secret redaction on every outbound message, measured | ✅ Implemented |
-| Agent OS | Model routing across Anthropic / OpenAI / Gemini / local Ollama, with credential-aware fallback | ✅ Implemented |
-| Agent OS | Workflow planning, surfaced in Agent OS → Workflow Planner | ⚠️ Fixed three-task scaffold (requirements → architecture → review); no LLM decomposition |
-| Git | Status, ahead/behind, changed files, recent commits, branch creation, commit-message drafting, release notes | ✅ Implemented in the core; status, commits and release notes are surfaced on `/github` |
-| Git | Pull requests, issues, review automation | ❌ Not started |
-| Git | Commits and pushes from inside the app | ❌ Not started |
-| Interop | `AGENTS.md` / `CLAUDE.md` / `GEMINI.md` export | ✅ Implemented |
-| Workspace | Read-only file tree of the open project (explorer panel, inspector, project home) | ✅ Implemented (capped at 2000 entries / 6 levels, and it says so) |
-| Credentials | GitHub personal access token in the OS credential store, with a check that it works | ✅ Implemented |
-| Plugins | Manifest discovery and listing | ⚠️ Loads manifests; no runtime execution surface |
-| Desktop | Windows / Linux / macOS bundles built in CI | ✅ Implemented (unsigned); verified on a pull request with the `build:bundles` label |
+| Area                 | Capability                                                                                                   | Status                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Project intelligence | Local repository scan (languages, frameworks, data stores, file count)                                       | ✅ Implemented                                                                            |
+| Project intelligence | Website reference analysis (title, headings, framework detection)                                            | ✅ Implemented                                                                            |
+| Project intelligence | Tree-sitter semantic parsing / AST analysis                                                                  | ❌ Not started                                                                            |
+| Project intelligence | Architecture graph rendering                                                                                 | ❌ Not started                                                                            |
+| Memory               | ADR create / list / search, persisted to SQLite                                                              | ✅ Implemented                                                                            |
+| Memory               | Tiered knowledge entries (session, project, decision, knowledge, user, agent)                                | ✅ Implemented                                                                            |
+| Memory               | Append-only local audit log (`audit.jsonl`)                                                                  | ✅ Implemented                                                                            |
+| Memory               | Vector / semantic retrieval                                                                                  | ❌ Not started (SQL `LIKE` only)                                                          |
+| Agent OS             | Persona registry loaded from disk with hot reload                                                            | ✅ Implemented (24 personas)                                                              |
+| Agent OS             | Prompt compiler: manual + framework + quality gates + live context                                           | ✅ Implemented                                                                            |
+| Agent OS             | Secret redaction on every outbound message, measured                                                         | ✅ Implemented                                                                            |
+| Agent OS             | Model routing across Anthropic / OpenAI / Gemini / local Ollama, with credential-aware fallback              | ✅ Implemented                                                                            |
+| Agent OS             | Workflow planning, surfaced in Agent OS → Workflow Planner                                                   | ⚠️ Fixed three-task scaffold (requirements → architecture → review); no LLM decomposition |
+| Git                  | Status, ahead/behind, changed files, recent commits, branch creation, commit-message drafting, release notes | ✅ Implemented in the core; status, commits and release notes are surfaced on `/github`   |
+| Git                  | Pull requests, issues, review automation                                                                     | ❌ Not started                                                                            |
+| Git                  | Commits and pushes from inside the app                                                                       | ❌ Not started                                                                            |
+| Interop              | `AGENTS.md` / `CLAUDE.md` / `GEMINI.md` export                                                               | ✅ Implemented                                                                            |
+| Workspace            | Read-only file tree of the open project (explorer panel, inspector, project home)                            | ✅ Implemented (capped at 2000 entries / 6 levels, and it says so)                        |
+| Credentials          | GitHub personal access token in the OS credential store, with a check that it works                          | ✅ Implemented                                                                            |
+| Plugins              | Manifest discovery and listing                                                                               | ⚠️ Reads manifests from your plugin directory; no runtime executes plugin code            |
+| Desktop              | Windows / Linux / macOS bundles built in CI                                                                  | ✅ Implemented (unsigned); verified on a pull request with the `build:bundles` label      |
 
 ## Personas
 
@@ -143,12 +143,12 @@ persona is a behaviour contract, not a role label.
 Blueprint is not the only agent in a developer's day. **Intelligence → Export
 agent context** writes the shared convention those tools already read:
 
-| File | Contents | Read by |
-| --- | --- | --- |
-| `AGENTS.md` | Full generated context: repository facts, detected stack, declared build/test commands, recorded ADRs, sealed knowledge, persona standards, and Always / Ask-first / Never boundaries | [OpenCode](https://opencode.ai/docs/rules/), Codex CLI, Amp, Jules, Cursor, Zed, Factory |
-| `CLAUDE.md` | Pointer to `AGENTS.md` (plain instruction + `@AGENTS.md` import) | Claude Code, OpenCode fallback |
-| `GEMINI.md` | Pointer to `AGENTS.md` | Gemini CLI |
-| `knowledge.md` | Pointer to `AGENTS.md` | [Freebuff](https://freebuff.com) and Codebuff, which resolve `knowledge.md` → `AGENTS.md` → `CLAUDE.md` |
+| File           | Contents                                                                                                                                                                              | Read by                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `AGENTS.md`    | Full generated context: repository facts, detected stack, declared build/test commands, recorded ADRs, sealed knowledge, persona standards, and Always / Ask-first / Never boundaries | [OpenCode](https://opencode.ai/docs/rules/), Codex CLI, Amp, Jules, Cursor, Zed, Factory                |
+| `CLAUDE.md`    | Pointer to `AGENTS.md` (plain instruction + `@AGENTS.md` import)                                                                                                                      | Claude Code, OpenCode fallback                                                                          |
+| `GEMINI.md`    | Pointer to `AGENTS.md`                                                                                                                                                                | Gemini CLI                                                                                              |
+| `knowledge.md` | Pointer to `AGENTS.md`                                                                                                                                                                | [Freebuff](https://freebuff.com) and Codebuff, which resolve `knowledge.md` → `AGENTS.md` → `CLAUDE.md` |
 
 The commands section lists only what is actually declared in the repository
 (`package.json` scripts with the right package manager, `make` targets) — an
@@ -169,16 +169,16 @@ alternatives considered are recorded in
 
 ## A tour of the app
 
-| Route | What it does |
-| --- | --- |
-| `/` | Project home: open a repository through the native directory picker, then see its branch, divergence, changed files, recent commits and file counts |
-| `/intelligence` | Repository scan, website reference analysis, agent-context export |
-| `/ai` | AI Teammate chat: pick a persona, converse, see the model and redaction count per run |
-| `/ai/aos` | Agent OS kernel: the loaded persona registry, manual by manual, plus the workflow planner |
-| `/memory` | ADRs and knowledge entries: create, search, inspect |
-| `/github` | Local git state (branch, ahead/behind, changed files, recent commits), release notes drafted from real history, your GitHub repositories with a working filter, and a scan of the open project |
-| `/settings` | Provider API keys and the GitHub token (both in the OS credential store), plus installed plugin manifests |
-| `/design-system` | The "Ink & Mint" component library, live |
+| Route            | What it does                                                                                                                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`              | Project home: open a repository through the native directory picker, then see its branch, divergence, changed files, recent commits and file counts                                            |
+| `/intelligence`  | Repository scan, website reference analysis, agent-context export                                                                                                                              |
+| `/ai`            | AI Teammate chat: pick a persona, converse, see the model and redaction count per run                                                                                                          |
+| `/ai/aos`        | Agent OS kernel: the loaded persona registry, manual by manual, plus the workflow planner                                                                                                      |
+| `/memory`        | ADRs and knowledge entries: create, search, inspect                                                                                                                                            |
+| `/github`        | Local git state (branch, ahead/behind, changed files, recent commits), release notes drafted from real history, your GitHub repositories with a working filter, and a scan of the open project |
+| `/settings`      | Provider API keys and the GitHub token (both in the OS credential store), plus installed plugin manifests                                                                                      |
+| `/design-system` | The "Ink & Mint" component library, live                                                                                                                                                       |
 
 Around those routes sits the shell: a file explorer that walks the project you
 opened (`list_project_files` - read-only, skipping `.git`, dependencies and build
@@ -258,10 +258,10 @@ More detail: [`ARCHITECTURE.md`](ARCHITECTURE.md),
 ├── packages/
 │   ├── ui/                       # "Ink & Mint" design system (React 19)
 │   ├── personas/                 # 24 persona operating manuals (bundle resource)
-│   ├── types/                    # shared TypeScript contracts
+│   ├── types/                    # contracts that cross a package boundary
 │   ├── git-engine/               # git + GitHub command surface, under contract test
-│   ├── core/ · brain/ · ai-adapters/ · plugin-sdk/
-├── plugins/                      # first-party plugin manifests
+│   └── plugin-sdk/               # plugin manifest and registration types
+├── plugins/                      # four first-party plugins: manifest + inert scaffolding
 ├── docs/                         # architecture, guides, product, ADRs
 ├── tests/unit/                   # Vitest suites (+ tests/stubs for the Tauri IPC stub)
 └── .github/workflows/            # ci.yml · security.yml · desktop.yml
@@ -271,11 +271,11 @@ More detail: [`ARCHITECTURE.md`](ARCHITECTURE.md),
 
 ### Prerequisites
 
-| Requirement | Version | Notes |
-| --- | --- | --- |
-| Node.js | 22+ | developed and CI-tested on 22 |
-| pnpm | 11 | `corepack enable pnpm` |
-| Rust | stable | via [rustup](https://rustup.rs) |
+| Requirement | Version | Notes                           |
+| ----------- | ------- | ------------------------------- |
+| Node.js     | 22+     | developed and CI-tested on 22   |
+| pnpm        | 11      | `corepack enable pnpm`          |
+| Rust        | stable  | via [rustup](https://rustup.rs) |
 
 Platform packages for the WebView:
 
@@ -313,7 +313,7 @@ there is no Rust core. Use `tauri:dev` for real behaviour.
 > **First Rust build:** `next build` must have produced `apps/desktop/out`
 > before `cargo` compiles the Tauri binary, because `generate_context!()`
 > verifies `frontendDist` at compile time. `pnpm --filter blueprint-desktop
-> tauri:dev` runs the `beforeDevCommand` for you; a bare `cargo build` in
+tauri:dev` runs the `beforeDevCommand` for you; a bare `cargo build` in
 > `src-tauri/` needs `pnpm --filter blueprint-desktop build` first.
 
 ### Use it
@@ -335,10 +335,10 @@ Full walkthrough: [`docs/guides/GETTING_STARTED.md`](docs/guides/GETTING_STARTED
 
 **Credentials** are stored in the OS credential store, never in a config file:
 
-| Secret | Store | Entry |
-| --- | --- | --- |
+| Secret            | Store                                                                    | Entry                                             |
+| ----------------- | ------------------------------------------------------------------------ | ------------------------------------------------- |
 | Provider API keys | Windows Credential Manager / macOS Keychain / freedesktop Secret Service | service `blueprint-ai`, one entry per provider id |
-| GitHub token | same | service `blueprint-vcs`, entry `github` |
+| GitHub token      | same                                                                     | service `blueprint-vcs`, entry `github`           |
 
 On Linux a Secret Service provider (`gnome-keyring`, KeePassXC, KWallet-compat)
 must be running; headless containers have none and saving a key reports a clear
@@ -346,11 +346,11 @@ error instead of failing silently.
 
 **Environment variables**
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `BLUEPRINT_PERSONAS_DIR` | bundled resources, then `packages/personas` | override the persona registry location (development, CI) |
-| `OLLAMA_HOST` | `http://127.0.0.1:11434` | local Ollama server for offline inference |
-| `RUST_LOG` | `info` | Rust core log level (`debug` shows persona loading and route substitutions) |
+| Variable                 | Default                                     | Purpose                                                                     |
+| ------------------------ | ------------------------------------------- | --------------------------------------------------------------------------- |
+| `BLUEPRINT_PERSONAS_DIR` | bundled resources, then `packages/personas` | override the persona registry location (development, CI)                    |
+| `OLLAMA_HOST`            | `http://127.0.0.1:11434`                    | local Ollama server for offline inference                                   |
+| `RUST_LOG`               | `info`                                      | Rust core log level (`debug` shows persona loading and route substitutions) |
 
 **Model routing.** Reasoning and architecture tasks prefer Anthropic
 (`claude-3-5-sonnet-latest`), coding and function calling prefer OpenAI
@@ -367,11 +367,11 @@ label is applied, so the three-OS matrix can be proven before a merge without
 paying for a cold Rust compile on three platforms for every push; remove and
 re-add the label to run it again.
 
-| Platform | Artefacts | Notes |
-| --- | --- | --- |
-| Windows 10/11 | NSIS `.exe`, `.msi` | per-user install, LZMA compression, WebView2 bootstrapped silently |
+| Platform      | Artefacts                   | Notes                                                                                |
+| ------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| Windows 10/11 | NSIS `.exe`, `.msi`         | per-user install, LZMA compression, WebView2 bootstrapped silently                   |
 | Linux (glibc) | `.deb`, `.rpm`, `.AppImage` | built on Ubuntu 22.04 for the widest glibc compatibility; recommends `gnome-keyring` |
-| macOS 12+ | `.app`, `.dmg` | built on `macos-latest` (arm64); no x86_64 or universal binary yet |
+| macOS 12+     | `.app`, `.dmg`              | built on `macos-latest` (arm64); no x86_64 or universal binary yet                   |
 
 Persona files ship as a Tauri bundle resource (`packages/personas/` →
 `personas/`), so an installed app resolves its registry from the bundle, not
@@ -387,12 +387,19 @@ in `apps/desktop/src-tauri/target/release/bundle/`.
 ## Testing and CI
 
 ```bash
+pnpm format:check  # Prettier over ts/tsx/json/md, per .prettierrc.json
 pnpm lint          # ESLint across every workspace + next lint
-pnpm typecheck     # tsc --noEmit across every workspace
-pnpm test          # Vitest: 141 tests (persona registry contract, platform/route helpers,
-                   # git-engine command contract, file-tree helpers)
+pnpm typecheck     # tsc --noEmit over the root project (packages/, plugins/, tests/)
+                   # and then across every workspace that declares the script
+pnpm test          # Vitest: 170 tests (persona registry contract, platform/route helpers,
+                   # git-engine command contract, file-tree helpers, plugin manifests
+                   # and the plugin command registry)
 pnpm build         # Next.js static export consumed by Tauri
 ```
+
+`pnpm format` writes the same style. It used to glob `**/*.rs`, which Prettier
+cannot parse, so it aborted with "No parser could be inferred" and formatted
+nothing; Rust formatting is rustfmt's, and CI checks both.
 
 `ci.yml` runs those plus a Rust job (`cargo fmt --check`, `cargo clippy
 -- -D warnings`, `cargo test` — 27 tests covering redaction, the repo scanner,
@@ -455,7 +462,11 @@ Known gaps, stated plainly:
   says so rather than implying the goal was analysed.
 - Memory search is SQL `LIKE`; there is no embedding index, so recall on
   paraphrased queries is poor.
-- The plugin system loads and lists manifests but does not execute plugin code.
+- The plugin system reads and lists manifests but does not execute plugin code.
+  The four first-party plugins in `plugins/` compile against
+  `@blueprint/plugin-sdk`, yet nothing instantiates them: the SDK's header says
+  so outright and lists which host capabilities are real (`registerCommand`, the
+  event bus) and which were deleted for having no implementation.
 - No architecture graph: the Intelligence page shows the placeholder until a
   real dependency graph exists.
 - The GitHub surface reads local git state and drafts release notes; it does not
@@ -481,8 +492,9 @@ semantic retrieval, PR/issue integration, then plugin execution. Tracked in
    commitlint runs on every commit via husky.
 3. Keep claims and code in step: if a feature does not exist, the docs must not
    say it does. This is enforced socially and by ADR 0002.
-4. `pnpm lint && pnpm typecheck && pnpm test && pnpm build` must pass, plus
-   `cargo clippy -- -D warnings` and `cargo test` for Rust changes.
+4. `pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build`
+   must pass, plus `cargo fmt --check`, `cargo clippy -- -D warnings` and
+   `cargo test` for Rust changes.
 5. Open a PR describing what changed, what it costs and what is still missing.
 
 Read [`docs/guides/CONTRIBUTING_GUIDE.md`](docs/guides/CONTRIBUTING_GUIDE.md)
@@ -490,16 +502,16 @@ and the ADRs in [`docs/adr/`](docs/adr) before proposing a structural change.
 
 ## Documentation
 
-| Document | Contents |
-| --- | --- |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | System overview and module responsibilities |
-| [`ROADMAP.md`](ROADMAP.md) | Phase plan with honest completion marks |
-| [`CHANGELOG.md`](CHANGELOG.md) | Keep-a-Changelog entries per release |
-| [`docs/guides/GETTING_STARTED.md`](docs/guides/GETTING_STARTED.md) | Per-OS setup, development, packaging |
-| [`docs/guides/CONTRIBUTING_GUIDE.md`](docs/guides/CONTRIBUTING_GUIDE.md) | Workflow, conventions, review |
-| [`docs/adr/`](docs/adr) | Architecture decision records |
-| [`docs/product/STRATEGIC_ASSESSMENT.md`](docs/product/STRATEGIC_ASSESSMENT.md) | Product critique and wedge strategy |
-| [`packages/personas/README.md`](packages/personas/README.md) | Persona file contract and catalogue |
+| Document                                                                       | Contents                                    |
+| ------------------------------------------------------------------------------ | ------------------------------------------- |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)                                           | System overview and module responsibilities |
+| [`ROADMAP.md`](ROADMAP.md)                                                     | Phase plan with honest completion marks     |
+| [`CHANGELOG.md`](CHANGELOG.md)                                                 | Keep-a-Changelog entries per release        |
+| [`docs/guides/GETTING_STARTED.md`](docs/guides/GETTING_STARTED.md)             | Per-OS setup, development, packaging        |
+| [`docs/guides/CONTRIBUTING_GUIDE.md`](docs/guides/CONTRIBUTING_GUIDE.md)       | Workflow, conventions, review               |
+| [`docs/adr/`](docs/adr)                                                        | Architecture decision records               |
+| [`docs/product/STRATEGIC_ASSESSMENT.md`](docs/product/STRATEGIC_ASSESSMENT.md) | Product critique and wedge strategy         |
+| [`packages/personas/README.md`](packages/personas/README.md)                   | Persona file contract and catalogue         |
 
 ## License
 

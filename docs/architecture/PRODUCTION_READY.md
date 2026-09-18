@@ -1,5 +1,10 @@
 # Blueprint Production Readiness Checklist
 
+> **Design spec, written before implementation.** This document records what was
+> planned, not what ships. Where it disagrees with the code, the code wins: the
+> current state is the [root README](../../README.md), the [ADRs](../adr) and the
+> source itself. [docs/README.md](../README.md) lists what is authoritative.
+
 This document defines the quality gates required for Blueprint to transition
 from alpha to professional engineering use.
 
@@ -18,7 +23,7 @@ strings.
       for AWS/Stripe/GitHub/OpenAI/Anthropic/Slack/Google tokens, JWTs, bearer
       headers, connection strings and PEM blocks. Covered by Rust unit tests.
 - [x] **CSP Enforcement:** WebView is locked to `'self'` plus the Tauri IPC
-      origins; `unsafe-eval` removed; AI provider origins are *not* reachable
+      origins; `unsafe-eval` removed; AI provider origins are _not_ reachable
       from the renderer.
 - [x] **Secret Storage:** Keys go to the OS credential store (Windows Credential
       Manager / macOS Keychain / freedesktop Secret Service) with actionable
@@ -73,5 +78,6 @@ strings.
       Installers are currently unsigned.
 
 ---
-*Blueprint v0.1.0-alpha. Status: packaging real, intelligence partial, honesty
-enforced.*
+
+_Blueprint v0.1.0-alpha. Status: packaging real, intelligence partial, honesty
+enforced._

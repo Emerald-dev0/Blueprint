@@ -87,7 +87,7 @@ Twelve decisions follow from that:
 ## Alternatives considered
 
 - **MCP server exposing Blueprint's memory to any MCP client.** The right
-  long-term answer for *live* queries, but it requires the app to be running and
+  long-term answer for _live_ queries, but it requires the app to be running and
   reachable while another agent works, and MCP support is uneven across the
   tools above. A file works when Blueprint is closed. Not mutually exclusive —
   see Consequences.
@@ -95,7 +95,7 @@ Twelve decisions follow from that:
   maintenance cost, slowest to cover new tools, and each still needs the same
   content pipeline.
 - **A `blueprint` CLI that other agents shell out to.** Viable, and still the
-  best route for *querying* memory on demand, but it does not help agents that
+  best route for _querying_ memory on demand, but it does not help agents that
   cannot run subprocesses, and it would not be read automatically at session
   start.
 - **Copying each persona manual into the repository.** Rejected: 24 files of

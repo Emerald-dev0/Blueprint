@@ -1,14 +1,22 @@
 # Blueprint AI Intelligence Architecture
 
+> **Design spec, written before implementation.** This document records what was
+> planned, not what ships. Where it disagrees with the code, the code wins: the
+> current state is the [root README](../../README.md), the [ADRs](../adr) and the
+> source itself. [docs/README.md](../README.md) lists what is authoritative.
+
 ## 1. Executive Summary
+
 Blueprint’s intelligence layer is designed to move beyond simple LLM wrappers. It establishes a multi-tier memory system, specialized agent orchestration, and a universal provider abstraction layer. This architecture ensures that Blueprint remains model-independent while providing the deep project context required for high-end engineering.
 
 ---
 
 ## 2. Universal Provider Abstraction (UPA)
+
 Blueprint communicates with models through a unified interface. Adding a new provider requires no changes to core business logic.
 
 ### Interface Definition
+
 ```typescript
 interface AIProvider {
   id: string;
@@ -24,13 +32,16 @@ interface AIProvider {
   embed(text: string): Promise<number[]>;
 }
 ```
+
 - **Supported Providers:** Google Gemini (Default), Anthropic Claude, OpenAI, OpenRouter, and Local Models (via Ollama).
 - **Key Management:** API keys are stored in the system's secure keychain (e.g., macOS Keychain) and never exposed to the UI or logs.
 
 ---
 
 ## 3. Intelligent Model Routing
+
 Blueprint dynamically selects models based on task complexity and user preferences:
+
 - **Reasoning (Complex):** Claude 3.5 Sonnet / GPT-4o for architecture and planning.
 - **Velocity (Simple):** Gemini 1.5 Flash for code scans and documentation drafts.
 - **Large Context:** Gemini 1.5 Pro for full-repository analysis (1M+ tokens).
@@ -39,7 +50,9 @@ Blueprint dynamically selects models based on task complexity and user preferenc
 ---
 
 ## 4. The Deep Context Engine
+
 Blueprint solves "Context Loss" by aggregating signals from the entire project environment:
+
 1. **Active Context:** Open files, terminal logs, and recent implementation plans.
 2. **Structural Context:** Directory tree, technology stack (detected via config files).
 3. **Historical Context:** Git history, PR descriptions, and previous architectural decisions.
@@ -49,34 +62,39 @@ Blueprint solves "Context Loss" by aggregating signals from the entire project e
 
 ## 5. Multi-Tier Memory System
 
-| Tier | Duration | Storage | Purpose |
-| :--- | :--- | :--- | :--- |
-| **Short-Term** | Session | In-memory | Current chat thread and undo/redo history. |
-| **Working** | Feature | SQLite | State of the current Implementation Plan. |
-| **Long-Term** | Project | LanceDB (Vector) | Architectural decisions, constraints, and project rules. |
-| **Global** | Permanent | SQLite | User preferences, common engineering standards across projects. |
+| Tier           | Duration  | Storage          | Purpose                                                         |
+| :------------- | :-------- | :--------------- | :-------------------------------------------------------------- |
+| **Short-Term** | Session   | In-memory        | Current chat thread and undo/redo history.                      |
+| **Working**    | Feature   | SQLite           | State of the current Implementation Plan.                       |
+| **Long-Term**  | Project   | LanceDB (Vector) | Architectural decisions, constraints, and project rules.        |
+| **Global**     | Permanent | SQLite           | User preferences, common engineering standards across projects. |
 
 ---
 
 ## 6. Specialized Agent System
+
 Tasks are handled by distinct "Personalities" with specific tool access and permissions.
 
 ### Research Agent
+
 - **Role:** Understands the "What" and "Why."
 - **Tools:** Website scraper, PDF parser, Search.
 - **Outputs:** Requirements docs, brand guides.
 
 ### Architecture Agent
+
 - **Role:** Designs the "How."
 - **Tools:** Codebase graph explorer, SQLite schema analyzer.
 - **Outputs:** System diagrams, database schemas, tech-stack decisions.
 
 ### Coding Agent
+
 - **Role:** Executes the "How."
 - **Tools:** File reading/writing (scoped), Linter, Test runner.
 - **Outputs:** Implementation proposals, diffs.
 
 ### Review Agent
+
 - **Role:** Validates the "Quality."
 - **Tools:** Security scanner, performance auditor.
 - **Outputs:** Code review comments, health reports.
@@ -84,6 +102,7 @@ Tasks are handled by distinct "Personalities" with specific tool access and perm
 ---
 
 ## 7. Agent Orchestration Workflow
+
 1. **Intent Extraction:** "Add OAuth2."
 2. **Decomposition:** Split into Research (patterns), Architecture (schema), and Coding (logic).
 3. **Execution Pipeline:** Agents work sequentially or in parallel based on dependencies.
@@ -92,6 +111,7 @@ Tasks are handled by distinct "Personalities" with specific tool access and perm
 ---
 
 ## 8. Safety & Autonomy
+
 - **Strict Approval Gate:** Any action that modifies the filesystem or triggers a Git commit requires explicit human approval.
 - **Autonomous Permission:** AI can autonomously search files, analyze websites, and update its own internal memory.
 - **Redaction Layer:** A local pre-processor redacts secrets (detected via regex/entropy) before sending data to remote LLMs.
@@ -99,9 +119,11 @@ Tasks are handled by distinct "Personalities" with specific tool access and perm
 ---
 
 ## 9. AI Quality Control
+
 - **Self-Review:** The Review Agent automatically audits plans generated by the Coding Agent.
 - **Confidence Scoring:** Blueprint warns the user when context is low or confidence in a plan is below 70%.
 - **Source Attributions:** Every AI recommendation is linked back to the source file or requirement doc.
 
 ---
-*Blueprint AI Intelligence Architecture — Prepared for Implementation.*
+
+_Blueprint AI Intelligence Architecture — Prepared for Implementation._
