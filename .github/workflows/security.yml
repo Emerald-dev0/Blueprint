@@ -16,15 +16,15 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           run_install: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -35,6 +35,9 @@ jobs:
         # eslint at runtime (incompatible API), so it is allowlisted as dev-only.
         run: pnpm audit --ignore GHSA-mh99-v99m-4gvg
 
+      # v2.0.0 is the newest release and still declares `using: node20`, so the
+      # runner logs a deprecation notice for it. That is upstream's to fix; every
+      # action this repository controls is on a node24 release.
       - name: Audit Rust dependencies
         uses: rustsec/audit-check@v2.0.0
         with:

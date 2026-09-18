@@ -12,15 +12,15 @@ jobs:
     name: Web (format / lint / typecheck / test / export)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           run_install: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: 'pnpm'
@@ -64,22 +64,16 @@ jobs:
   rust:
     name: Rust (fmt / clippy / test)
     runs-on: ubuntu-22.04
-    # TEMPORARY (bring-up): publishing the rustfmt diff as a pull request comment
-    # needs `pull-requests: write`. Drop this block together with the diagnostic
-    # step once the tree is formatted.
-    permissions:
-      contents: read
-      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           run_install: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: 'pnpm'
@@ -117,60 +111,9 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: clippy
-        id: clippy
         working-directory: apps/desktop/src-tauri
-        continue-on-error: true
-        run: |
-          set -o pipefail
-          cargo clippy --all-targets -- -D warnings 2>&1 | tee /tmp/clippy.log
+        run: cargo clippy --all-targets -- -D warnings
 
-      # Tests still run when clippy fails, so one push reports both.
       - name: Unit tests
-        id: tests
         working-directory: apps/desktop/src-tauri
-        continue-on-error: true
-        run: |
-          set -o pipefail
-          cargo test 2>&1 | tee /tmp/test.log
-
-      # TEMPORARY bring-up scaffolding. This branch is maintained from an
-      # environment that cannot download Actions logs (the results-receiver host
-      # is unreachable), so a clippy or test failure is invisible there. Publish
-      # the relevant output on the pull request instead, then remove this step
-      # and restore the plain gates.
-      - name: Publish Rust diagnostics (bring-up only)
-        continue-on-error: true
-        if: >-
-          always() && github.event_name == 'pull_request' &&
-          (steps.clippy.outcome == 'failure' || steps.tests.outcome == 'failure')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          {
-            echo '### Rust diagnostics (temporary CI step)'
-            if [ "${{ steps.clippy.outcome }}" = "failure" ]; then
-              echo
-              echo '`cargo clippy --all-targets -- -D warnings` failed:'
-              echo
-              echo '```'
-              grep -E '^(error|warning)' -A 25 /tmp/clippy.log | head -c 45000
-              echo '```'
-            fi
-            if [ "${{ steps.tests.outcome }}" = "failure" ]; then
-              echo
-              echo '`cargo test` failed:'
-              echo
-              echo '```'
-              grep -E '^(error|failures:|---- |test .* FAILED)' -A 20 /tmp/test.log | head -c 20000
-              echo '```'
-            fi
-          } > /tmp/rust-report.md
-          gh pr comment "${{ github.event.pull_request.number }}" \
-            --repo "${{ github.repository }}" \
-            --body-file /tmp/rust-report.md
-
-      - name: Rust gate (clippy, tests)
-        if: always() && (steps.clippy.outcome == 'failure' || steps.tests.outcome == 'failure')
-        run: |
-          echo "::error::clippy or cargo test failed; the output is in a comment on the pull request."
-          exit 1
+        run: cargo test
