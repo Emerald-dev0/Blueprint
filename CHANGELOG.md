@@ -165,6 +165,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- CI job names are back to the ones branch protection on `main` requires -
+  `Frontend`, `Backend` and `IPC contract` - after they had been renamed to
+  describe their contents without the protection rule being updated. A required
+  status check that never reports blocks a pull request indefinitely, so `main`
+  had become mergeable only by admin override; three of the four required checks
+  were permanently "expected". `IPC contract` is now a job in its own right,
+  running the two suites that read Rust source, and both `ci.yml` and
+  `security.yml` explain why the names must not drift from the rule.
+
 - `pnpm typecheck` never covered the root project, so `@blueprint/plugin-sdk`
   and everything under `plugins/` went unchecked in CI even though the root
   `tsconfig.json` includes them. The root script now runs `tsc --noEmit` on that
