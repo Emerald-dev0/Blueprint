@@ -51,15 +51,6 @@ importers:
 
   apps/desktop:
     dependencies:
-      '@blueprint/ai-adapters':
-        specifier: workspace:*
-        version: link:../../packages/ai-adapters
-      '@blueprint/brain':
-        specifier: workspace:*
-        version: link:../../packages/brain
-      '@blueprint/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@blueprint/git-engine':
         specifier: workspace:*
         version: link:../../packages/git-engine
@@ -148,31 +139,6 @@ importers:
       tailwindcss:
         specifier: ^4.0.0
         version: 4.3.3
-      typescript:
-        specifier: ^5.5.0
-        version: 5.9.3
-
-  packages/ai-adapters:
-    dependencies:
-      '@blueprint/types':
-        specifier: workspace:*
-        version: link:../types
-      '@tauri-apps/api':
-        specifier: ^2.0.0
-        version: 2.11.1
-    devDependencies:
-      typescript:
-        specifier: ^5.5.0
-        version: 5.9.3
-
-  packages/brain:
-    devDependencies:
-      typescript:
-        specifier: ^5.5.0
-        version: 5.9.3
-
-  packages/core:
-    devDependencies:
       typescript:
         specifier: ^5.5.0
         version: 5.9.3

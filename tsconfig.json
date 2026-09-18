@@ -22,10 +22,7 @@
       // app still resolves the real Tauri API through its own tsconfig.
       "@tauri-apps/api/core": ["tests/stubs/tauri-core.ts"],
       "@blueprint/ui": ["packages/ui/src"],
-      "@blueprint/core": ["packages/core/src"],
-      "@blueprint/ai-adapters": ["packages/ai-adapters/src"],
       "@blueprint/git-engine": ["packages/git-engine/src"],
-      "@blueprint/brain": ["packages/brain/src"],
       "@blueprint/types": ["packages/types/src"],
       "@blueprint/plugin-sdk": ["packages/plugin-sdk/src"]
     }

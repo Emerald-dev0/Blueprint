@@ -17,10 +17,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@blueprint/ui": ["../../packages/ui/src"],
-      "@blueprint/core": ["../../packages/core/src"],
-      "@blueprint/ai-adapters": ["../../packages/ai-adapters/src"],
       "@blueprint/git-engine": ["../../packages/git-engine/src"],
-      "@blueprint/brain": ["../../packages/brain/src"],
       "@blueprint/types": ["../../packages/types/src"]
     },
     "plugins": [

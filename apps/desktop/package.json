@@ -11,9 +11,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@blueprint/ai-adapters": "workspace:*",
-    "@blueprint/brain": "workspace:*",
-    "@blueprint/core": "workspace:*",
     "@blueprint/git-engine": "workspace:*",
     "@blueprint/plugin-sdk": "workspace:*",
     "@blueprint/types": "workspace:*",

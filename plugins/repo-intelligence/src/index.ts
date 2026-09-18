@@ -1,5 +1,14 @@
-import { BlueprintPlugin, BlueprintAPI } from '@blueprint/plugin-sdk';
+import { BlueprintPlugin, type BlueprintAPI } from '@blueprint/plugin-sdk';
 
+/**
+ * Inert scaffolding: no host instantiates this class, because Blueprint has no
+ * plugin runtime yet (see the SDK header).
+ *
+ * It registers one palette command and publishes the intent on the event bus.
+ * The repository scan it stands in for already exists in the app as the
+ * `start_repo_analysis` command behind the Intelligence page - a plugin would
+ * call that, not reimplement it.
+ */
 export default class RepoIntelligencePlugin extends BlueprintPlugin {
   constructor(api: BlueprintAPI) {
     super(api);
@@ -7,18 +16,9 @@ export default class RepoIntelligencePlugin extends BlueprintPlugin {
 
   activate() {
     this.api.registerCommand('repo.scan', 'Intelligence: Scan Repository', () => {
-      this.api.workspace.openTab('repo-scanner', 'intelligence', 'Repository Scanner');
+      this.api.events.publish('REPO_SCAN_REQUESTED', {});
     });
-
-    this.api.events.subscribe('PROJECT_OPENED', async (data: { path: string }) => {
-      console.log('Repo Intelligence: Auto-scanning repository...');
-      this.api.events.publish('ANALYSIS_PROGRESS', { status: 'indexing-files', path: data.path });
-    });
-
-    console.log('✓ Repository Intelligence Plugin Activated');
   }
 
-  deactivate() {
-    console.log('Repository Intelligence Plugin Deactivated');
-  }
+  deactivate() {}
 }
