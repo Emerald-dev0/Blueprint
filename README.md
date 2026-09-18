@@ -401,20 +401,31 @@ pnpm build         # Next.js static export consumed by Tauri
 cannot parse, so it aborted with "No parser could be inferred" and formatted
 nothing; Rust formatting is rustfmt's, and CI checks both.
 
-`ci.yml` runs those plus a Rust job (`cargo fmt --check`, `cargo clippy
--- -D warnings`, `cargo test` — 27 tests covering redaction, the repo scanner,
-prompt compilation, persona parsing, the file-tree walk's bounds and the date
-maths behind the export). `security.yml` runs dependency and secret scanning;
-`desktop.yml` builds the installers.
+`ci.yml` splits into three jobs: **Frontend** (the commands above), **Backend**
+(`cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` — 27 tests
+covering redaction, the repo scanner, prompt compilation, persona parsing, the
+file-tree walk's bounds and the date maths behind the export) and **IPC
+contract** (the two suites below that read Rust source). `security.yml` runs
+dependency and secret scanning as **audit**; `desktop.yml` builds the installers.
 
-Two suites exist purely to stop the UI claiming things the core cannot do, which
-is how the fabricated surfaces in earlier revisions survived:
+Those four names are required status checks on `main`, so they are not free to
+change: a required check that never reports blocks every pull request until an
+administrator overrides the merge. `ci.yml` carries the same warning.
+
+Three suites exist purely to stop the UI claiming things the core cannot do,
+which is how the fabricated surfaces in earlier revisions survived:
 
 - `tests/unit/git-engine.test.ts` reads `main.rs` and fails if the SDK invokes a
   command that is not in `generate_handler!` — the check that would have caught
   four methods whose commands never existed.
+- `tests/unit/plugins.test.ts` reads `main.rs` and `plugins/manager.rs`: every
+  manifest must name an entrypoint that exists, declare only keys the Rust parser
+  actually reads, and request only permissions a registered command can exercise.
 - The route-table tests in `tests/unit/platform.test.ts` fail if navigation
   offers a route with no `page.tsx`, or if a page exists that no route declares.
+
+The first two cross the language boundary, so they are what the **IPC contract**
+job runs; all three run in the full suite as well.
 
 Tauri's IPC is aliased to `tests/stubs/tauri-core.ts` in `vitest.config.ts`: the
 real module needs `window.__TAURI_INTERNALS__`, and pnpm's strict layout means

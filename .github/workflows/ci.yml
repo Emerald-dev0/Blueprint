@@ -6,10 +6,24 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+# The job names below are load-bearing.
+#
+# Branch protection on `main` requires four status checks by name: `Frontend`,
+# `Backend` and `IPC contract` from this file, plus `audit` from security.yml.
+# Those were the names CI produced when the rule was written. The jobs were later
+# renamed to describe their contents, and because a required check that never
+# reports blocks a pull request indefinitely, `main` became mergeable only by
+# admin override - which is how this was found. Renaming a job here therefore
+# breaks merging until Settings -> Branches is updated to match: change both
+# together, or neither.
+#
+# The names still say what each job covers - the Next.js renderer, the Rust core,
+# and the tests that hold the boundary between the two to account.
 jobs:
-  # Renderer, design system and shared packages.
+  # Renderer, design system and shared packages: formatting, ESLint, TypeScript,
+  # the full Vitest suite, and the static export Tauri embeds.
   web:
-    name: Web (format / lint / typecheck / test / export)
+    name: Frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -62,7 +76,7 @@ jobs:
   # `generate_context!()` embeds `frontendDist`, so the renderer must be
   # exported before the crate can compile.
   rust:
-    name: Rust (fmt / clippy / test)
+    name: Backend
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v7
@@ -117,3 +131,34 @@ jobs:
       - name: Unit tests
         working-directory: apps/desktop/src-tauri
         run: cargo test
+
+  # The suites that read Rust source to pin what the renderer is allowed to
+  # claim: every command `@blueprint/git-engine` invokes must appear in
+  # `generate_handler!`, and every plugin manifest must declare only keys
+  # `plugins/manager.rs` parses and only permissions a registered command can
+  # exercise. They also run inside `Frontend`; giving them a job of their own
+  # means a broken contract is named by the check that fails instead of surfacing
+  # as one red job somewhere inside 170 tests.
+  ipc-contract:
+    name: IPC contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # No Rust toolchain here: these tests read the .rs files as text.
+      - name: Contract tests
+        run: pnpm exec vitest run tests/unit/git-engine.test.ts tests/unit/plugins.test.ts
