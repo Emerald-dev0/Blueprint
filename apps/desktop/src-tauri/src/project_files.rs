@@ -56,7 +56,7 @@ pub enum FileKind {
     Directory,
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FileNode {
     pub name: String,
@@ -160,15 +160,14 @@ fn walk(dir: &Path, prefix: &str, depth_left: usize, walker: &mut Walker) -> Vec
         .filter(|(_, _, name)| !name.is_empty())
         .collect();
 
-    entries.sort_by(|a, b| node_order(a.1, &a.2).cmp(&node_order(b.1, &b.2)));
+    entries.sort_by_key(|(_, is_dir, name)| node_order(*is_dir, name));
 
     let mut nodes = Vec::new();
     for (path, is_dir, name) in entries {
-        if is_dir {
-            if should_skip_dir(&name) {
-                continue;
-            }
-        } else if should_skip_file(&name) {
+        if is_dir && should_skip_dir(&name) {
+            continue;
+        }
+        if !is_dir && should_skip_file(&name) {
             continue;
         }
         if !walker.take() {
