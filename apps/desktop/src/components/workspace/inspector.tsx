@@ -73,9 +73,7 @@ export function Inspector() {
             )}
             <div className="min-w-0 space-y-1">
               <p className="break-words text-xs font-bold text-white">{selection.name}</p>
-              <p className="font-mono text-[10px] uppercase text-slate-600">
-                {selection.kind}
-              </p>
+              <p className="font-mono text-[10px] uppercase text-slate-600">{selection.kind}</p>
             </div>
           </div>
 

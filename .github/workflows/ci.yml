@@ -9,7 +9,7 @@ on:
 jobs:
   # Renderer, design system and shared packages.
   web:
-    name: Web (lint / typecheck / test / export)
+    name: Web (format / lint / typecheck / test / export)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +27,13 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # `pnpm format` used to glob `**/*.rs`, which Prettier cannot parse, so it
+      # exited with "No parser could be inferred" and formatted nothing. Rust is
+      # rustfmt's job (see the `rust` job); this checks the rest, against the
+      # style the workspace actually uses, which .prettierrc.json now records.
+      - name: Check formatting
+        run: pnpm format:check
 
       - name: Lint
         run: pnpm lint

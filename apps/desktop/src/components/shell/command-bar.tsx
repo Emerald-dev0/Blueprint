@@ -53,13 +53,8 @@ const NAVIGATION: { key: RouteKey; label: string; icon: LucideIcon }[] = [
 
 export function CommandBar() {
   const router = useRouter();
-  const {
-    commandBarOpen,
-    setCommandBarOpen,
-    toggleLeftWing,
-    toggleRightWing,
-    refreshExplorer,
-  } = useWorkspaceStore();
+  const { commandBarOpen, setCommandBarOpen, toggleLeftWing, toggleRightWing, refreshExplorer } =
+    useWorkspaceStore();
   const { commands } = usePluginStore();
   const [isOpening, setIsOpening] = React.useState(false);
 
@@ -198,8 +193,7 @@ export function CommandBar() {
   );
 }
 
-const groupClass =
-  'px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-slate-500';
+const groupClass = 'px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-slate-500';
 
 function CommandItem({
   children,

@@ -38,8 +38,10 @@ export function getPlatform(): Platform {
   const source = (highEntropy ?? navigator.platform ?? navigator.userAgent).toLowerCase();
 
   if (source.includes('win')) return 'windows';
-  if (source.includes('mac') || source.includes('iphone') || source.includes('ipad')) return 'macos';
-  if (source.includes('linux') || source.includes('x11') || source.includes('ubuntu')) return 'linux';
+  if (source.includes('mac') || source.includes('iphone') || source.includes('ipad'))
+    return 'macos';
+  if (source.includes('linux') || source.includes('x11') || source.includes('ubuntu'))
+    return 'linux';
   return 'unknown';
 }
 

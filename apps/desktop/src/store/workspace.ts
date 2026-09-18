@@ -65,8 +65,7 @@ export const useWorkspaceStore = create<WorkspaceState>()(
       toggleRightWing: () => set((state) => ({ rightWingOpen: !state.rightWingOpen })),
       setCommandBarOpen: (open) => set({ commandBarOpen: open }),
       select: (selection) => set({ selection }),
-      refreshExplorer: () =>
-        set((state) => ({ explorerNonce: state.explorerNonce + 1 })),
+      refreshExplorer: () => set((state) => ({ explorerNonce: state.explorerNonce + 1 })),
       setLayout: (layout) =>
         set((state) => ({
           layout: { ...state.layout, ...layout },
@@ -83,6 +82,6 @@ export const useWorkspaceStore = create<WorkspaceState>()(
         rightWingOpen: state.rightWingOpen,
         layout: state.layout,
       }),
-    }
-  )
+    },
+  ),
 );

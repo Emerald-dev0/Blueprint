@@ -1,0 +1,12 @@
+# Prettier owns TypeScript, JSON and Markdown. Rust belongs to rustfmt, which
+# CI already enforces with `cargo fmt --check`; the old `format` script globbed
+# `**/*.rs` and died with "No parser could be inferred", so it formatted nothing.
+**/*.rs
+
+# Build output and generated files.
+.next
+dist
+out
+coverage
+*.tsbuildinfo
+pnpm-lock.yaml

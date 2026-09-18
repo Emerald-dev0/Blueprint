@@ -9,7 +9,7 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-  TabsContent
+  TabsContent,
 } from '@blueprint/ui';
 import { ShieldCheck, Key, Github, Sparkles } from 'lucide-react';
 import { api, type PluginManifest } from '../../lib/ipc';
@@ -35,7 +35,7 @@ export default function SettingsPage() {
   const [keys, setKeys] = React.useState({
     gemini: '',
     anthropic: '',
-    openai: ''
+    openai: '',
   });
   const [status, setStatus] = React.useState<Record<string, string>>({});
 
@@ -86,26 +86,38 @@ export default function SettingsPage() {
   const saveKey = async (provider: string) => {
     try {
       await api.setAiCredential(provider, (keys as Record<string, string>)[provider]);
-      setStatus(prev => ({ ...prev, [provider]: 'Saved' }));
-      setTimeout(() => setStatus(prev => ({ ...prev, [provider]: '' })), 2000);
+      setStatus((prev) => ({ ...prev, [provider]: 'Saved' }));
+      setTimeout(() => setStatus((prev) => ({ ...prev, [provider]: '' })), 2000);
     } catch {
-      setStatus(prev => ({ ...prev, [provider]: 'Error' }));
+      setStatus((prev) => ({ ...prev, [provider]: 'Error' }));
     }
   };
 
   return (
     <div className="p-12 max-w-4xl mx-auto space-y-12">
       <header className="space-y-2">
-        <h1 className="text-3xl font-black tracking-tight text-white uppercase italic">Command Settings</h1>
-        <p className="text-slate-500 font-mono text-sm">Configure your engineering intelligence layer.</p>
+        <h1 className="text-3xl font-black tracking-tight text-white uppercase italic">
+          Command Settings
+        </h1>
+        <p className="text-slate-500 font-mono text-sm">
+          Configure your engineering intelligence layer.
+        </p>
       </header>
 
       <Tabs defaultValue="ai" className="w-full">
         <TabsList className="bg-white/5 border border-white/5 p-1 mb-8">
-          <TabsTrigger value="ai" className="data-[state=active]:bg-[#00FF9D]/10">AI Providers</TabsTrigger>
-          <TabsTrigger value="github" className="data-[state=active]:bg-[#00FF9D]/10">GitHub</TabsTrigger>
-          <TabsTrigger value="plugins" className="data-[state=active]:bg-[#00FF9D]/10">Installed</TabsTrigger>
-          <TabsTrigger value="marketplace" className="data-[state=active]:bg-[#00FF9D]/10">Marketplace</TabsTrigger>
+          <TabsTrigger value="ai" className="data-[state=active]:bg-[#00FF9D]/10">
+            AI Providers
+          </TabsTrigger>
+          <TabsTrigger value="github" className="data-[state=active]:bg-[#00FF9D]/10">
+            GitHub
+          </TabsTrigger>
+          <TabsTrigger value="plugins" className="data-[state=active]:bg-[#00FF9D]/10">
+            Installed
+          </TabsTrigger>
+          <TabsTrigger value="marketplace" className="data-[state=active]:bg-[#00FF9D]/10">
+            Marketplace
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="ai" className="space-y-8 animate-in fade-in duration-300">
@@ -120,21 +132,21 @@ export default function SettingsPage() {
                 name="Google Gemini"
                 value={keys.gemini}
                 status={status.gemini}
-                onChange={(val: string) => setKeys(k => ({ ...k, gemini: val }))}
+                onChange={(val: string) => setKeys((k) => ({ ...k, gemini: val }))}
                 onSave={() => saveKey('gemini')}
               />
               <ProviderKeyInput
                 name="Anthropic Claude"
                 value={keys.anthropic}
                 status={status.anthropic}
-                onChange={(val: string) => setKeys(k => ({ ...k, anthropic: val }))}
+                onChange={(val: string) => setKeys((k) => ({ ...k, anthropic: val }))}
                 onSave={() => saveKey('anthropic')}
               />
               <ProviderKeyInput
                 name="OpenAI"
                 value={keys.openai}
                 status={status.openai}
-                onChange={(val: string) => setKeys(k => ({ ...k, openai: val }))}
+                onChange={(val: string) => setKeys((k) => ({ ...k, openai: val }))}
                 onSave={() => saveKey('openai')}
               />
             </div>
@@ -145,7 +157,9 @@ export default function SettingsPage() {
           <section className="p-6 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
             <div className="space-y-1">
               <h4 className="text-sm font-bold text-white">Privacy Seal</h4>
-              <p className="text-xs text-slate-500 font-mono">Keys are stored locally in your system keychain. No cloud sync.</p>
+              <p className="text-xs text-slate-500 font-mono">
+                Keys are stored locally in your system keychain. No cloud sync.
+              </p>
             </div>
             <ShieldCheck size={24} className="text-[#00FF9D] opacity-50" />
           </section>
@@ -155,13 +169,15 @@ export default function SettingsPage() {
           <section className="space-y-5">
             <div className="flex items-center space-x-2 text-[#00FF9D]">
               <Github size={16} />
-              <h3 className="text-xs font-black uppercase tracking-widest">Personal access token</h3>
+              <h3 className="text-xs font-black uppercase tracking-widest">
+                Personal access token
+              </h3>
             </div>
 
             <p className="max-w-2xl font-mono text-xs leading-relaxed text-slate-500">
-              Blueprint stores the token in your operating system credential store - not in a
-              config file - and sends it only to api.github.com. Its audit log records the byte
-              length of what was stored, never the token. A read-only token with the{' '}
+              Blueprint stores the token in your operating system credential store - not in a config
+              file - and sends it only to api.github.com. Its audit log records the byte length of
+              what was stored, never the token. A read-only token with the{' '}
               <span className="text-slate-300">repo</span> scope is enough for everything
               implemented today.
             </p>
@@ -222,8 +238,8 @@ export default function SettingsPage() {
             <ul className="space-y-1 font-mono text-xs text-slate-500">
               <li>· Listing your repositories on the GitHub page.</li>
               <li>
-                · Nothing else yet. Issues, pull requests, commits and pushes are not implemented
-                in the core, so no command can act on your behalf.
+                · Nothing else yet. Issues, pull requests, commits and pushes are not implemented in
+                the core, so no command can act on your behalf.
               </li>
             </ul>
           </section>
@@ -236,19 +252,31 @@ export default function SettingsPage() {
               offer one - the previous "Disable" button had no handler. */}
           <div className="grid gap-4">
             {plugins.length === 0 ? (
-              <p className="text-sm text-slate-500 font-mono text-center py-12 border border-dashed border-white/5 rounded-2xl">No plugins installed.</p>
+              <p className="text-sm text-slate-500 font-mono text-center py-12 border border-dashed border-white/5 rounded-2xl">
+                No plugins installed.
+              </p>
             ) : (
               plugins.map((plugin) => (
-                <div key={plugin.id} className="p-6 bg-[#141414] border border-white/5 rounded-2xl flex items-start justify-between">
+                <div
+                  key={plugin.id}
+                  className="p-6 bg-[#141414] border border-white/5 rounded-2xl flex items-start justify-between"
+                >
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <h4 className="text-sm font-bold text-white">{plugin.name}</h4>
                       <Badge variant="outline">v{plugin.version}</Badge>
                     </div>
-                    <p className="text-xs text-slate-500 font-mono leading-relaxed max-w-md">{plugin.description}</p>
+                    <p className="text-xs text-slate-500 font-mono leading-relaxed max-w-md">
+                      {plugin.description}
+                    </p>
                     <div className="flex gap-2">
-                      {plugin.permissions.map(p => (
-                        <span key={p} className="text-[9px] px-1.5 py-0.5 bg-white/5 rounded text-slate-400 font-mono uppercase">{p}</span>
+                      {plugin.permissions.map((p) => (
+                        <span
+                          key={p}
+                          className="text-[9px] px-1.5 py-0.5 bg-white/5 rounded text-slate-400 font-mono uppercase"
+                        >
+                          {p}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -262,8 +290,8 @@ export default function SettingsPage() {
           <div className="p-12 border border-dashed border-white/10 rounded-2xl text-center space-y-4">
             <Sparkles size={32} className="mx-auto text-[#00FF9D]/40" />
             <p className="text-slate-400 font-mono text-sm">
-              The community marketplace is not live yet. Nothing is listed here because no
-              registry exists to list from.
+              The community marketplace is not live yet. Nothing is listed here because no registry
+              exists to list from.
             </p>
           </div>
         </TabsContent>
@@ -272,12 +300,13 @@ export default function SettingsPage() {
   );
 }
 
-
 function ProviderKeyInput({ name, value, onChange, onSave, status }: ProviderKeyInputProps) {
   return (
     <div className="flex items-center justify-between p-4 bg-[#141414] border border-white/5 rounded-xl transition-all hover:border-white/10">
       <div className="space-y-1">
-        <label className="text-[10px] font-black uppercase text-slate-500 tracking-tighter">{name}</label>
+        <label className="text-[10px] font-black uppercase text-slate-500 tracking-tighter">
+          {name}
+        </label>
         <Input
           type="password"
           value={value}
@@ -287,8 +316,16 @@ function ProviderKeyInput({ name, value, onChange, onSave, status }: ProviderKey
         />
       </div>
       <div className="flex items-center space-x-2">
-        {status && <span className={`text-[10px] font-mono ${status === 'Error' ? 'text-red-500' : 'text-[#00FF9D]'}`}>{status}</span>}
-        <Button size="sm" variant="ghost" onClick={onSave} className="h-8">Save Key</Button>
+        {status && (
+          <span
+            className={`text-[10px] font-mono ${status === 'Error' ? 'text-red-500' : 'text-[#00FF9D]'}`}
+          >
+            {status}
+          </span>
+        )}
+        <Button size="sm" variant="ghost" onClick={onSave} className="h-8">
+          Save Key
+        </Button>
       </div>
     </div>
   );

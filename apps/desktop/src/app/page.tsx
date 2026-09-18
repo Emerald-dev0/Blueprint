@@ -127,8 +127,8 @@ export default function ProjectHome() {
           </h2>
           <p className="mx-auto max-w-lg font-mono text-xs leading-relaxed text-slate-500">
             Blueprint reads the project you point it at: the file tree, the git state and the
-            languages in use. It runs locally, writes nothing except the files you explicitly ask
-            it to (memory entries, ADRs and the AGENTS.md export), and stores credentials in your
+            languages in use. It runs locally, writes nothing except the files you explicitly ask it
+            to (memory entries, ADRs and the AGENTS.md export), and stores credentials in your
             operating system keychain.
           </p>
           <p className="font-mono text-[11px] text-slate-600">
@@ -191,7 +191,11 @@ export default function ProjectHome() {
             )}
           </Card>
 
-          <Card title="Contents" icon={Layers} hint={tree ? `${tree.maxDepth} levels walked` : undefined}>
+          <Card
+            title="Contents"
+            icon={Layers}
+            hint={tree ? `${tree.maxDepth} levels walked` : undefined}
+          >
             {counts ? (
               <div className="space-y-3">
                 <dl className="space-y-2">
@@ -212,12 +216,19 @@ export default function ProjectHome() {
             )}
           </Card>
 
-          <Card title="Recent commits" icon={Clock} hint={git ? `${git.recent_commits.length} shown` : undefined}>
+          <Card
+            title="Recent commits"
+            icon={Clock}
+            hint={git ? `${git.recent_commits.length} shown` : undefined}
+          >
             {git && git.recent_commits.length > 0 ? (
               <ul className="space-y-3">
                 {git.recent_commits.slice(0, 5).map((commit) => (
                   <li key={commit.id} className="space-y-0.5">
-                    <p className="truncate font-mono text-[11px] text-slate-300" title={commit.summary}>
+                    <p
+                      className="truncate font-mono text-[11px] text-slate-300"
+                      title={commit.summary}
+                    >
                       {commit.summary}
                     </p>
                     <p className="font-mono text-[9px] uppercase text-slate-600">

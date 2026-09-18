@@ -27,7 +27,7 @@ export function ShortcutHint({ keys, className }: ShortcutHintProps) {
     <kbd
       className={cn(
         'px-1.5 py-0.5 rounded border border-white/20 bg-white/5 text-white font-mono text-[11px]',
-        className
+        className,
       )}
     >
       {label}

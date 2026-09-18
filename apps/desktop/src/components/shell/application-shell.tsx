@@ -19,8 +19,7 @@ import { cn } from '../../lib/utils';
  * the plugin runtime once it exists.
  */
 export function ApplicationShell({ children }: { children: React.ReactNode }) {
-  const { toggleLeftWing, toggleRightWing, leftWingOpen, rightWingOpen } =
-    useWorkspaceStore();
+  const { toggleLeftWing, toggleRightWing, leftWingOpen, rightWingOpen } = useWorkspaceStore();
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-[#0B0B0B] text-white">
@@ -41,7 +40,7 @@ export function ApplicationShell({ children }: { children: React.ReactNode }) {
             aria-label="Toggle explorer panel"
             className={cn(
               'p-1.5 rounded hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF9D]/60',
-              leftWingOpen ? 'text-[#00FF9D]' : 'text-slate-500'
+              leftWingOpen ? 'text-[#00FF9D]' : 'text-slate-500',
             )}
           >
             <PanelLeft size={16} />
@@ -52,7 +51,7 @@ export function ApplicationShell({ children }: { children: React.ReactNode }) {
             aria-label="Toggle inspector panel"
             className={cn(
               'p-1.5 rounded hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-[#00FF9D]/60',
-              rightWingOpen ? 'text-[#00FF9D]' : 'text-slate-500'
+              rightWingOpen ? 'text-[#00FF9D]' : 'text-slate-500',
             )}
           >
             <PanelRight size={16} />

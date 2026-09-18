@@ -4,12 +4,7 @@ import * as React from 'react';
 import { Badge, Button, Input, Separator } from '@blueprint/ui';
 import { FileCode2, FolderSearch, Globe, Network, Share2 } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
-import {
-  api,
-  pickProjectDirectory,
-  type AgentContextExport,
-  type RepoReport,
-} from '../../lib/ipc';
+import { api, pickProjectDirectory, type AgentContextExport, type RepoReport } from '../../lib/ipc';
 
 /** Tools that read the files Blueprint writes; shown so the action is legible. */
 const AGENT_READERS = [
@@ -56,7 +51,10 @@ export default function IntelligencePage() {
   };
 
   React.useEffect(() => {
-    api.getProjectPath().then(setProjectPath).catch(() => setProjectPath(null));
+    api
+      .getProjectPath()
+      .then(setProjectPath)
+      .catch(() => setProjectPath(null));
   }, []);
 
   const handleImportAndScan = async () => {
@@ -189,7 +187,11 @@ export default function IntelligencePage() {
             onClick={handleImportAndScan}
             disabled={isScanning}
           >
-            {isScanning ? 'Scanning…' : projectPath ? 'Rescan / Change Repository' : 'Import Local Directory'}
+            {isScanning
+              ? 'Scanning…'
+              : projectPath
+                ? 'Rescan / Change Repository'
+                : 'Import Local Directory'}
           </Button>
 
           {scanError && <p className="text-xs text-red-400 font-mono">{scanError}</p>}
@@ -212,9 +214,7 @@ export default function IntelligencePage() {
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center space-x-2 text-[#00FF9D]">
             <Share2 size={18} />
-            <h3 className="text-sm font-black uppercase tracking-widest">
-              Agent Interoperability
-            </h3>
+            <h3 className="text-sm font-black uppercase tracking-widest">Agent Interoperability</h3>
           </div>
           <Button
             variant="primary"
@@ -228,17 +228,16 @@ export default function IntelligencePage() {
         </div>
 
         <p className="text-xs text-slate-500 font-mono leading-relaxed max-w-3xl">
-          Writes <span className="text-slate-300">AGENTS.md</span> into the open project —
-          the detected stack, the build and test commands this repo declares, your recorded
-          architecture decisions, sealed knowledge, the installed persona standards and the
-          boundaries agents must respect — plus{' '}
-          <span className="text-slate-300">CLAUDE.md</span>,{' '}
+          Writes <span className="text-slate-300">AGENTS.md</span> into the open project — the
+          detected stack, the build and test commands this repo declares, your recorded architecture
+          decisions, sealed knowledge, the installed persona standards and the boundaries agents
+          must respect — plus <span className="text-slate-300">CLAUDE.md</span>,{' '}
           <span className="text-slate-300">GEMINI.md</span> and{' '}
-          <span className="text-slate-300">knowledge.md</span> that point at it, because
-          those tools look for their own filename first. Any other coding agent then starts
-          from Blueprint&apos;s understanding instead of rediscovering the repository. Values
-          are passed through the local secret redactor before they touch disk, and files
-          Blueprint did not generate are never overwritten.
+          <span className="text-slate-300">knowledge.md</span> that point at it, because those tools
+          look for their own filename first. Any other coding agent then starts from
+          Blueprint&apos;s understanding instead of rediscovering the repository. Values are passed
+          through the local secret redactor before they touch disk, and files Blueprint did not
+          generate are never overwritten.
         </p>
 
         <div className="flex flex-wrap gap-1.5">

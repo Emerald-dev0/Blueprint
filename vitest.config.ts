@@ -9,11 +9,13 @@ export default defineConfig({
   // `tests/stubs/tauri-core.ts`.
   resolve: {
     alias: {
-      '@tauri-apps/api/core': fileURLToPath(new URL('./tests/stubs/tauri-core.ts', import.meta.url))
-    }
+      '@tauri-apps/api/core': fileURLToPath(
+        new URL('./tests/stubs/tauri-core.ts', import.meta.url),
+      ),
+    },
   },
   test: {
     include: ['tests/**/*.test.ts'],
-    environment: 'node'
-  }
+    environment: 'node',
+  },
 });

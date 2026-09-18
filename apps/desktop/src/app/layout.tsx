@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 // Self-hosted variable fonts (bundled into `out/` at build time).
 //
@@ -12,15 +12,15 @@ import type { Metadata } from "next";
 // Only the `wght` axis is imported (no italic); the faces declare
 // `unicode-range`, so the WebView downloads just the latin subset from local
 // disk.
-import "@fontsource-variable/inter/wght.css";
-import "@fontsource-variable/jetbrains-mono/wght.css";
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
 
-import "./globals.css";
-import { ApplicationShell } from "../components/shell/application-shell";
+import './globals.css';
+import { ApplicationShell } from '../components/shell/application-shell';
 
 export const metadata: Metadata = {
-  title: "Blueprint",
-  description: "AI Engineering Command Center",
+  title: 'Blueprint',
+  description: 'AI Engineering Command Center',
 };
 
 export default function RootLayout({

@@ -41,7 +41,7 @@ export default function AOSDashboard() {
    *  persona a human recognises instead of its directory slug. */
   const personaNames = React.useMemo(
     () => Object.fromEntries(manuals.map((manual) => [manual.id, manual.name])),
-    [manuals]
+    [manuals],
   );
 
   if (isLoading) {
@@ -82,12 +82,10 @@ export default function AOSDashboard() {
       {manuals.length === 0 && !loadError && (
         <div className="p-12 border border-dashed border-white/10 rounded-3xl text-center space-y-3">
           <BookOpen size={36} className="mx-auto text-slate-700" />
-          <p className="text-sm text-slate-400 font-mono">
-            No persona manuals were found on disk.
-          </p>
+          <p className="text-sm text-slate-400 font-mono">No persona manuals were found on disk.</p>
           <p className="text-xs text-slate-600 font-mono max-w-md mx-auto">
-            The registry looks in the bundled resources, then the monorepo
-            checkout. Set BLUEPRINT_PERSONAS_DIR to point it somewhere else.
+            The registry looks in the bundled resources, then the monorepo checkout. Set
+            BLUEPRINT_PERSONAS_DIR to point it somewhere else.
           </p>
         </div>
       )}
@@ -98,7 +96,10 @@ export default function AOSDashboard() {
           <TabsTrigger value="runtime">Workflow Planner</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="registry" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <TabsContent
+          value="registry"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {manuals.map((manual) => (
             <PersonaCard key={manual.id} manual={manual} />
           ))}
@@ -113,8 +114,8 @@ export default function AOSDashboard() {
               </div>
               <p className="max-w-xl font-mono text-[11px] leading-relaxed text-slate-500">
                 Returns the core&apos;s three-step plan for a goal - requirements, architecture,
-                review - each naming the persona that should execute it. Runs entirely locally;
-                the decomposition is a fixed scaffold, not an LLM plan.
+                review - each naming the persona that should execute it. Runs entirely locally; the
+                decomposition is a fixed scaffold, not an LLM plan.
               </p>
             </div>
             <Badge variant="outline" className="shrink-0 border-white/10 text-[9px] text-slate-500">

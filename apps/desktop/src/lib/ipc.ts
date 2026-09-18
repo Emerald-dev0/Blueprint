@@ -162,7 +162,7 @@ export const api = {
   generateCompletion(
     providerId: string,
     modelId: string,
-    messages: { role: string; content: string }[]
+    messages: { role: string; content: string }[],
   ): Promise<CompletionResult> {
     return invoke('generate_ai_completion', { providerId, modelId, messages });
   },
@@ -185,7 +185,7 @@ export const api = {
   runAosCompletion(
     roleId: string,
     goal: string,
-    context: Record<string, unknown> = {}
+    context: Record<string, unknown> = {},
   ): Promise<CompletionResult> {
     return invoke('run_aos_completion', { roleId, goal, context });
   },

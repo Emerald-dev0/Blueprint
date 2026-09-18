@@ -59,7 +59,7 @@ export function ExecutionTimeline({ tasks, personaNames, className }: ExecutionT
                   <h4
                     className={cn(
                       'text-xs font-bold uppercase tracking-tight',
-                      task.status === 'Active' ? 'text-[#00FF9D]' : 'text-slate-300'
+                      task.status === 'Active' ? 'text-[#00FF9D]' : 'text-slate-300',
                     )}
                   >
                     {task.goal}

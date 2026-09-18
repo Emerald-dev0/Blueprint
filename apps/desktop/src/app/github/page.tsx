@@ -147,7 +147,7 @@ export default function GitHubPage() {
       [repo.fullName, repo.name, repo.description ?? '', repo.language ?? '']
         .join(' ')
         .toLowerCase()
-        .includes(needle)
+        .includes(needle),
     );
   }, [repos, query]);
 
@@ -163,7 +163,7 @@ export default function GitHubPage() {
       .map(([language]) => language);
     const mostStarred = repos.reduce<GitHubRepository | null>(
       (best, repo) => (!best || repo.stars > best.stars ? repo : best),
-      null
+      null,
     );
     return {
       total: repos.length,
@@ -182,8 +182,8 @@ export default function GitHubPage() {
             <h1 className="text-2xl font-black uppercase italic tracking-tight">GitHub</h1>
           </div>
           <p className="font-mono text-xs text-slate-500">
-            The open repository&apos;s git state, release notes from real history, and your
-            GitHub repositories.
+            The open repository&apos;s git state, release notes from real history, and your GitHub
+            repositories.
           </p>
         </div>
 
@@ -278,7 +278,10 @@ export default function GitHubPage() {
                     <ul className="space-y-2">
                       {git.recent_commits.map((commit) => (
                         <li key={commit.id} className="space-y-0.5">
-                          <p className="truncate font-mono text-[11px] text-slate-300" title={commit.summary}>
+                          <p
+                            className="truncate font-mono text-[11px] text-slate-300"
+                            title={commit.summary}
+                          >
                             {commit.summary}
                           </p>
                           <p className="font-mono text-[9px] uppercase text-slate-600">
@@ -312,8 +315,8 @@ export default function GitHubPage() {
               <h2 className="text-[10px] font-black uppercase tracking-widest">Release notes</h2>
             </div>
             <p className="font-mono text-[11px] leading-relaxed text-slate-500">
-              Groups the last 200 commits reachable from a tag by conventional-commit prefix.
-              Leave the tag empty to start from HEAD.
+              Groups the last 200 commits reachable from a tag by conventional-commit prefix. Leave
+              the tag empty to start from HEAD.
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
@@ -334,7 +337,11 @@ export default function GitHubPage() {
               </Button>
               {notes && (
                 <Button variant="ghost" size="sm" onClick={copyNotes}>
-                  {notesCopied ? <Check size={13} className="mr-2" /> : <Copy size={13} className="mr-2" />}
+                  {notesCopied ? (
+                    <Check size={13} className="mr-2" />
+                  ) : (
+                    <Copy size={13} className="mr-2" />
+                  )}
                   {notesCopied ? 'Copied' : 'Copy'}
                 </Button>
               )}
@@ -426,7 +433,11 @@ export default function GitHubPage() {
                   <div className="flex flex-wrap gap-1">
                     {footprint.topLanguages.length > 0 ? (
                       footprint.topLanguages.map((language) => (
-                        <Badge key={language} variant="outline" className="border-white/10 text-[9px] text-slate-400">
+                        <Badge
+                          key={language}
+                          variant="outline"
+                          className="border-white/10 text-[9px] text-slate-400"
+                        >
                           {language}
                         </Badge>
                       ))
@@ -519,7 +530,10 @@ function RepoCard({ repo }: { repo: GitHubRepository }) {
               <Lock size={11} className="shrink-0 text-slate-600" aria-label="Private repository" />
             )}
             {repo.language && (
-              <Badge variant="outline" className="shrink-0 border-white/10 text-[8px] text-slate-500">
+              <Badge
+                variant="outline"
+                className="shrink-0 border-white/10 text-[8px] text-slate-500"
+              >
                 {repo.language}
               </Badge>
             )}
@@ -572,7 +586,11 @@ function StackRow({ label, values }: { label: string; values: string[] }) {
       {values.length > 0 ? (
         <div className="flex flex-wrap gap-1">
           {values.map((value) => (
-            <Badge key={value} variant="outline" className="border-white/10 text-[9px] text-slate-400">
+            <Badge
+              key={value}
+              variant="outline"
+              className="border-white/10 text-[9px] text-slate-400"
+            >
               {value}
             </Badge>
           ))}

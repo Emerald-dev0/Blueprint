@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogFooter,
   Button,
-  Badge
+  Badge,
 } from '@blueprint/ui';
 import { ShieldAlert, CheckCircle2, XCircle } from 'lucide-react';
 
@@ -30,7 +30,7 @@ export function ApprovalGate({
   description,
   impact = 'medium',
   onApprove,
-  onReject
+  onReject,
 }: ApprovalGateProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -42,7 +42,9 @@ export function ApprovalGate({
               {impact} Impact Approval
             </Badge>
           </div>
-          <DialogTitle className="text-xl italic font-black uppercase tracking-tight italic">Confirm Intent Seal</DialogTitle>
+          <DialogTitle className="text-xl italic font-black uppercase tracking-tight italic">
+            Confirm Intent Seal
+          </DialogTitle>
           <DialogDescription className="font-mono text-xs pt-2">
             An AI Agent is requesting permission to perform a high-privilege action.
           </DialogDescription>
@@ -56,7 +58,10 @@ export function ApprovalGate({
         <DialogFooter className="mt-6 flex gap-3">
           <Button
             variant="ghost"
-            onClick={() => { onReject(); onOpenChange(false); }}
+            onClick={() => {
+              onReject();
+              onOpenChange(false);
+            }}
             className="flex-grow font-bold uppercase tracking-tighter"
           >
             <XCircle size={16} className="mr-2" />
@@ -64,7 +69,10 @@ export function ApprovalGate({
           </Button>
           <Button
             variant="primary"
-            onClick={() => { onApprove(); onOpenChange(false); }}
+            onClick={() => {
+              onApprove();
+              onOpenChange(false);
+            }}
             className="flex-grow font-bold uppercase tracking-tighter"
           >
             <CheckCircle2 size={16} className="mr-2" />

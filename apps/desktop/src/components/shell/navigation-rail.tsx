@@ -3,14 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NavItem } from '@blueprint/ui';
-import {
-  FolderKanban,
-  Brain,
-  Bot,
-  Github,
-  History,
-  Settings,
-} from 'lucide-react';
+import { FolderKanban, Brain, Bot, Github, History, Settings } from 'lucide-react';
 import { ROUTES } from '../../lib/routes';
 import { normalizePath } from '../../lib/platform';
 
@@ -52,12 +45,7 @@ export function NavigationRail() {
 
       <div className="flex-grow" />
 
-      <NavItem
-        icon={Settings}
-        label="Settings"
-        isActive={isActive(ROUTES.settings)}
-        asChild
-      >
+      <NavItem icon={Settings} label="Settings" isActive={isActive(ROUTES.settings)} asChild>
         <Link href={ROUTES.settings} />
       </NavItem>
     </nav>

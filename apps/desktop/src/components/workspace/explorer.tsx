@@ -97,7 +97,7 @@ export function ProjectExplorer() {
 
   const nodes = React.useMemo(
     () => (tree && filter.trim() ? filterTree(tree.nodes, filter.trim()) : (tree?.nodes ?? [])),
-    [tree, filter]
+    [tree, filter],
   );
 
   const projectName = projectPath
@@ -139,14 +139,20 @@ export function ProjectExplorer() {
         </div>
 
         {projectName && (
-          <p className="truncate font-mono text-[10px] text-slate-600" title={projectPath ?? undefined}>
+          <p
+            className="truncate font-mono text-[10px] text-slate-600"
+            title={projectPath ?? undefined}
+          >
             {projectName}
           </p>
         )}
 
         {projectPath && (
           <div className="relative">
-            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-600" />
+            <Search
+              size={14}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-600"
+            />
             <Input
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
@@ -253,7 +259,7 @@ function TreeLevel({
               title={node.path}
               className={cn(
                 'flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-left transition-colors',
-                isSelected ? 'bg-[#00FF9D]/10 text-[#00FF9D]' : 'text-slate-400 hover:bg-white/5'
+                isSelected ? 'bg-[#00FF9D]/10 text-[#00FF9D]' : 'text-slate-400 hover:bg-white/5',
               )}
               style={{ paddingLeft: `${depth * 12 + 6}px` }}
             >

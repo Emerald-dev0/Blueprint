@@ -36,7 +36,7 @@ export function StatusBar() {
 
   const platform = PLATFORM_LABEL[getPlatform()] ?? 'Desktop';
   const projectName = projectPath
-    ? projectPath.split(/[/\\]/).filter(Boolean).pop() ?? projectPath
+    ? (projectPath.split(/[/\\]/).filter(Boolean).pop() ?? projectPath)
     : null;
 
   return (

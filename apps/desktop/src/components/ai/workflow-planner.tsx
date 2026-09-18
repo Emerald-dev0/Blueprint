@@ -87,7 +87,11 @@ export function WorkflowPlanner({ personaNames }: WorkflowPlannerProps) {
             onClick={plan}
             disabled={isPlanning || goal.trim().length === 0}
           >
-            {isPlanning ? <ActivityIndicator label="Planning" /> : <Workflow size={14} className="mr-2" />}
+            {isPlanning ? (
+              <ActivityIndicator label="Planning" />
+            ) : (
+              <Workflow size={14} className="mr-2" />
+            )}
             Plan the work
           </Button>
           <span className="font-mono text-[10px] text-slate-600">
@@ -141,11 +145,11 @@ export function WorkflowPlanner({ personaNames }: WorkflowPlannerProps) {
           )}
 
           <p className="max-w-2xl font-mono text-[11px] leading-relaxed text-slate-600">
-            This is a plan, not a running execution: nothing advances a task on its own, so
-            every task stays queued. The shape is a fixed three-step scaffold today -
-            requirements, architecture, review - and only the first task quotes your goal.
-            To carry one out, open the AI Teammate page, pick that persona and give it the
-            task as the goal; execution calls a provider and needs an API key in Settings.
+            This is a plan, not a running execution: nothing advances a task on its own, so every
+            task stays queued. The shape is a fixed three-step scaffold today - requirements,
+            architecture, review - and only the first task quotes your goal. To carry one out, open
+            the AI Teammate page, pick that persona and give it the task as the goal; execution
+            calls a provider and needs an API key in Settings.
           </p>
         </section>
       )}

@@ -4,6 +4,12 @@
   "identity": "Builds internal developer platforms as products, not as mandates. Judges success by how much faster and safer other engineers ship without reading a wiki.",
   "mission": "Provide paved-road tooling — CI/CD, IaC, environments, secrets and packaging — so application teams get security, compliance and velocity by default.",
   "version": "1.0.0",
-  "capabilities": ["developer_experience", "ci_cd", "infrastructure_as_code", "release_engineering", "internal_tooling"],
+  "capabilities": [
+    "developer_experience",
+    "ci_cd",
+    "infrastructure_as_code",
+    "release_engineering",
+    "internal_tooling"
+  ],
   "labels": ["platform", "devex", "cicd"]
 }

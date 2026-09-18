@@ -5,16 +5,8 @@ import Link from 'next/link';
 import { ActivityIndicator, AIProposalSurface, Badge, Button, Input } from '@blueprint/ui';
 import { Bot, ChevronRight, Cpu, Send, ShieldCheck, Sparkles, User } from 'lucide-react';
 import { ROUTES } from '../../lib/routes';
-import {
-  api,
-  type CompletionResult,
-  type OperatingManual,
-} from '../../lib/ipc';
-import {
-  groupThinkingFramework,
-  hasOperatingManual,
-  sortManuals,
-} from '../../lib/personas';
+import { api, type CompletionResult, type OperatingManual } from '../../lib/ipc';
+import { groupThinkingFramework, hasOperatingManual, sortManuals } from '../../lib/personas';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -51,18 +43,13 @@ export default function AIPage() {
       .then((loaded) => {
         const ordered = sortManuals(loaded);
         setManuals(ordered);
-        setActiveId(
-          ordered.find((m) => m.id === DEFAULT_PERSONA)?.id ?? ordered[0]?.id ?? null
-        );
+        setActiveId(ordered.find((m) => m.id === DEFAULT_PERSONA)?.id ?? ordered[0]?.id ?? null);
       })
       .catch((e) => setLoadError(String(e)));
   }, []);
 
   const manual = manuals.find((m) => m.id === activeId) ?? null;
-  const steps = React.useMemo(
-    () => groupThinkingFramework(manual?.thinking_framework),
-    [manual]
-  );
+  const steps = React.useMemo(() => groupThinkingFramework(manual?.thinking_framework), [manual]);
   const lastRun = runs.length > 0 ? runs[runs.length - 1] : null;
   const totalRedactions = runs.reduce((sum, r) => sum + r.secretsRedacted, 0);
 
@@ -99,10 +86,7 @@ export default function AIPage() {
         },
       ]);
     } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        { role: 'assistant', content: `Error: ${String(error)}` },
-      ]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: `Error: ${String(error)}` }]);
     } finally {
       setIsLoading(false);
     }
@@ -158,10 +142,10 @@ export default function AIPage() {
                 <Bot size={24} />
               </div>
               <p className="text-sm text-slate-500 font-mono max-w-md leading-relaxed">
-                Pick a persona on the right and ask it to review a design, plan a feature or
-                audit code. The persona&apos;s full operating manual — decision framework,
-                failure modes and quality standards — is compiled into the system prompt, and
-                secrets in your message are redacted locally before anything is sent.
+                Pick a persona on the right and ask it to review a design, plan a feature or audit
+                code. The persona&apos;s full operating manual — decision framework, failure modes
+                and quality standards — is compiled into the system prompt, and secrets in your
+                message are redacted locally before anything is sent.
               </p>
             </div>
           )}
@@ -257,8 +241,8 @@ export default function AIPage() {
 
           {!loadError && manuals.length === 0 && (
             <p className="text-[10px] font-mono text-slate-500 leading-relaxed">
-              No persona manuals were found. The registry looks in the bundled resources
-              first, then in <span className="text-slate-300">packages/personas</span>.
+              No persona manuals were found. The registry looks in the bundled resources first, then
+              in <span className="text-slate-300">packages/personas</span>.
             </p>
           )}
 
@@ -370,8 +354,7 @@ export default function AIPage() {
                     {r.provider} / {r.model}
                   </p>
                   <p className="text-slate-600">
-                    {new Date(r.at).toLocaleTimeString()} ·{' '}
-                    {r.secretsRedacted} secret(s) redacted
+                    {new Date(r.at).toLocaleTimeString()} · {r.secretsRedacted} secret(s) redacted
                   </p>
                 </div>
               ))

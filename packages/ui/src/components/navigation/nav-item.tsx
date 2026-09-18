@@ -1,11 +1,13 @@
 'use client';
 
-import * as React from "react"
-import { LucideIcon } from "lucide-react"
-import { cn } from "../../lib/utils"
+import * as React from 'react';
+import { LucideIcon } from 'lucide-react';
+import { cn } from '../../lib/utils';
 
-export interface NavItemProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+export interface NavItemProps extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  'children'
+> {
   icon: LucideIcon;
   label: string;
   isActive?: boolean;
@@ -40,12 +42,12 @@ export function NavItem({
   ...props
 }: NavItemProps) {
   const classes = cn(
-    "p-3 rounded-lg transition-colors group relative flex items-center justify-center",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF9D]/60",
+    'p-3 rounded-lg transition-colors group relative flex items-center justify-center',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FF9D]/60',
     isActive
-      ? "bg-[#00FF9D]/10 text-[#00FF9D]"
-      : "text-slate-400 hover:bg-white/5 hover:text-white",
-    className
+      ? 'bg-[#00FF9D]/10 text-[#00FF9D]'
+      : 'text-slate-400 hover:bg-white/5 hover:text-white',
+    className,
   );
 
   const contents = (
@@ -66,17 +68,15 @@ export function NavItem({
   const sharedProps = {
     className: classes,
     title: label,
-    "aria-current": isActive ? ("page" as const) : undefined,
-    "data-active": isActive || undefined,
+    'aria-current': isActive ? ('page' as const) : undefined,
+    'data-active': isActive || undefined,
   };
 
   if (asChild) {
     if (!React.isValidElement(children)) {
       // Fail loudly in development rather than rendering an empty control.
-      if (process.env.NODE_ENV !== "production") {
-        console.error(
-          "[NavItem] `asChild` requires a single valid React element child."
-        );
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('[NavItem] `asChild` requires a single valid React element child.');
       }
       return null;
     }
@@ -88,7 +88,7 @@ export function NavItem({
         ...sharedProps,
         className: cn(classes, child.props.className),
       },
-      contents
+      contents,
     );
   }
 

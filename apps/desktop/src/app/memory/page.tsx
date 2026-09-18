@@ -16,17 +16,7 @@ import {
   DialogTrigger,
   Textarea,
 } from '@blueprint/ui';
-import {
-  History,
-  Search,
-  Plus,
-  Brain,
-  BookOpen,
-  User,
-  Bot,
-  Database,
-  Clock,
-} from 'lucide-react';
+import { History, Search, Plus, Brain, BookOpen, User, Bot, Database, Clock } from 'lucide-react';
 import { api, type ADR, type MemoryEntry } from '../../lib/ipc';
 
 export default function MemoryPage() {
@@ -223,19 +213,32 @@ export default function MemoryPage() {
           className="pl-12 bg-[#141414] border-white/5 h-14 text-base focus-visible:ring-[#00FF9D]/30"
         />
         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2">
-          {isSearching && <Badge variant="outline" className="font-mono text-[9px]">Searching…</Badge>}
+          {isSearching && (
+            <Badge variant="outline" className="font-mono text-[9px]">
+              Searching…
+            </Badge>
+          )}
         </div>
       </div>
 
       <Tabs defaultValue="decisions" className="w-full">
         <TabsList className="bg-transparent border-b border-white/5 rounded-none p-0 h-10 mb-8 w-full justify-start space-x-8">
-          <TabsTrigger value="decisions" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]">
+          <TabsTrigger
+            value="decisions"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]"
+          >
             Architecture Decisions
           </TabsTrigger>
-          <TabsTrigger value="knowledge" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]">
+          <TabsTrigger
+            value="knowledge"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]"
+          >
             Project Knowledge
           </TabsTrigger>
-          <TabsTrigger value="user" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]">
+          <TabsTrigger
+            value="user"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#00FF9D] data-[state=active]:bg-transparent px-0 text-[10px]"
+          >
             Preferences
           </TabsTrigger>
         </TabsList>
@@ -263,9 +266,21 @@ export default function MemoryPage() {
         <TabsContent value="knowledge">
           {memories.length === 0 ? (
             <div className="grid grid-cols-3 gap-6">
-              <KnowledgeCard icon={Database} title="Data Models" description="Core schemas and relationships." />
-              <KnowledgeCard icon={History} title="Security Patterns" description="Auth and encryption rules." />
-              <KnowledgeCard icon={Bot} title="Agent Insights" description="Discovered system patterns." />
+              <KnowledgeCard
+                icon={Database}
+                title="Data Models"
+                description="Core schemas and relationships."
+              />
+              <KnowledgeCard
+                icon={History}
+                title="Security Patterns"
+                description="Auth and encryption rules."
+              />
+              <KnowledgeCard
+                icon={Bot}
+                title="Agent Insights"
+                description="Discovered system patterns."
+              />
             </div>
           ) : (
             <div className="grid gap-4">

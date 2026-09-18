@@ -70,9 +70,8 @@ describe('shortcut labels', () => {
   it('agree with the detected platform and never throw during render', async () => {
     // These helpers are called during render on pre-rendered pages, so they
     // must tolerate any host environment (browser, Node, or none).
-    const { getPlatform, shortcut, modifierKey } = await import(
-      '../../apps/desktop/src/lib/platform'
-    );
+    const { getPlatform, shortcut, modifierKey } =
+      await import('../../apps/desktop/src/lib/platform');
 
     const platform = getPlatform();
     expect(['windows', 'macos', 'linux', 'unknown']).toContain(platform);

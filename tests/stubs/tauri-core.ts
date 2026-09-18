@@ -16,10 +16,7 @@ import { vi } from 'vitest';
  * code under test imports {@link invoke}, which is the same object carrying the
  * real generic signature.
  */
-type InvokeSignature = <T = unknown>(
-  cmd: string,
-  args?: Record<string, unknown>
-) => Promise<T>;
+type InvokeSignature = <T = unknown>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
 
 /** The Vitest mock: assertions and canned responses go through this. */
 export const invokeMock = vi.fn();

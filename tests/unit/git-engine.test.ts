@@ -21,10 +21,7 @@ import * as gitEngine from '../../packages/git-engine/src/index';
 
 /** Command names present in the Rust `generate_handler!` list. */
 function registeredCommands(): Set<string> {
-  const mainRs = readFileSync(
-    resolve(process.cwd(), 'apps/desktop/src-tauri/src/main.rs'),
-    'utf8'
-  );
+  const mainRs = readFileSync(resolve(process.cwd(), 'apps/desktop/src-tauri/src/main.rs'), 'utf8');
   const start = mainRs.indexOf('generate_handler![');
   expect(start, 'main.rs must register its command table').toBeGreaterThan(-1);
   const block = mainRs.slice(start);
@@ -169,7 +166,7 @@ describe('capabilities that do not exist', () => {
         'setGitHubCredential',
         'suggestCommitMessage',
         'toGitHubRepository',
-      ].sort()
+      ].sort(),
     );
   });
 });

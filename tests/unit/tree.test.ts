@@ -23,7 +23,9 @@ describe('countNodes', () => {
 
   it('counts files and directories across levels', () => {
     const tree = [
-      dir('apps', [dir('desktop', [file('package.json', 'apps/desktop/package.json')], 'apps/desktop')]),
+      dir('apps', [
+        dir('desktop', [file('package.json', 'apps/desktop/package.json')], 'apps/desktop'),
+      ]),
       dir('packages', [file('README.md', 'packages/README.md')]),
       file('pnpm-workspace.yaml'),
     ];
@@ -89,7 +91,7 @@ describe('filterTree', () => {
 
 describe('relativeTime', () => {
   // 2026-09-17T12:00:00Z in Unix seconds.
-  const now = Date.UTC(2026, 8, 17, 12, 0, 0) ;
+  const now = Date.UTC(2026, 8, 17, 12, 0, 0);
   const nowSeconds = now / 1000;
 
   it('reads a timestamp a minute old as one minute', () => {

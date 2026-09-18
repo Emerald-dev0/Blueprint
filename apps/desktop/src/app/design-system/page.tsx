@@ -26,17 +26,31 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   AIProposalSurface,
-  ActivityIndicator
+  ActivityIndicator,
 } from '@blueprint/ui';
 import { Box, Shield, Zap } from 'lucide-react';
 
-function ColorSwatch({ color, label, hex, textColor = "text-white" }: { color: string; label: string; hex: string; textColor?: string }) {
+function ColorSwatch({
+  color,
+  label,
+  hex,
+  textColor = 'text-white',
+}: {
+  color: string;
+  label: string;
+  hex: string;
+  textColor?: string;
+}) {
   return (
     <div className="space-y-2">
       <div className={`h-24 w-full rounded-lg border border-white/5 ${color} flex items-end p-2`}>
-        <span className={`text-[10px] font-bold uppercase tracking-tighter ${textColor}`}>{hex}</span>
+        <span className={`text-[10px] font-bold uppercase tracking-tighter ${textColor}`}>
+          {hex}
+        </span>
       </div>
-      <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest text-center">{label}</p>
+      <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest text-center">
+        {label}
+      </p>
     </div>
   );
 }
@@ -55,7 +69,9 @@ export default function DesignSystemPage() {
 
         {/* Colors */}
         <section className="space-y-6">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-slate-500">Color Palette</h2>
+          <h2 className="text-xs font-mono uppercase tracking-widest text-slate-500">
+            Color Palette
+          </h2>
           <div className="grid grid-cols-5 gap-4">
             <ColorSwatch color="bg-[#0B0B0B]" label="Ink" hex="#0B0B0B" />
             <ColorSwatch color="bg-[#00FF9D]" label="Mint" hex="#00FF9D" textColor="text-black" />
@@ -70,7 +86,9 @@ export default function DesignSystemPage() {
           <h2 className="text-xs font-mono uppercase tracking-widest text-slate-500">Typography</h2>
           <div className="space-y-8">
             <div className="space-y-2">
-              <p className="text-[10px] text-slate-600 uppercase font-bold tracking-widest">Inter (UI Sans)</p>
+              <p className="text-[10px] text-slate-600 uppercase font-bold tracking-widest">
+                Inter (UI Sans)
+              </p>
               <div className="grid grid-cols-2 gap-4">
                 <p className="text-4xl font-black tracking-tighter uppercase">Command Center</p>
                 <p className="text-sm text-slate-400 leading-relaxed">
@@ -80,7 +98,9 @@ export default function DesignSystemPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-[10px] text-slate-600 uppercase font-bold tracking-widest">JetBrains Mono (Data/Code)</p>
+              <p className="text-[10px] text-slate-600 uppercase font-bold tracking-widest">
+                JetBrains Mono (Data/Code)
+              </p>
               <div className="p-4 bg-[#141414] rounded-lg border border-white/5">
                 <code className="text-sm text-[#00FF9D]">
                   fn main() &#123; println!("Blueprint initialized"); &#125;
@@ -104,7 +124,9 @@ export default function DesignSystemPage() {
             <Button size="sm">Small</Button>
             <Button size="md">Medium</Button>
             <Button size="lg">Large</Button>
-            <Button size="icon"><Zap size={16}/></Button>
+            <Button size="icon">
+              <Zap size={16} />
+            </Button>
           </div>
         </section>
 
@@ -113,11 +135,15 @@ export default function DesignSystemPage() {
           <h2 className="text-xs font-mono uppercase tracking-widest text-slate-500">Inputs</h2>
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-2">
-              <label className="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">Default Input</label>
+              <label className="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">
+                Default Input
+              </label>
               <Input placeholder="Enter command..." />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">Disabled State</label>
+              <label className="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">
+                Disabled State
+              </label>
               <Input placeholder="Locked field" disabled />
             </div>
           </div>
@@ -182,9 +208,7 @@ export default function DesignSystemPage() {
                   Security Audit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-500">
-                  Delete Project
-                </DropdownMenuItem>
+                <DropdownMenuItem className="text-red-500">Delete Project</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -199,15 +223,22 @@ export default function DesignSystemPage() {
               <TabsTrigger value="memory">Memory</TabsTrigger>
               <TabsTrigger value="git">GitHub</TabsTrigger>
             </TabsList>
-            <TabsContent value="architecture" className="p-4 bg-[#141414] rounded-lg border border-white/5 mt-4">
-              <p className="text-slate-400 font-mono text-sm text-center py-12">Architecture graph will render here.</p>
+            <TabsContent
+              value="architecture"
+              className="p-4 bg-[#141414] rounded-lg border border-white/5 mt-4"
+            >
+              <p className="text-slate-400 font-mono text-sm text-center py-12">
+                Architecture graph will render here.
+              </p>
             </TabsContent>
           </Tabs>
         </section>
 
         {/* AI Components */}
         <section className="space-y-6">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-slate-500">AI Foundations</h2>
+          <h2 className="text-xs font-mono uppercase tracking-widest text-slate-500">
+            AI Foundations
+          </h2>
           <div className="space-y-8">
             <ActivityIndicator label="AI Researching project structure..." />
 
@@ -217,18 +248,25 @@ export default function DesignSystemPage() {
                 <span className="text-[10px] font-mono text-[#00FF9D]">Drafting...</span>
               </div>
               <p className="text-sm font-mono text-slate-300 leading-relaxed">
-                Based on your request, I recommend implementing the OAuth2 flow using the `@blueprint/auth` package.
+                Based on your request, I recommend implementing the OAuth2 flow using the
+                `@blueprint/auth` package.
               </p>
               <div className="mt-6 flex justify-end gap-2">
-                <Button size="sm" variant="ghost">Reject</Button>
-                <Button size="sm" variant="primary">Seal Intent</Button>
+                <Button size="sm" variant="ghost">
+                  Reject
+                </Button>
+                <Button size="sm" variant="primary">
+                  Seal Intent
+                </Button>
               </div>
             </AIProposalSurface>
           </div>
         </section>
 
         <footer className="pt-12 text-center">
-          <p className="text-[10px] font-mono text-slate-700 uppercase tracking-widest">Blueprint Design System v0.1.0</p>
+          <p className="text-[10px] font-mono text-slate-700 uppercase tracking-widest">
+            Blueprint Design System v0.1.0
+          </p>
         </footer>
       </div>
     </TooltipProvider>

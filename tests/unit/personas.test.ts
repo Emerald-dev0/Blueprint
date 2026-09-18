@@ -29,7 +29,7 @@ const personaDirs = readdirSync(PERSONAS_ROOT)
 
 function readManifest(dir: string): PersonaManifest {
   return JSON.parse(
-    readFileSync(path.join(PERSONAS_ROOT, dir, 'persona.json'), 'utf8')
+    readFileSync(path.join(PERSONAS_ROOT, dir, 'persona.json'), 'utf8'),
   ) as PersonaManifest;
 }
 
@@ -70,46 +70,40 @@ describe('persona registry on disk', () => {
 
   it('has an operating manual (instructions.md) for nearly every persona', () => {
     const withoutManual = personaDirs.filter(
-      (dir) => !existsSync(path.join(PERSONAS_ROOT, dir, 'instructions.md'))
+      (dir) => !existsSync(path.join(PERSONAS_ROOT, dir, 'instructions.md')),
     );
     // Metadata-only personas are allowed but should stay rare: without an
     // instructions.md the compiled prompt is just an identity and a mission.
     expect(withoutManual.length).toBeLessThanOrEqual(2);
   });
 
-  it.each(personaDirs.filter((dir) => existsSync(path.join(PERSONAS_ROOT, dir, 'instructions.md'))))(
-    '%s instructions.md follows the house structure',
-    (dir) => {
-      const content = readFileSync(path.join(PERSONAS_ROOT, dir, 'instructions.md'), 'utf8');
-      expect(content.startsWith('# '), `${dir}: must start with a level-1 heading`).toBe(true);
-      for (const section of [
-        '## IDENTITY',
-        '## MISSION',
-        '## CORE RESPONSIBILITIES',
-        '## DECISION FRAMEWORK',
-        '## THINKING PROCESS',
-        '## FAILURE MODES',
-        '## OUTPUT STANDARDS',
-        '## QUALITY CHECKLIST',
-      ]) {
-        expect(content, `${dir}: missing ${section}`).toContain(section);
-      }
-      // The loader parses "- [ ] " items into the persona's quality standards.
-      expect(content).toMatch(/^- \[ \] /m);
-      // ...and "- **Format**:" into the output format.
-      expect(content).toMatch(/- \*\*Format\*\*:/);
+  it.each(
+    personaDirs.filter((dir) => existsSync(path.join(PERSONAS_ROOT, dir, 'instructions.md'))),
+  )('%s instructions.md follows the house structure', (dir) => {
+    const content = readFileSync(path.join(PERSONAS_ROOT, dir, 'instructions.md'), 'utf8');
+    expect(content.startsWith('# '), `${dir}: must start with a level-1 heading`).toBe(true);
+    for (const section of [
+      '## IDENTITY',
+      '## MISSION',
+      '## CORE RESPONSIBILITIES',
+      '## DECISION FRAMEWORK',
+      '## THINKING PROCESS',
+      '## FAILURE MODES',
+      '## OUTPUT STANDARDS',
+      '## QUALITY CHECKLIST',
+    ]) {
+      expect(content, `${dir}: missing ${section}`).toContain(section);
     }
-  );
+    // The loader parses "- [ ] " items into the persona's quality standards.
+    expect(content).toMatch(/^- \[ \] /m);
+    // ...and "- **Format**:" into the output format.
+    expect(content).toMatch(/- \*\*Format\*\*:/);
+  });
 
   it.each(
-    personaDirs.filter((dir) =>
-      existsSync(path.join(PERSONAS_ROOT, dir, 'thinking-framework.md'))
-    )
+    personaDirs.filter((dir) => existsSync(path.join(PERSONAS_ROOT, dir, 'thinking-framework.md'))),
   )('%s thinking-framework.md uses parseable STEP headings', (dir) => {
-    const content = readFileSync(
-      path.join(PERSONAS_ROOT, dir, 'thinking-framework.md'),
-      'utf8'
-    );
+    const content = readFileSync(path.join(PERSONAS_ROOT, dir, 'thinking-framework.md'), 'utf8');
     const steps = content.split('\n').filter((line) => line.startsWith('## STEP'));
     expect(steps.length, `${dir}: expected numbered steps`).toBeGreaterThanOrEqual(3);
     // The loader strips "## STEP" and keeps the remainder, so "## STEP 1: X".
@@ -132,10 +126,7 @@ describe('groupThinkingFramework', () => {
 
     expect(steps).toHaveLength(2);
     expect(steps[0].title).toBe('1: CONTRACT FIRST');
-    expect(steps[0].details).toEqual([
-      'What is the output schema?',
-      'Which fields may be null?',
-    ]);
+    expect(steps[0].details).toEqual(['What is the output schema?', 'Which fields may be null?']);
     expect(steps[1].title).toBe('2: FAILURE ENUMERATION');
     expect(steps[1].details).toEqual(['What happens on timeout?']);
   });
