@@ -5,9 +5,10 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,rs,json,md}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
     "test": "vitest run",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "tsc --noEmit -p tsconfig.json && turbo run typecheck",
     "prepare": "husky"
   },
   "devDependencies": {

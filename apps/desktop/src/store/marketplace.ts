@@ -37,7 +37,7 @@ export const useMarketplaceStore = create<MarketplaceState>((set) => ({
         downloads: 1250,
         rating: 4.8,
         isVerified: true,
-        category: 'intelligence'
+        category: 'intelligence',
       },
       {
         id: 'io.blueprint.community.aws-deploy',
@@ -48,8 +48,8 @@ export const useMarketplaceStore = create<MarketplaceState>((set) => ({
         downloads: 840,
         rating: 4.5,
         isVerified: true,
-        category: 'tool'
-      }
+        category: 'tool',
+      },
     ];
 
     setTimeout(() => {
@@ -60,5 +60,5 @@ export const useMarketplaceStore = create<MarketplaceState>((set) => ({
   installPlugin: async (id) => {
     console.log(`Installing marketplace plugin: ${id}`);
     // This would eventually download and move files to ~/.blueprint/plugins
-  }
+  },
 }));

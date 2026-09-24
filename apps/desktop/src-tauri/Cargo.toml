@@ -4,30 +4,54 @@ version = "0.1.0"
 description = "Blueprint AI Engineering Command Center"
 authors = ["Founding Team"]
 edition = "2021"
+rust-version = "1.77.2"
+license = "MIT"
+homepage = "https://github.com/Emerald-dev0/Blueprint"
+repository = "https://github.com/Emerald-dev0/Blueprint"
+readme = "../../README.md"
 
 [build-dependencies]
 tauri-build = { version = "2.0.0", features = [] }
 
 [dependencies]
 tauri = { version = "2.0.0" }
+tauri-plugin-dialog = "2.0.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+# NOTE: kept on the default (native-tls) TLS stack deliberately. Switching to
+# `rustls-tls` would drop the OpenSSL runtime dependency and is the recommended
+# follow-up for wider distro coverage, but it changes the resolved dependency
+# graph and should be landed with a green CI run that actually compiles the
+# Rust side (see .github/workflows/desktop.yml).
 reqwest = { version = "0.12", features = ["json", "stream"] }
-tokio = { version = "1", features = ["full"] }
 keyring = "2.3"
-futures-util = "0.3"
 async-trait = "0.1"
 log = "0.4"
 env_logger = "0.11"
-walkdir = "2.5"
 scraper = "0.19"
-tree-sitter = "0.22"
 ignore = "0.4"
 rusqlite = { version = "0.31", features = ["bundled"] }
 regex = "1.10"
-git2 = "0.19"
+# Local repository operations only (status, branches, commits). Network
+# features are intentionally unused: GitHub access goes through the REST API in
+# `git/mod.rs`, not libgit2.
+git2 = { version = "0.19", default-features = false }
+
+# Dependencies that were previously declared but never referenced anywhere in
+# the source have been removed. In particular `tree-sitter` was advertised in
+# the README as the basis of "deep semantic analysis", yet no code path used
+# it; claiming a capability that has no implementation is worse than not
+# claiming it. See docs/adr/0002 for the plan to land real parsing.
+#   removed: tree-sitter, walkdir, futures-util
 
 [features]
-# this feature is used for production builds or when `devPath` points to the filesystem
-# DO NOT REMOVE!!
+# This feature is used for production builds or when `devUrl` points to the
+# filesystem. DO NOT REMOVE!! `tauri build` enables `tauri/custom-protocol`
+# itself; it is not part of the default feature set.
 custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+# Smaller installers matter for a desktop app that ships over the network:
+# the .deb/.rpm/AppImage/NSIS payloads embed this binary.
+strip = true
+lto = "thin"

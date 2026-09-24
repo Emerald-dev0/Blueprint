@@ -1,6 +1,12 @@
 # Blueprint Plugin & Extension Ecosystem
 
+> **Design spec, written before implementation.** This document records what was
+> planned, not what ships. Where it disagrees with the code, the code wins: the
+> current state is the [root README](../../README.md), the [ADRs](../adr) and the
+> source itself. [docs/README.md](../README.md) lists what is authoritative.
+
 ## 1. Executive Summary
+
 Blueprint is designed to be an **extensible engineering intelligence platform**. While the core remains stable and secure, the ecosystem allows developers to add specialized analysis, custom AI agents, and deep integrations with the wider engineering stack. This document defines the secure, high-performance architecture for the Blueprint extension engine.
 
 ---
@@ -8,19 +14,27 @@ Blueprint is designed to be an **extensible engineering intelligence platform**.
 ## 2. Plugin Categories
 
 ### Analysis Plugins
+
 Add support for specific languages, frameworks, or architectural patterns.
+
 - **Example:** `React Intelligence`, `Rust Health Audit`, `SQL Schema Mapper`.
 
 ### AI Agent Plugins
+
 Define custom "Personalities" with specialized knowledge and tool access.
+
 - **Example:** `Senior Security Reviewer`, `Performance Tuning Expert`, `Accessibility Guide`.
 
 ### Integration Plugins
+
 Connect Blueprint to external services and infrastructure.
+
 - **Example:** `Vercel Deployer`, `Firebase Manager`, `Jira Sync`.
 
 ### Workflow Plugins
+
 Automate repetitive engineering processes.
+
 - **Example:** `License Compliance Auditor`, `Auto-Changelog Generator`.
 
 ---
@@ -49,6 +63,7 @@ blueprint-plugin/
 ```
 
 ### The Manifest (`manifest.json`)
+
 ```json
 {
   "id": "io.blueprint.react-intel",
@@ -69,16 +84,18 @@ blueprint-plugin/
 
 Blueprint exposes a restricted **Host API** to plugins:
 
-| Namespace | Access |
-| :--- | :--- |
-| `fs` | Read/Write access (Scoped to project root). |
-| `ai` | Ability to stream prompts and request embeddings. |
-| `memory` | Read/Write access to the Project Memory (LanceDB). |
-| `git` | High-level operations (status, diff, branch). |
-| `ui` | Registering panels, toast notifications, and menu items. |
+| Namespace | Access                                                   |
+| :-------- | :------------------------------------------------------- |
+| `fs`      | Read/Write access (Scoped to project root).              |
+| `ai`      | Ability to stream prompts and request embeddings.        |
+| `memory`  | Read/Write access to the Project Memory (LanceDB).       |
+| `git`     | High-level operations (status, diff, branch).            |
+| `ui`      | Registering panels, toast notifications, and menu items. |
 
 ### Event System
+
 Plugins can subscribe to core Blueprint events:
+
 - `onProjectOpen`, `onFileChange`, `onPlanProposed`, `onGitUpdate`.
 
 ---
@@ -88,6 +105,7 @@ Plugins can subscribe to core Blueprint events:
 Security is the primary constraint. Every plugin must declare its needed capabilities.
 
 ### Permission Levels
+
 - **Read-Only:** Access to file structure and non-sensitive metadata.
 - **AI Access:** Ability to communicate with configured providers.
 - **Write Access:** Ability to modify project files (**Requires User Consent Seal**).
@@ -98,13 +116,16 @@ Security is the primary constraint. Every plugin must declare its needed capabil
 ## 7. Trust Model & Marketplace
 
 ### Verification Tiers
+
 1. **Official:** Built and maintained by the Blueprint Core Team.
 2. **Verified:** Third-party plugins reviewed for security and performance by the Blueprint community.
 3. **Community:** Unreviewed plugins from the public ecosystem.
 4. **Private/Enterprise:** In-house plugins for organization-specific standards.
 
 ### The AI Agent Marketplace
+
 A specialized section for sharing **Agent Personalities**:
+
 - **System Prompt:** The "Character" and "Rules" of the agent.
 - **Tool Kit:** The specific Blueprint tools the agent is allowed to use.
 - **Knowledge Base:** Bundled documentation or best-practice rules.
@@ -122,6 +143,7 @@ A specialized section for sharing **Agent Personalities**:
 ## 9. Enterprise Extensions
 
 For large engineering teams, Blueprint supports **Private Registries**:
+
 - **Org Standards:** Enforcement of internal coding rules via custom analysis plugins.
 - **Private Agents:** Agents trained on internal proprietary documentation.
 - **RBAC:** Controlling which developers can install specific extensions.
@@ -135,4 +157,5 @@ For large engineering teams, Blueprint supports **Private Registries**:
 - **Graceful Failure:** If a plugin crashes, its Wasm sandbox is isolated—Blueprint remains active, and only the specific extension is disabled.
 
 ---
-*Blueprint Plugin & Extension Ecosystem — Phase 1 Design Complete.*
+
+_Blueprint Plugin & Extension Ecosystem — Phase 1 Design Complete._

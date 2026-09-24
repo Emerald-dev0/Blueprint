@@ -2,42 +2,75 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod ai;
-mod intelligence;
-mod memory;
-mod git;
-mod plugins;
+mod audit;
 mod events;
+mod git;
+mod intelligence;
+mod interop;
+mod memory;
+mod paths;
+mod plugins;
+mod project;
+mod project_files;
 
-use ai::manager::AIManager;
-use ai::aos::AgentOS;
-use memory::MemoryManager;
-use plugins::manager::PluginManager;
 use std::sync::Arc;
-use std::path::PathBuf;
+
+use tauri::Manager;
+
+use ai::aos::AgentOS;
+use ai::manager::AIManager;
+use audit::AuditLog;
+use memory::MemoryManager;
+use paths::AppPaths;
+use plugins::manager::PluginManager;
+use project::ProjectContext;
 
 fn main() {
-    let memory_manager = Arc::new(MemoryManager::new("blueprint.db"));
-    let app_data_dir = PathBuf::from(".");
-    let plugin_manager = PluginManager::new(app_data_dir);
-
-    // Path to personas in development
-    let personas_root = PathBuf::from("../../packages/personas");
-    let agent_os = AgentOS::new(personas_root);
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .manage(AIManager::new())
-        .manage(memory_manager)
-        .manage(plugin_manager)
-        .manage(agent_os)
+        .setup(|app| {
+            let handle = app.handle().clone();
+
+            // Resolve real per-user directories (see `paths`): the previous
+            // build derived the database, plugin dir and persona registry from
+            // the process working directory, which is undefined for a packaged
+            // app launched from a Start Menu shortcut or .desktop file.
+            let app_paths = AppPaths::resolve(&handle)?;
+            log::info!(
+                "blueprint v{} starting; data dir: {}",
+                env!("CARGO_PKG_VERSION"),
+                app_paths.app_data_dir.display()
+            );
+
+            let audit = AuditLog::new(app_paths.audit_log_file());
+            audit.record(
+                "app.started",
+                serde_json::json!({ "version": env!("CARGO_PKG_VERSION") }),
+            );
+
+            let memory = Arc::new(MemoryManager::new(&app_paths.database_file()));
+            let plugin_manager = PluginManager::new(app_paths.plugin_dir());
+            let agent_os = AgentOS::new(app_paths.personas_dir.clone());
+
+            app.manage(app_paths);
+            app.manage(audit);
+            app.manage(memory);
+            app.manage(plugin_manager);
+            app.manage(agent_os);
+            app.manage(ProjectContext::default());
+
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             ai::set_ai_credential,
             ai::generate_ai_completion,
             ai::run_aos_completion,
-            ai::get_personas,
             ai::get_operating_manuals,
             ai::reload_personas,
             ai::plan_aos_workflow,
-            ai::orchestration::get_agent_roles,
             intelligence::start_repo_analysis,
             intelligence::analyze_website,
             git::set_github_credential,
@@ -48,9 +81,14 @@ fn main() {
             git::generate_github_release_notes,
             memory::get_adrs,
             memory::search_memory,
+            memory::create_adr,
+            memory::save_memory_entry,
             plugins::list_installed_plugins,
-            plugins::run_python_tool,
-            events::publish_system_event
+            events::publish_system_event,
+            project::set_project_path,
+            project::get_project_path,
+            project_files::list_project_files,
+            interop::export_agent_context
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
