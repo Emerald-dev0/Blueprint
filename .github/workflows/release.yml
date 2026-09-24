@@ -1,9 +1,18 @@
 name: Release
 
-# Builds signed-less distributable bundles for macOS, Windows, and Linux and
-# publishes them as a GitHub Release. Triggered by pushing a `v*` tag (e.g.
+# Builds distributable bundles for macOS, Windows, and Linux and publishes
+# them as a GitHub Release. Triggered by pushing a `v*` tag (e.g.
 # `git tag v0.1.0 && git push origin v0.1.0`), or manually via Actions -> Run
 # workflow (builds and uploads artifacts without creating a release).
+#
+# Code signing is fully secret-conditional:
+#   - macOS: when APPLE_CERTIFICATE (base64 .p12) + APPLE_CERTIFICATE_PASSWORD
+#     are set, bundles are signed and (with APPLE_ID/APPLE_PASSWORD/APPLE_TEAM_ID)
+#     notarized and stapled. Without them the pipeline builds unsigned bundles.
+#   - Windows: when WINDOWS_CERTIFICATE (base64 .pfx/.p12) + WINDOWS_CERTIFICATE_PASSWORD
+#     are set, the NSIS/MSI installers are signed with signtool. Unsigned otherwise.
+#   - Linux: unsigned (AppImage/deb). GPG/AppImage signing is future work.
+# See docs/RELEASING.md for how to create and configure the certificates.
 on:
   push:
     tags:
@@ -21,6 +30,18 @@ jobs:
   publish:
     name: Build ${{ matrix.platform }}
     runs-on: ${{ matrix.platform }}
+    env:
+      # Code-signing secrets. Empty when not configured, which is how the
+      # pipeline detects that signing should be skipped (unsigned bundles).
+      # macOS signing/notarization:
+      APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+      APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      # Windows code signing:
+      WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+      WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
     strategy:
       fail-fast: false
       matrix:
@@ -67,14 +88,59 @@ jobs:
             libssl-dev \
             libxdo-dev
 
+      # macOS code signing + notarization.
+      # Without APPLE_CERTIFICATE this step is skipped and Tauri produces an
+      # unsigned bundle. When configured, the .p12 is imported into a dedicated
+      # signing keychain (made searchable by codesign/notarytool) and Tauri
+      # signs with it, then notarizes and staples using APPLE_ID/APPLE_PASSWORD/
+      # APPLE_TEAM_ID. Tauri v2 also reads APPLE_CERTIFICATE/APPLE_CERTIFICATE_PASSWORD
+      # from the environment directly, so the import below is belt-and-suspenders
+      # for older tooling and for the notarytool trust path.
+      - name: Import Apple code-signing certificate
+        if: runner.os == 'macOS' && env.APPLE_CERTIFICATE != ''
+        run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/blueprint-signing.keychain-db"
+          echo "$APPLE_CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/blueprint-cert.p12"
+          security create-keychain -p runner "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p runner "$KEYCHAIN_PATH"
+          security import "$RUNNER_TEMP/blueprint-cert.p12" -k "$KEYCHAIN_PATH" \
+            -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign -T /usr/bin/notarytool
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s \
+            -k runner "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+          security unlock-keychain -p runner "$KEYCHAIN_PATH"
+          rm -f "$RUNNER_TEMP/blueprint-cert.p12"
+
+      # Windows code signing.
+      # Without WINDOWS_CERTIFICATE this step is skipped and the installers are
+      # unsigned. When configured, the .pfx/.p12 is imported into the current
+      # user's personal store and its thumbprint is injected into
+      # tauri.conf.json (bundle.windows.certificateThumbprint) so Tauri's
+      # bundler signs the NSIS/MSI installers with signtool. signtool
+      # time-stamping is handled by Tauri when a certificate is present (see
+      # bundle.windows.timestampUrl in docs/RELEASING.md).
+      - name: Import Windows code-signing certificate
+        if: runner.os == 'Windows' && env.WINDOWS_CERTIFICATE != ''
+        shell: pwsh
+        run: |
+          $bytes = [Convert]::FromBase64String($env:WINDOWS_CERTIFICATE)
+          $certPath = Join-Path $env:RUNNER_TEMP 'blueprint-cert.pfx'
+          [IO.File]::WriteAllBytes($certPath, $bytes)
+          $cert = Import-PfxCertificate -FilePath $certPath `
+            -CertStoreLocation 'Cert:\CurrentUser\My' `
+            -Password (ConvertTo-SecureString -String $env:WINDOWS_CERTIFICATE_PASSWORD -AsPlainText -Force)
+          Write-Host "Imported certificate with thumbprint: $($cert.Thumbprint)"
+          Remove-Item $certPath -Force
+          node -e 'const fs=require("fs");const p="apps/desktop/src-tauri/tauri.conf.json";const c=JSON.parse(fs.readFileSync(p,"utf8"));c.bundle.windows=c.bundle.windows||{};c.bundle.windows.certificateThumbprint=process.argv[1];fs.writeFileSync(p,JSON.stringify(c,null,2)+"\n")' $cert.Thumbprint
+
       - name: Build and release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Signing/notarization is intentionally not configured yet: without
-          # these env vars Tauri produces unsigned bundles. When certificates
-          # exist, add APPLE_CERTIFICATE/APPLE_CERTIFICATE_PASSWORD for macOS
-          # and TAURI_SIGNING_PRIVATE_KEY for Windows/Linux updater signing.
+          # Signing/notarization env vars (APPLE_* / WINDOWS_CERTIFICATE*) are
+          # inherited from the job-level env above. Bundles are unsigned without
+          # these secrets.
         with:
           projectPath: apps/desktop
           createRelease: ${{ startsWith(github.ref, 'refs/tags/') }}
